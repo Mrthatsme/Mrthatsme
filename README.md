@@ -45,3 +45,26 @@ Persona: a composite Florida roll-off dumpster rental company (`app/minutes_rega
 
 The bookings/approvals data lives in a local SQLite file (`app/minutes_regained/mock_crm.db`, gitignored) that resets if you delete it.
 
+## Marketing Site (`/site`)
+
+A static landing page for `minutesregained.com` — hero, "where are your minutes disappearing," how-it-works, a live client-side ROI calculator, the services ladder, and a contact CTA. Plain HTML/CSS/JS, no build step, no backend dependency.
+
+### Local preview
+
+```bash
+cd site
+python3 -m http.server 8000
+# open http://localhost:8000
+```
+
+### Deploying to minutesregained.com
+
+Any static host works — no build command needed, just point it at the `site/` folder as the output/publish directory:
+
+- **Vercel / Netlify / Cloudflare Pages**: create a new project from this repo, set the root/publish directory to `site`, leave the build command empty.
+- **GitHub Pages**: enable Pages for this repo and set the source to the `site/` folder (or move its contents to `/docs` if your Pages setup requires that).
+
+Then point `minutesregained.com`'s DNS at whichever host you pick (each gives you the exact records to add once the project exists). The domain currently has no DNS records configured, so there's nothing to undo first.
+
+The contact CTA is a plain `mailto:` link (`hello@minutesregained.com`) — swap in a real inbox, or wire up a form service (e.g. Formspree) later if you want submissions captured instead of just opening the visitor's email client.
+
