@@ -66,5 +66,5 @@ Any static host works — no build command needed, just point it at the `site/` 
 
 Then point `minutesregained.com`'s DNS at whichever host you pick (each gives you the exact records to add once the project exists). The domain currently has no DNS records configured, so there's nothing to undo first.
 
-The contact CTA is a plain `mailto:` link (`hello@minutesregained.com`) — swap in a real inbox, or wire up a form service (e.g. Formspree) later if you want submissions captured instead of just opening the visitor's email client.
+The contact CTA is a plain `mailto:support@minutesregained.com` link — once that inbox exists (e.g. via Google Workspace), the link already works. Wire up a form service (e.g. Formspree) later if you want submissions captured server-side instead of just opening the visitor's email client.
 
