@@ -7,9 +7,11 @@ from fastapi.responses import StreamingResponse
 from . import conversation_store as store
 from .claude_client import client, send_message
 from .config import CLAUDE_MODEL, DEFAULT_MAX_TOKENS, DEFAULT_SYSTEM_PROMPT
+from .minutes_regained.router import router as minutes_regained_router
 from .schemas import ChatRequest, ChatResponse
 
-app = FastAPI(title="Virtual Assistant Service")
+app = FastAPI(title="Minutes Regained")
+app.include_router(minutes_regained_router)
 
 
 @app.get("/health")
