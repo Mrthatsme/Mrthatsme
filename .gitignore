@@ -4,3 +4,9 @@ __pycache__/
 .venv/
 venv/
 *.db
+
+# HyperFrames video-tooling install (local skill/plugin machinery, not project source)
+.agents/
+.claude/
+skills-lock.json
+videos/
