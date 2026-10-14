@@ -294,3 +294,11 @@ section.tight{padding-block:clamp(40px,6vw,64px)}
 @media (max-width:560px){.strip li{grid-template-columns:24px 1fr;align-items:center;padding:10px 12px;gap:10px}.strip svg{width:22px;height:22px}.strip li:last-child:nth-child(odd){grid-column:1 / -1}}
 .strip-head{margin:26px 0 0;font:700 17px/1.35 var(--display);font-stretch:112%;color:var(--ink)}
 .strip-head+.strip{margin-top:12px}
+
+/* Phones: every standalone link and button is at least 44px tall for thumbs. */
+@media (max-width:560px){
+  .btn-link{display:flex;align-items:center;min-height:44px;margin-top:4px}
+  footer a{display:inline-flex;align-items:center;min-height:44px}
+  .btn,button{min-height:44px}
+  .brand{min-height:44px}
+}
