@@ -34,7 +34,7 @@ const CONFIG = {
   vendorDomains: [
     'stripe.com', 'cloudflare.com', 'google.com', 'resend.com', 'resend.dev',
     'elevenlabs.io', 'northwestregisteredagent.com', 'formsubmit.co',
-    'anthropic.com', 'github.com', 'heygen.com', 'canva.com',
+    'anthropic.com', 'github.com', 'heygen.com', 'canva.com', '800.com', 'openai.com',
   ],
 };
 
