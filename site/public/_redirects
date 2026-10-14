@@ -1,0 +1,1 @@
+# keep one canonical host; Cloudflare serves both apex and www by default

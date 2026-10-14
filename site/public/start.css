@@ -1,0 +1,33 @@
+.start-wrap{padding-block:clamp(40px,6vw,72px) 100px;max-width:760px}
+.start-step{margin-top:40px}
+.step-title{display:flex;align-items:center;gap:12px;font-size:22px}
+.step-num{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:var(--accent);color:var(--accent-ink);font:800 15px/1 var(--display)}
+.hid{display:none}
+
+.plan-pick{display:grid;gap:12px;margin:20px 0;grid-template-columns:repeat(3,1fr)}
+@media (max-width:700px){.plan-pick{grid-template-columns:1fr}}
+.plan-opt{position:relative;display:grid;gap:4px;border:2px solid var(--line);border-radius:10px;padding:16px;cursor:pointer;background:var(--surface)}
+.plan-opt input{position:absolute;top:14px;right:14px}
+.plan-opt:has(input:checked){border-color:var(--accent)}
+.plan-opt .tier{font-weight:700}
+.plan-opt .price{font:800 22px/1.2 var(--display)}
+.plan-opt .price small{font-size:13px;font-weight:500;color:var(--muted)}
+
+.founding-row{display:flex;gap:10px;align-items:flex-start;margin:16px 0;font-size:14.5px;color:var(--muted)}
+.founding-row input{margin-top:3px}
+
+.contract-box{white-space:pre-wrap;font:14px/1.6 var(--mono);background:var(--log-bg);color:var(--log-fg);border-radius:10px;padding:24px;max-height:420px;overflow:auto;margin:20px 0}
+
+#result-box h2{margin-bottom:10px}
+#result-box.ok{color:var(--sea)}
+#result-box.err{color:var(--accent-text)}
+
+.note.err-text{color:var(--accent-text);font-size:14px;margin-top:8px}
+
+/* billing option + plan details */
+.automate-mini{font:500 13px/1.5 var(--mono);color:var(--sea);letter-spacing:.02em}
+.plan-meta{font-size:13px;color:var(--muted);line-height:1.4}
+.billing-pick{border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:18px 0 0;display:grid;gap:8px}
+.billing-pick legend{font:500 12px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:0 6px}
+.billing-pick label{display:flex;gap:8px;align-items:baseline;cursor:pointer}
+.no-setup{margin:12px 0 0;font-weight:600}

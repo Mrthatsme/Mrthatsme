@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="Set up your Minutes Regained plan: pick a plan, review and agree to the service agreement, then pay securely via Stripe.">
+<meta name="robots" content="noindex,follow">
+<link rel="canonical" href="https://minutesregained.com/start.html">
+<meta name="theme-color" content="#2C6468" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0C1822" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="/mark.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="/favicon-180.png">
+<title>Set up your plan — Minutes Regained</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@112,700;112,800;100,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/site.css">
+<link rel="stylesheet" href="/start.css?v=20261014">
+</head>
+<body>
+  <header class="top">
+    <div class="wrap nav">
+      <a class="brand" href="/">Minutes<span class="acc">Regained</span></a>
+      <a class="btn btn-ghost btn-sm" href="/#pricing">Back to pricing</a>
+    </div>
+  </header>
+
+  <main class="wrap start-wrap">
+    <div class="sec-head">
+      <p class="eyebrow">Set up your plan</p>
+      <h1>Three steps: pick a plan, agree to the terms, pay securely.</h1>
+      <p class="automate-mini">Missed-call text-back &middot; Instant lead replies &middot; Quote follow-ups &middot; Appointment reminders &middot; Review requests &middot; Invoice reminders &middot; Daily brief</p>
+      <p class="lede">Your card is handled entirely by Stripe — Minutes Regained never sees or stores it. This sets up your own monthly service fee only; we never collect payment from, or on behalf of, your customers.</p>
+    </div>
+
+    <!-- STEP 1: plan -->
+    <section class="start-step" id="step-plan" data-step="1">
+      <h2 class="step-title"><span class="step-num">1</span> Choose your plan</h2>
+      <div class="plan-pick" id="plan-pick">
+        <label class="plan-opt">
+          <input type="radio" name="plan" value="essential">
+          <span class="tier">Essential</span>
+          <span class="price" data-monthly="$450" data-retainer="$405">$450<small>/mo</small></span>
+          <span class="plan-meta">Up to 3 automations &middot; 10 hrs/mo &middot; software up to $50/mo</span>
+        </label>
+        <label class="plan-opt">
+          <input type="radio" name="plan" value="business_support" checked>
+          <span class="tier">Business Support</span>
+          <span class="price" data-monthly="$900" data-retainer="$810">$900<small>/mo</small></span>
+          <span class="plan-meta">Up to 6 automations &middot; 22 hrs/mo &middot; software up to $100/mo</span>
+        </label>
+        <label class="plan-opt">
+          <input type="radio" name="plan" value="operations_plus">
+          <span class="tier">Operations+</span>
+          <span class="price" data-monthly="$1,500" data-retainer="$1,350">$1,500<small>/mo</small></span>
+          <span class="plan-meta">Up to 12 automations &middot; 40 hrs/mo &middot; software up to $150/mo</span>
+        </label>
+      </div>
+      <fieldset class="billing-pick">
+        <legend>Billing option</legend>
+        <label><input type="radio" name="billing" value="monthly" checked> <b>Monthly</b> &mdash; cancel with 30 days' notice</label>
+        <label><input type="radio" name="billing" value="retainer"> <b>12-month Retainer</b> &mdash; 10% off, billed monthly</label>
+      </fieldset>
+      <p class="no-setup">No setup fee. Software included up to your plan's allowance.</p>
+      <label class="founding-row hid" id="founding-row">
+        <input type="checkbox" id="founding-check">
+        <span>Apply the <b>Founding Client offer</b>: Business Support (22 hours) at $450/mo for your first 90 days, then $900/mo ($810 on a Retainer). We'll remind you 14 days before the price changes. <span id="founding-remaining"></span></span>
+      </label>
+      <button class="btn btn-primary" id="to-step2" type="button">Continue</button>
+    </section>
+
+    <!-- STEP 2: contract -->
+    <section class="start-step hid" id="step-contract" data-step="2">
+      <h2 class="step-title"><span class="step-num">2</span> Review and agree to the service agreement</h2>
+      <pre class="contract-box" id="contract-box">Loading…</pre>
+      <form id="agree-form" class="sign">
+        <div class="fld"><label for="a-business">Business legal name</label><input id="a-business" name="business" required></div>
+        <div class="fld"><label for="a-name">Your name</label><input id="a-name" name="name" required></div>
+        <div class="fld"><label for="a-email">Email</label><input id="a-email" name="email" type="email" required></div>
+        <label class="founding-row">
+          <input type="checkbox" id="agree-check" required>
+          <span>I have read the agreement above, I am authorized to sign for the business named, and I agree to its terms.</span>
+        </label>
+        <button class="btn btn-primary" id="to-step3" type="submit">Continue to payment</button>
+        <p class="note" id="agree-err"></p>
+      </form>
+    </section>
+
+    <!-- STEP 3: payment (handoff to Stripe) -->
+    <section class="start-step hid" id="step-pay" data-step="3">
+      <h2 class="step-title"><span class="step-num">3</span> Pay securely via Stripe</h2>
+      <p class="lede">You're about to be redirected to Stripe's secure checkout. After payment, you'll land back here confirmed.</p>
+      <button class="btn btn-primary" id="to-stripe" type="button">Continue to Stripe</button>
+      <p class="note" id="pay-err"></p>
+    </section>
+
+    <!-- RESULT: shown via ?status=success|canceled -->
+    <section class="start-step hid" id="step-result">
+      <div id="result-box"></div>
+    </section>
+  </main>
+
+  <script src="/start.js?v=20261014"></script>
+</body>
+</html>
