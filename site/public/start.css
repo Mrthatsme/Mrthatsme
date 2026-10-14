@@ -31,3 +31,9 @@
 .billing-pick legend{font:500 12px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:0 6px}
 .billing-pick label{display:flex;gap:8px;align-items:baseline;cursor:pointer}
 .no-setup{margin:12px 0 0;font-weight:600}
+
+/* agreement gate */
+.contract-box{max-height:360px;overflow-y:auto}
+.terms-error{border:1px solid #C2452F;border-left:3px solid #C2452F;border-radius:8px;padding:14px 16px;display:grid;gap:10px;justify-items:start}
+#to-step3:disabled{opacity:.45;cursor:not-allowed}
+.founding-row:has(#agree-check:disabled){opacity:.6}

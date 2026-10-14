@@ -16,7 +16,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@112,700;112,800;100,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <link rel="stylesheet" href="/site.css?v=20261014e">
-<link rel="stylesheet" href="/start.css?v=20261014">
+<link rel="stylesheet" href="/start.css?v=20261014b">
 </head>
 <body>
   <header class="top">
@@ -73,16 +73,21 @@
     <!-- STEP 2: contract -->
     <section class="start-step hid" id="step-contract" data-step="2">
       <h2 class="step-title"><span class="step-num">2</span> Review and agree to the service agreement</h2>
-      <pre class="contract-box" id="contract-box">Loading…</pre>
+      <pre class="contract-box" id="contract-box" tabindex="0" aria-busy="true">Loading the agreement…</pre>
+      <div class="terms-error hid" id="terms-error">
+        <p><b>The agreement didn't load.</b> Don't continue: you'd be agreeing to terms you haven't read. Try again, or email support@minutesregained.com and we'll send it to you directly.</p>
+        <button class="btn btn-ghost btn-sm" type="button" id="terms-retry">Try again</button>
+      </div>
       <form id="agree-form" class="sign">
         <div class="fld"><label for="a-business">Business legal name</label><input id="a-business" name="business" required></div>
         <div class="fld"><label for="a-name">Your name</label><input id="a-name" name="name" required></div>
         <div class="fld"><label for="a-email">Email</label><input id="a-email" name="email" type="email" required></div>
         <label class="founding-row">
-          <input type="checkbox" id="agree-check" required>
+          <input type="checkbox" id="agree-check" required disabled>
           <span>I have read the agreement above, I am authorized to sign for the business named, and I agree to its terms.</span>
         </label>
-        <button class="btn btn-primary" id="to-step3" type="submit">Continue to payment</button>
+        <p class="note" id="agree-lock">You can tick this once the agreement has loaded and you've scrolled to the end.</p>
+        <button class="btn btn-primary" id="to-step3" type="submit" disabled>Continue to payment</button>
         <p class="note" id="agree-err"></p>
       </form>
     </section>
@@ -101,6 +106,6 @@
     </section>
   </main>
 
-  <script src="/start.js?v=20261014"></script>
+  <script src="/start.js?v=20261014b"></script>
 </body>
 </html>

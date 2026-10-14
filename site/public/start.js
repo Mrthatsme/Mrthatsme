@@ -59,11 +59,42 @@
   });
   refreshFoundingRow();
 
+  // ---------- agreement gate: no agreeing to terms that never loaded ----------
+  var gate = { loaded: false, read: false };
+  function refreshGate() {
+    var box = $("contract-box"), chk = $("agree-check");
+    var ready = gate.loaded && gate.read;
+    chk.disabled = !ready;
+    if (!ready) chk.checked = false;
+    $("agree-lock").textContent = !gate.loaded ? "You can tick this once the agreement has loaded."
+      : !gate.read ? "Scroll to the end of the agreement to continue." : "";
+    $("to-step3").disabled = !(ready && chk.checked);
+  }
+  function markRead() {
+    var box = $("contract-box");
+    gate.read = box.scrollHeight <= box.clientHeight + 4 ||
+      box.scrollTop + box.clientHeight >= box.scrollHeight - 24;
+    refreshGate();
+  }
+  $("contract-box").addEventListener("scroll", markRead, { passive: true });
+  $("agree-check").addEventListener("change", refreshGate);
+  window.addEventListener("resize", function () { if (gate.loaded) markRead(); });
+  function termsFailed() {
+    gate.loaded = false; gate.read = false;
+    $("contract-box").classList.add("hid");
+    $("terms-error").classList.remove("hid");
+    refreshGate();
+  }
+
   // ---------- step 1 -> 2 ----------
-  $("to-step2").addEventListener("click", function () {
+  function loadAgreement() {
     var plan = selectedPlan();
     var founding = $("founding-check").checked && plan === "business_support";
-    $("contract-box").textContent = "Loading…";
+    gate.loaded = false; gate.read = false; refreshGate();
+    $("terms-error").classList.add("hid");
+    $("contract-box").classList.remove("hid");
+    $("contract-box").setAttribute("aria-busy", "true");
+    $("contract-box").textContent = "Loading the agreement…";
     showStep("step-contract");
 
     var billing = selectedBilling();
@@ -71,16 +102,22 @@
     fetch("/api/contract-text?" + params.toString())
       .then(function (r) { return r.json(); })
       .then(function (d) {
-        if (d.error) { $("contract-box").textContent = "Could not load the agreement. Please refresh and try again."; return; }
+        if (d.error || !d.text || d.text.length < 400) { termsFailed(); return; }
         $("contract-box").textContent = d.text;
+        $("contract-box").setAttribute("aria-busy", "false");
+        $("contract-box").scrollTop = 0;
+        gate.loaded = true;
+        markRead();
         state.plan = plan;
         state.founding = founding;
         state.billing = billing;
         state.planLabel = d.plan.label;
         state.priceCents = d.plan.priceCents;
       })
-      .catch(function () { $("contract-box").textContent = "Could not load the agreement. Please refresh and try again."; });
-  });
+      .catch(termsFailed);
+  }
+  $("to-step2").addEventListener("click", loadAgreement);
+  $("terms-retry").addEventListener("click", loadAgreement);
 
   // ---------- step 2: agree ----------
   $("agree-form").addEventListener("submit", function (ev) {
@@ -118,8 +155,8 @@
     })
       .then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
       .then(function (res) {
-        btn.disabled = false;
         btn.textContent = "Continue to payment";
+        refreshGate();
         if (!res.ok) {
           if (res.d.error === "founding_offer_full") {
             errEl.textContent = "The Founding Client offer just filled up. Please uncheck it and continue at the standard price, or contact us.";
@@ -132,8 +169,8 @@
         showStep("step-pay");
       })
       .catch(function () {
-        btn.disabled = false;
         btn.textContent = "Continue to payment";
+        refreshGate();
         errEl.textContent = "Something went wrong. Please check your connection and try again.";
       });
   });
