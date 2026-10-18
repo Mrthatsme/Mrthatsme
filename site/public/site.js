@@ -9,6 +9,7 @@
      independent copy of bug reports sent elsewhere.
      ------------------------------------------------------------------ */
   var FORM_ENDPOINT = "/api/feedback";
+  var PAGE_LOADED_AT = Date.now(); /* bots submit forms instantly; people take seconds */
 
   /* the FAQ box searches locally; it must never navigate */
   (function(){ var f=document.getElementById("faq-form");
@@ -46,6 +47,8 @@
           business: biz,
           contact: contact,
           phone: (fd.get("phone")||"").toString().trim(),
+          company_website: (fd.get("company_website")||"").toString(),
+          elapsed_ms: Date.now() - PAGE_LOADED_AT,
           contactWindow: (fd.get("window")||"").toString(),
           pain: (fd.get("pain")||"").toString().trim()
         })
@@ -199,6 +202,8 @@
       fd.append("browser",navigator.userAgent);
       fd.append("theme", window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark":"light");
       fd.append("at",new Date().toISOString());
+      fd.append("company_website",$("fb-hp").value);
+      fd.append("elapsed_ms",String(Date.now() - PAGE_LOADED_AT));
       fetch(FORM_ENDPOINT,{method:"POST",body:fd,headers:{"Accept":"application/json"}})
         .then(function(r){ if(!r.ok) throw new Error("bad"); 
           fbForm.classList.add("hid"); fbOk.classList.remove("hid");

@@ -1,5 +1,6 @@
 import { listLeads, listContracts, listClients, listPayments } from "./db.js";
 import { sendNotificationEmail } from "./email.js";
+import { securitySummary } from "./protect.js";
 
 // Weekday morning brief, sent by the Worker's own cron trigger. Plain data
 // from D1, no model call and no mailbox access -- so it costs nothing to run
@@ -9,6 +10,27 @@ const TZ = "America/New_York";
 
 function easternLabel(date, opts) {
   return new Intl.DateTimeFormat("en-US", { timeZone: TZ, ...opts }).format(date);
+}
+
+const FORM_NAMES = { "/api/leads": "Contact form", "/api/feedback": "Report-a-problem form" };
+const BLOCK_NAMES = {
+  honeypot: "bot filled the hidden field",
+  too_fast: "submitted faster than a person can type",
+  rate_limited: "too many from one address (got \"slow down\")",
+  invalid_email: "bad email address",
+  invalid_phone: "bad phone number",
+};
+
+function protectionLines(rows) {
+  const accepted = rows.filter((r) => r.kind === "accepted").reduce((n, r) => n + r.n, 0);
+  const blocked = rows.filter((r) => r.kind !== "accepted");
+  const total = blocked.reduce((n, r) => n + r.n, 0);
+  return [
+    `SITE PROTECTION`,
+    `- Real submissions let through: ${accepted}`,
+    `- Stopped: ${total}${total ? "" : " (quiet)"}`,
+    ...blocked.map((r) => `  - ${r.n} on the ${FORM_NAMES[r.path] || r.path}: ${BLOCK_NAMES[r.kind] || r.kind}`),
+  ];
 }
 
 function leadLine(l) {
@@ -30,8 +52,9 @@ export async function sendDailyBrief(env) {
   const isMorning = Number(easternLabel(now, { hour: "numeric", hourCycle: "h23" })) < 12;
   const since = new Date(now.getTime() - 12 * 3600000).toISOString();
 
-  const [leads, contracts, clients, payments] = await Promise.all([
+  const [leads, contracts, clients, payments, security] = await Promise.all([
     listLeads(env.DB, 500), listContracts(env.DB, 500), listClients(env.DB, 500), listPayments(env.DB, 500),
+    securitySummary(env, since).catch(() => []),
   ]);
   const newLeads = leads.filter((l) => (l.created_at || "") >= since);
   const needYou = newLeads.filter((l) => l.triage_status !== "auto_replied");
@@ -56,6 +79,8 @@ export async function sendDailyBrief(env) {
     `- New agreements signed: ${newContracts.length}`,
     `- Agreements waiting on payment: ${pending.length}`,
     `- Active clients: ${active.length}`,
+    ``,
+    ...protectionLines(security),
     ``,
     `Full details: https://minutesregained.com/api/admin/dashboard`,
     ``,

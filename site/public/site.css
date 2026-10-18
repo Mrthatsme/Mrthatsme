@@ -311,3 +311,5 @@ section.tight{padding-block:clamp(40px,6vw,64px)}
 .calc-note{margin-top:14px;font-size:14px;color:var(--muted);max-width:75ch}
 .page-cta{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
 .notfound{display:grid;gap:18px;max-width:720px}
+/* honeypot: invisible to people, tempting to form-filling bots */
+.hp{position:absolute!important;left:-10000px!important;width:1px;height:1px;overflow:hidden}

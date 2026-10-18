@@ -34,7 +34,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@112,700;112,800;100,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="/site.css?v=20261018b">
+<link rel="stylesheet" href="/site.css?v=20261018c">
 
 </head>
 <body>
@@ -421,6 +421,7 @@
             <option value="">Pick one</option><option>Early morning, before 8am</option><option>Daytime, business hours</option>
             <option>Evening, after 6pm</option><option>Weekends only</option><option>Email only, please</option></select></div>
           <div class="fld"><label for="f-pain">What eats most of your time right now?</label><textarea id="f-pain" name="pain" placeholder="Chasing quotes, answering the same questions, scheduling&hellip;"></textarea></div>
+          <div class="hp" aria-hidden="true"><label for="f-hp">Company website</label><input id="f-hp" name="company_website" tabindex="-1" autocomplete="off"></div>
           <button class="btn btn-primary" type="submit" id="f-send">Request assessment</button>
           <p class="note" id="f-note">No cost and no obligation. We reply within one business day.</p>
         </form>
@@ -440,7 +441,7 @@
   </div>
 </footer>
 
-<script src="/site.js?v=20261014b" defer></script>
+<script src="/site.js?v=20261018" defer></script>
 
 <button id="fb-open" type="button" aria-haspopup="dialog">Report a problem</button>
 
@@ -462,6 +463,7 @@
         <textarea id="fb-what" name="what" placeholder="Text overlapped, a button did nothing, something was confusing&hellip;" required></textarea></div>
       <div class="fld"><label for="fb-who">Your name (so we know who to thank)</label>
         <input id="fb-who" name="who" autocomplete="name"></div>
+        <div class="hp" aria-hidden="true"><label for="fb-hp">Company website</label><input id="fb-hp" name="company_website" tabindex="-1" autocomplete="off"></div>
       <div class="row">
         <button class="btn btn-primary" type="submit" id="fb-send">Send report</button>
         <button class="btn" type="button" id="fb-cancel">Cancel</button>

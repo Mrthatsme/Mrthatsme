@@ -11,6 +11,7 @@ import { requireAdmin, unauthorizedResponse, renderAdminPage } from "./admin.js"
 import { notifyNewClient, sendNotificationEmail } from "./email.js";
 import { triageLead } from "./triage.js";
 import { sendDailyBrief, isBriefHour } from "./brief.js";
+import { screenSubmission, logSecurityEvent } from "./protect.js";
 
 const JSON_HEADERS = { "Content-Type": "application/json; charset=utf-8" };
 
@@ -154,8 +155,11 @@ async function handleFeedback(request, env) {
     return json({ error: "invalid_form" }, 400);
   }
   const field = (k, max = 300) => String(form.get(k) || "").trim().slice(0, max);
+  const screen = await screenSubmission(request, env, "/api/feedback", { honeypot: form.get("company_website"), elapsedMs: form.get("elapsed_ms") });
+  if (!screen.ok) return screen.silent ? json({ ok: true }) : json({ error: "too_many_requests" }, 429);
   const what = field("what", 3000);
   if (!what) return json({ error: "missing_fields" }, 400);
+  await logSecurityEvent(env, { kind: "accepted", path: "/api/feedback", hash: screen.hash });
   const lines = [
     `Where: ${field("where")}`,
     `What happened: ${what}`,
@@ -182,9 +186,18 @@ async function handleCreateLead(request, env, ctx) {
   const body = await readJson(request);
   if (body === undefined) return json({ error: "invalid_json" }, 400);
   let { name, business, contact, phone, contactWindow, pain } = body || {};
+  const screen = await screenSubmission(request, env, "/api/leads", { honeypot: (body || {}).company_website, elapsedMs: (body || {}).elapsed_ms });
+  if (!screen.ok) return screen.silent ? json({ leadId: "received" }) : json({ error: "too_many_requests" }, 429);
   if (!name || !business || !contact) return json({ error: "missing_fields" }, 400);
-  if (typeof contact !== "string" || !EMAIL_RE.test(contact.trim())) return json({ error: "invalid_email" }, 400);
-  if (phone && !validPhone(phone)) return json({ error: "invalid_phone" }, 400);
+  if (typeof contact !== "string" || !EMAIL_RE.test(contact.trim())) {
+    await logSecurityEvent(env, { kind: "invalid_email", path: "/api/leads", hash: screen.hash });
+    return json({ error: "invalid_email" }, 400);
+  }
+  if (phone && !validPhone(phone)) {
+    await logSecurityEvent(env, { kind: "invalid_phone", path: "/api/leads", hash: screen.hash });
+    return json({ error: "invalid_phone" }, 400);
+  }
+  await logSecurityEvent(env, { kind: "accepted", path: "/api/leads", hash: screen.hash });
 
   name = clampLen(name, MAX_FIELD_LEN);
   business = clampLen(business, MAX_FIELD_LEN);
