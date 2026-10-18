@@ -302,3 +302,9 @@ section.tight{padding-block:clamp(40px,6vw,64px)}
   .btn,button{min-height:44px}
   .brand{min-height:44px}
 }
+
+/* job status tags in "What your AI team covers" */
+.job-tag{display:inline-block;justify-self:start;font:500 10.5px/1 var(--mono);letter-spacing:.06em;text-transform:uppercase;font-style:normal;padding:3px 6px;border-radius:4px;margin:2px 0}
+.job-tag.live{color:var(--sea);background:var(--sea-soft)}
+.job-tag.setup{color:var(--muted);border:1px solid var(--line)}
+.agent .badge{grid-row:span 3}.agent > :not(.badge){grid-column:2}
