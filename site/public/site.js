@@ -8,7 +8,7 @@
      instead; paste a provider URL here only if you want a *second*,
      independent copy of bug reports sent elsewhere.
      ------------------------------------------------------------------ */
-  var FORM_ENDPOINT = "";
+  var FORM_ENDPOINT = "/api/feedback";
 
   /* the FAQ box searches locally; it must never navigate */
   (function(){ var f=document.getElementById("faq-form");
@@ -32,7 +32,9 @@
       var biz = (fd.get("biz")||"").toString().trim();
       var contact = (fd.get("contact")||"").toString().trim();
       if(!name || !biz || !contact){ showErr("Please fill in your name, business and email."); return; }
-      if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact)){ showErr("Please enter a valid email address so we can reply right away."); return; }
+      if(!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(contact)){ showErr("Please enter a valid email address so we can reply right away."); return; }
+      var phoneVal=(fd.get("phone")||"").toString().trim();
+      if(phoneVal && (phoneVal.replace(/\D/g,"").length<10 || phoneVal.replace(/\D/g,"").length>15)){ showErr("That phone number looks incomplete. Include the area code, or leave it blank."); return; }
 
       sendBtn.disabled = true; sendBtn.textContent = "Sending\u2026";
 
@@ -74,7 +76,7 @@
     ["Can it spend my money or run a card?",
      "No. Never. Not at any setting and not if you ask. There is no banking credential, no payment login and no transfer tool anywhere in the system. When a card needs charging, you are told and you charge it. Every chargeback and refund stays yours, because we were never near it."],
     ["Can it send quotes or emails without asking me?",
-     "Anything new reaching one of your customers waits for you. One exception, written into the agreement: a holding reply that says we have your message and someone is looking at it. It commits you to no price, no date and no promise \u2014 it exists because silence is what loses the customer."],
+     "Prices, quotes and anything new always wait for your OK. During setup you approve the routine messages, like first replies, appointment confirmations, reminders, review requests and follow-ups, word for word. After that, those approved messages go out on their own. Anything outside them comes to you first."],
     ["What are the four control levels?",
      "Handle it \u2014 do it, don't ask. Tell me \u2014 do it, then report. Ask me \u2014 draft it and wait. Never \u2014 not possible, because no tool exists behind it. You set them per kind of work and change them whenever you like."],
     ["What happens when the internet is down?",
@@ -112,7 +114,7 @@
     ["Is software included?",
      "Yes. The tools we use to serve you are included in your plan, up to an allowance. Your own existing subscriptions, like your email or accounting software, stay yours."],
     ["Can I cancel?",
-     "Monthly plans: 30 days' notice, anytime. Retainers: 12 months at 10% off. Leave early and you only repay the discount you received. The first month covers setup and isn't refundable once setup begins."],
+     "Monthly plans: cancel any time with 30 days' notice. Retainers: 12 months at 10% off. Leave early and you only repay the discount you received. The first month covers setup and isn't refundable once setup begins."],
     ["Who does the work?",
      "AI agents do the work, set up and supervised by a person, and nothing important goes out without your approval level."]
   ];
@@ -223,7 +225,7 @@
 
     var REVIEW_MINUTES_PER_FLAGGED_ITEM = 3; /* "Ask Me" items still need a short human look */
 
-    function fmt(n){ return Math.round(n).toLocaleString("en-US"); }
+    function fmt(n){ return Math.floor(n).toLocaleString("en-US"); }
 
     function recalc(){
       var leads = parseInt(leadsIn.value, 10);

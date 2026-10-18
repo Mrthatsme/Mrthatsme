@@ -308,3 +308,6 @@ section.tight{padding-block:clamp(40px,6vw,64px)}
 .job-tag.live{color:var(--sea);background:var(--sea-soft)}
 .job-tag.setup{color:var(--muted);border:1px solid var(--line)}
 .agent .badge{grid-row:span 3}.agent > :not(.badge){grid-column:2}
+.calc-note{margin-top:14px;font-size:14px;color:var(--muted);max-width:75ch}
+.page-cta{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.notfound{display:grid;gap:18px;max-width:720px}

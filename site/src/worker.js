@@ -8,7 +8,7 @@ import {
 } from "./db.js";
 import { createCheckoutSession, retrieveCheckoutSession, verifyStripeSignature } from "./stripe.js";
 import { requireAdmin, unauthorizedResponse, renderAdminPage } from "./admin.js";
-import { notifyNewClient } from "./email.js";
+import { notifyNewClient, sendNotificationEmail } from "./email.js";
 import { triageLead } from "./triage.js";
 import { sendDailyBrief, isBriefHour } from "./brief.js";
 
@@ -55,6 +55,9 @@ export default {
       if (path === "/api/stripe/webhook" && request.method === "POST") {
         return await handleStripeWebhook(request, env, ctx);
       }
+      if (path === "/api/feedback" && request.method === "POST") {
+        return await handleFeedback(request, env);
+      }
       if (path === "/api/ops/summary" && request.method === "GET") {
         if (!(await opsTokenValid(request, env))) return json({ error: "unauthorized" }, 401);
         return await handleOpsSummary(url, env);
@@ -67,6 +70,7 @@ export default {
         }
         return await handleAdmin(path, env);
       }
+      if (!path.startsWith("/api/")) return await notFoundPage(env, url);
       return json({ error: "not found" }, 404);
     } catch (err) {
       console.error(err);
@@ -93,6 +97,48 @@ function handleContractText(url) {
   return json({ text, version: CONTRACT_VERSION, plan: { id: plan.id, label: plan.label, priceCents: plan.priceCents, billing } });
 }
 
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+// US/international phone: 10-15 digits once punctuation is stripped.
+function validPhone(phone) {
+  if (typeof phone !== "string") return false;
+  const digits = phone.replace(/\D/g, "");
+  return digits.length >= 10 && digits.length <= 15;
+}
+
+// Mistyped URLs get the site's own 404 page instead of raw JSON.
+async function notFoundPage(env, url) {
+  const page = await env.ASSETS.fetch(new Request(new URL("/404", url)));
+  return new Response(page.body, { status: 404, headers: page.headers });
+}
+
+// "Report a problem" button: emails the report to support@.
+async function handleFeedback(request, env) {
+  if (Number(request.headers.get("Content-Length") || 0) > 20000) return json({ error: "too_large" }, 413);
+  let form;
+  try {
+    form = await request.formData();
+  } catch {
+    return json({ error: "invalid_form" }, 400);
+  }
+  const field = (k, max = 300) => String(form.get(k) || "").trim().slice(0, max);
+  const what = field("what", 3000);
+  if (!what) return json({ error: "missing_fields" }, 400);
+  const lines = [
+    `Where: ${field("where")}`,
+    `What happened: ${what}`,
+    `From: ${field("who") || "(not given)"}`,
+    ``,
+    `Page: ${field("page")}`,
+    `Screen: ${field("screen")}`,
+    `Theme: ${field("theme")}`,
+    `Browser: ${field("browser", 500)}`,
+    `Sent: ${field("at")}`,
+  ];
+  await sendNotificationEmail(env, { subject: `[Site problem report] ${field("where") || "website"}`, text: lines.join("\n") });
+  return json({ ok: true });
+}
+
 const MAX_FIELD_LEN = 300;
 const MAX_PAIN_LEN = 2000;
 
@@ -105,6 +151,8 @@ async function handleCreateLead(request, env, ctx) {
   if (body === undefined) return json({ error: "invalid_json" }, 400);
   let { name, business, contact, phone, contactWindow, pain } = body || {};
   if (!name || !business || !contact) return json({ error: "missing_fields" }, 400);
+  if (typeof contact !== "string" || !EMAIL_RE.test(contact.trim())) return json({ error: "invalid_email" }, 400);
+  if (phone && !validPhone(phone)) return json({ error: "invalid_phone" }, 400);
 
   name = clampLen(name, MAX_FIELD_LEN);
   business = clampLen(business, MAX_FIELD_LEN);
