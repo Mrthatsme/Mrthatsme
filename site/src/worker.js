@@ -36,6 +36,9 @@ export default {
     const path = url.pathname;
 
     try {
+      if (path === "/demo-video.mp4" && (request.method === "GET" || request.method === "HEAD")) {
+        return await serveVideo(request, env, url);
+      }
       if (path === "/api/contract-text" && request.method === "GET") {
         return handleContractText(url);
       }
@@ -104,6 +107,35 @@ function validPhone(phone) {
   if (typeof phone !== "string") return false;
   const digits = phone.replace(/\D/g, "");
   return digits.length >= 10 && digits.length <= 15;
+}
+
+// Byte-range support for the demo video: iPhone Safari refuses to play
+// video from a server that ignores Range requests.
+async function serveVideo(request, env, url) {
+  const asset = await env.ASSETS.fetch(new Request(url.toString()));
+  if (!asset.ok) return asset;
+  const buf = await asset.arrayBuffer();
+  const size = buf.byteLength;
+  const base = {
+    "Content-Type": "video/mp4",
+    "Accept-Ranges": "bytes",
+    "Cache-Control": "public, max-age=86400",
+    "X-Content-Type-Options": "nosniff",
+  };
+  const m = /^bytes=(\d*)-(\d*)$/.exec(request.headers.get("Range") || "");
+  if (!m || (m[1] === "" && m[2] === "")) {
+    return new Response(request.method === "HEAD" ? null : buf, { status: 200, headers: { ...base, "Content-Length": String(size) } });
+  }
+  let start = m[1] === "" ? size - Number(m[2]) : Number(m[1]);
+  let end = m[1] === "" || m[2] === "" ? size - 1 : Math.min(Number(m[2]), size - 1);
+  if (start < 0) start = 0;
+  if (start >= size || start > end) {
+    return new Response(null, { status: 416, headers: { ...base, "Content-Range": `bytes */${size}` } });
+  }
+  return new Response(request.method === "HEAD" ? null : buf.slice(start, end + 1), {
+    status: 206,
+    headers: { ...base, "Content-Range": `bytes ${start}-${end}/${size}`, "Content-Length": String(end - start + 1) },
+  });
 }
 
 // Mistyped URLs get the site's own 404 page instead of raw JSON.

@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="Interactive demo: trigger a new lead, a booking, an accepted estimate or a finished job and watch what Minutes Regained handles before the owner picks up the phone.">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://minutesregained.com/demo">
+<meta property="og:title" content="Command Center demo | Minutes Regained">
+<meta property="og:description" content="See the back office of a service business run itself. Sample data, interactive.">
+<meta property="og:image" content="https://minutesregained.com/og-image.png">
+<link rel="icon" href="/mark.svg" type="image/svg+xml">
+<title>Command Center Demo | Minutes Regained</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="/demo.css?v=20261018">
+</head>
+<body>
+<div class="wrap">
+
+  <a class="top-link" href="/">&larr; minutesregained.com</a>
+
+  <div class="demo-bar">
+    <span class="chip">Demo workspace</span>
+    <p>Sample data for an example company, Tidewater Plumbing. Nothing here is a real customer record.</p>
+  </div>
+
+  <header>
+    <div class="eyebrow">Minutes Regained</div>
+    <h1>Command Center</h1>
+    <p class="lede">The back office of a service business, running itself. Trigger an event below and watch what gets handled before the owner ever picks up the phone.</p>
+  </header>
+
+  <section>
+    <h2>Product demo</h2>
+    <div class="video-slot">
+      <div class="video-frame has-video">
+        <video controls muted playsinline preload="metadata" poster="/demo-poster.jpg">
+          <source src="/demo-video.mp4" type="video/mp4">
+        </video>
+      </div>
+      <div class="video-caption">Minutes Regained in 45 seconds. Captions are on screen, so it works with the sound off.</div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Live operations</h2>
+    <div class="metrics" id="metrics"></div>
+  </section>
+
+  <div class="cols">
+    <div class="col">
+      <section>
+        <h2>Customer pipeline</h2>
+        <div class="panel">
+          <div class="pipe" id="pipe"></div>
+          <p class="note mt14">Stages advance on their own as work completes. Click a stage to see what moved it.</p>
+        </div>
+      </section>
+    </div>
+    <div class="col">
+      <section>
+        <h2>Recent automation activity</h2>
+        <div class="panel">
+          <div class="activity" id="activity"></div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <section id="detail-host" hidden></section>
+
+  <section>
+    <h2>Try it yourself</h2>
+    <p class="note mb14">Pick an event the way it would actually arrive &mdash; a text at 7pm, a booking, an accepted estimate, a finished job.</p>
+    <div class="triggers" id="triggers"></div>
+    <div class="runner mt20" id="runner"></div>
+  </section>
+
+  <footer>
+    <div class="mark">You shouldn't be the automation.</div>
+    <div class="line">Minutes Regained handles repetitive back-office work so owners and their teams spend their time on the work that actually requires them.</div>
+    <a class="cta" href="https://calendar.app.google/mL2TQQSCAgLAURZC6" target="_blank" rel="noopener">Book a free operations assessment</a>
+    <div class="line">Minutes Regained is operated by Provident Watch LLC &middot; support@minutesregained.com &middot; (877) 896-8784</div>
+  </footer>
+
+</div>
+
+<script src="/demo.js?v=20261018"></script>
+</body>
+</html>

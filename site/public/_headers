@@ -12,7 +12,7 @@
 # cloudflareinsights.com entries allow Cloudflare Web Analytics (auto-injected).
 
 /*
-  Content-Security-Policy: default-src 'none'; script-src 'self' 'sha256-MtdpOy2LBm8dGislfWZ52mKedD8G+i/RZ/sw8EIz3t4=' https://static.cloudflareinsights.com; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; connect-src 'self' https://formspree.io https://api.web3forms.com https://cloudflareinsights.com; form-action 'self'; base-uri 'none'; frame-ancestors 'none'; object-src 'none'; upgrade-insecure-requests
+  Content-Security-Policy: default-src 'none'; script-src 'self' 'sha256-MtdpOy2LBm8dGislfWZ52mKedD8G+i/RZ/sw8EIz3t4=' https://static.cloudflareinsights.com; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; media-src 'self'; connect-src 'self' https://formspree.io https://api.web3forms.com https://cloudflareinsights.com; form-action 'self'; base-uri 'none'; frame-ancestors 'none'; object-src 'none'; upgrade-insecure-requests
   Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
   X-Content-Type-Options: nosniff
   X-Frame-Options: DENY
