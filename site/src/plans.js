@@ -1,6 +1,7 @@
 // Mirrors the plan cards in public/index.html's #pricing section and the
-// plan picker in public/start.html. priceCents is the STANDARD monthly price;
-// a 12-month Retainer is 10% off, billed monthly, as its own Stripe Price.
+// plan picker in public/start.html. priceCents is the STANDARD monthly price.
+// A 12-month Retainer is 10% off and paid in full for the year at sign-up
+// (its own yearly Stripe Price); it renews yearly with 30 days' notice.
 
 export const RETAINER_DISCOUNT = 0.1;
 
@@ -47,6 +48,8 @@ export const FOUNDING_OFFER = {
 
 export const BILLING_OPTIONS = ["monthly", "retainer"];
 
+export const RETAINER_MONTHS = 12;
+
 export function normalizeBilling(billing) {
   return billing === "retainer" ? "retainer" : "monthly";
 }
@@ -57,8 +60,9 @@ export function resolvePlan(planId, founding, billing = "monthly") {
   billing = normalizeBilling(billing);
   const afterCents = billing === "retainer" ? base.retainerCents : base.priceCents;
   if (founding) {
-    if (planId !== FOUNDING_OFFER.planId) return null;
-    return { id: planId, ...base, ...FOUNDING_OFFER, billing, afterFoundingCents: afterCents };
+    // The founding offer is monthly billing only.
+    if (planId !== FOUNDING_OFFER.planId || billing !== "monthly") return null;
+    return { id: planId, ...base, ...FOUNDING_OFFER, billing, afterFoundingCents: afterCents, chargeCents: FOUNDING_OFFER.priceCents, interval: "month" };
   }
   return {
     id: planId,
@@ -66,6 +70,11 @@ export function resolvePlan(planId, founding, billing = "monthly") {
     billing,
     label: billing === "retainer" ? `${base.label} (12-month Retainer)` : base.label,
     priceCents: afterCents,
+    standardCents: base.priceCents,
+    planName: base.label,
+    // What Stripe actually charges each billing period: one month, or the whole year.
+    chargeCents: billing === "retainer" ? afterCents * RETAINER_MONTHS : afterCents,
+    interval: billing === "retainer" ? "year" : "month",
     envKey: billing === "retainer" ? base.retainerEnvKey : base.envKey,
   };
 }

@@ -87,7 +87,7 @@
     ["I can only talk at certain times. Does that work?",
      "That's the normal case, not the exception. You set the days, hours and channel you can be reached, and routine items collect into one digest inside that window instead of pinging all day. A short written list is allowed to break it \u2014 a customer cancelling, a filing deadline inside two business days, a no-show, a vendor decision that would cost you, or a supply you need for a booked job. That list is in the agreement, not left to judgment."],
     ["What stops someone running up your costs \u2014 or mine?",
-     "Your bill can't move. It's a flat monthly retainer with no usage meter and no overage line, so nobody else's behaviour becomes a charge to you. Each client also runs under its own ceiling, so one busy month can't degrade anyone else."],
+     "Your bill can't move. It's a flat fee with no usage meter and no overage line, so nobody else's behaviour becomes a charge to you. Each client also runs under its own ceiling, so one busy month can't degrade anyone else."],
     ["Is my information mixed in with other clients?",
      "No. Each client's data sits in its own space and there is no path from one to another. Your information is used to do your work. It is not pooled and it is not used to train anything."],
     ["What if someone tries to trick it?",
@@ -105,7 +105,7 @@
     ["What if it gets something wrong?",
      "It will, eventually. That's the entire reason the levels exist \u2014 the work with real consequences waits for you, so a mistake shows up as a bad draft you decline rather than a bad email your customer receives. Start everything at ask-me and loosen it as you see the judgment."],
     ["Is there a contract?",
-     "Yes, a short service agreement you sign online. Monthly plans need 30 days' notice to cancel; a 12-month Retainer saves 10%. Pricing is published rather than quoted on a call, there's no setup fee, and software we use to serve you is included up to your plan's allowance."],
+     "Yes, a short service agreement you sign online. Monthly plans need 30 days' notice to cancel; a 12-month Retainer, paid upfront for the year, saves 10%. Pricing is published rather than quoted on a call, there's no setup fee, and software we use to serve you is included up to your plan's allowance."],
     ["What do you actually do?",
      "We find the repetitive work eating your week, like missed calls, quote follow-ups, reminders and invoices, then build automations to handle it. Our agents run them daily and fix anything that breaks. Building your first automations is included. No setup fee."],
     ["What happens if an automation breaks?",
@@ -117,7 +117,7 @@
     ["Is software included?",
      "Yes. The tools we use to serve you are included in your plan, up to an allowance. Your own existing subscriptions, like your email or accounting software, stay yours."],
     ["Can I cancel?",
-     "Monthly plans: cancel any time with 30 days' notice. Retainers: 12 months at 10% off. Leave early and you only repay the discount you received. The first month covers setup and isn't refundable once setup begins."],
+     "Monthly plans: cancel any time with 30 days' notice. Retainers are paid upfront for 12 months at 10% off. Leave early and we refund the rest of the year, keeping only the 10% discount on the months you used. The first month covers setup and isn't refundable once setup begins."],
     ["Who does the work?",
      "AI agents do the work, set up and supervised by a person, and nothing important goes out without your approval level."]
   ];

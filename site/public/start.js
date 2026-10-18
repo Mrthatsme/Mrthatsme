@@ -26,10 +26,11 @@
     var b = selectedBilling();
     document.querySelectorAll(".plan-opt .price").forEach(function (el) {
       el.firstChild.nodeValue = el.getAttribute("data-" + b);
+      el.querySelector("small").textContent = b === "retainer" ? "/yr" : "/mo";
     });
   }
   document.querySelectorAll('input[name="billing"]').forEach(function (el) {
-    el.addEventListener("change", refreshPrices);
+    el.addEventListener("change", function () { refreshPrices(); refreshFoundingRow(); });
   });
 
   function selectedPlan() {
@@ -40,7 +41,10 @@
   // ---------- founding-offer availability ----------
   function refreshFoundingRow() {
     var row = $("founding-row");
-    if (selectedPlan() !== "business_support") { row.classList.add("hid"); return; }
+    // The founding offer is monthly billing only.
+    if (selectedPlan() !== "business_support" || selectedBilling() !== "monthly") {
+      row.classList.add("hid"); $("founding-check").checked = false; return;
+    }
     fetch("/api/founding-status")
       .then(function (r) { return r.json(); })
       .then(function (d) {

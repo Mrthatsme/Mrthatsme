@@ -6,7 +6,7 @@ const RESEND_API = "https://api.resend.com/emails";
 
 const FROM_ADDRESS = "Minutes Regained <notifications@minutesregained.com>";
 
-export async function sendNotificationEmail(env, { to, subject, text }) {
+export async function sendNotificationEmail(env, { to, subject, text, replyTo }) {
   const destination = to || env.NOTIFY_EMAIL;
   if (!env.RESEND_API_KEY || !destination) {
     throw new Error("email not configured: missing RESEND_API_KEY or a destination address");
@@ -22,6 +22,7 @@ export async function sendNotificationEmail(env, { to, subject, text }) {
       to: [destination],
       subject,
       text,
+      ...(replyTo ? { reply_to: replyTo } : {}),
     }),
   });
   if (!res.ok) {

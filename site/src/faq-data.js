@@ -17,7 +17,7 @@ export const FAQ = [
   ["I can only talk at certain times. Does that work?",
    "That's the normal case, not the exception. You set the days, hours and channel you can be reached, and routine items collect into one digest inside that window instead of pinging all day. A short written list is allowed to break it — a customer cancelling, a filing deadline inside two business days, a no-show, a vendor decision that would cost you, or a supply you need for a booked job. That list is in the agreement, not left to judgment."],
   ["What stops someone running up your costs — or mine?",
-   "Your bill can't move. It's a flat monthly retainer with no usage meter and no overage line, so nobody else's behaviour becomes a charge to you. Each client also runs under its own ceiling, so one busy month can't degrade anyone else."],
+   "Your bill can't move. It's a flat fee with no usage meter and no overage line, so nobody else's behaviour becomes a charge to you. Each client also runs under its own ceiling, so one busy month can't degrade anyone else."],
   ["Is my information mixed in with other clients?",
    "No. Each client's data sits in its own space and there is no path from one to another. Your information is used to do your work. It is not pooled and it is not used to train anything."],
   ["What if someone tries to trick it?",
@@ -35,7 +35,7 @@ export const FAQ = [
   ["What if it gets something wrong?",
    "It will, eventually. That's the entire reason the levels exist — the work with real consequences waits for you, so a mistake shows up as a bad draft you decline rather than a bad email your customer receives. Start everything at ask-me and loosen it as you see the judgment."],
   ["Is there a contract?",
-   "Yes, a short service agreement you sign online. Monthly plans need 30 days' notice to cancel; a 12-month Retainer saves 10%. Pricing is published rather than quoted on a call, there's no setup fee, and software we use to serve you is included up to your plan's allowance."],
+   "Yes, a short service agreement you sign online. Monthly plans need 30 days' notice to cancel; a 12-month Retainer, paid upfront for the year, saves 10%. Pricing is published rather than quoted on a call, there's no setup fee, and software we use to serve you is included up to your plan's allowance."],
   ["What do you actually do?",
    "We find the repetitive work eating your week, like missed calls, quote follow-ups, reminders and invoices, then build automations to handle it. Our agents run them daily and fix anything that breaks. Building your first automations is included. No setup fee."],
   ["What happens if an automation breaks?",
@@ -47,17 +47,17 @@ export const FAQ = [
   ["Is software included?",
    "Yes. The tools we use to serve you are included in your plan, up to an allowance. Your own existing subscriptions, like your email or accounting software, stay yours."],
   ["Can I cancel?",
-   "Monthly plans: cancel any time with 30 days' notice. Retainers: 12 months at 10% off. Leave early and you only repay the discount you received. The first month covers setup and isn't refundable once setup begins."],
+   "Monthly plans: cancel any time with 30 days' notice. Retainers are paid upfront for 12 months at 10% off. Leave early and we refund the rest of the year, keeping only the 10% discount on the months you used. The first month covers setup and isn't refundable once setup begins."],
   ["Who does the work?",
    "AI agents do the work, set up and supervised by a person, and nothing important goes out without your approval level."],
 ];
 
 export const PRICING_SUMMARY = `Simple monthly pricing. Software included. No setup fee. Every plan includes automations built and monitored, the daily brief, and hands-on admin (email, scheduling, follow-ups, invoice reminders). Monitoring, repairs and the daily brief never use the client's hours.
-Essential: $450/month ($405/month on a 12-month Retainer) -- up to 3 automations, 10 hours/month (unused hours don't roll over), extra hours $50/hr only with approval, software included up to $50/month, 1 inbox.
-Business Support: $900/month ($810/month on a 12-month Retainer) -- up to 6 automations, 22 hours/month (roll over 1 month, max 5), extra hours $45/hr only with approval, software up to $100/month, 2 inboxes, 30-minute monthly review call.
-Operations+: $1,500/month ($1,350/month on a 12-month Retainer) -- up to 12 automations, 40 hours/month (roll over 1 month, max 10), extra hours $40/hr only with approval, software up to $150/month, 4 inboxes, 60-minute monthly review call.
-Billing: pay monthly and cancel with 30 days' notice, or save 10% with a 12-month Retainer; leave a Retainer early and only the discount received is repaid. The first month covers setup and isn't refundable once setup begins.
-Founding Client offer (first 3 clients only): Business Support (22 hours) at $450/month for the first 90 days, then $900/month ($810 on a Retainer).
+Essential: $450/month ($4,860/year on a 12-month Retainer, paid upfront; works out to $405/month) -- up to 3 automations, 10 hours/month (unused hours don't roll over), extra hours $50/hr only with approval, software included up to $50/month, 1 inbox.
+Business Support: $900/month ($9,720/year on a 12-month Retainer, paid upfront; works out to $810/month) -- up to 6 automations, 22 hours/month (roll over 1 month, max 5), extra hours $45/hr only with approval, software up to $100/month, 2 inboxes, 30-minute monthly review call.
+Operations+: $1,500/month ($16,200/year on a 12-month Retainer, paid upfront; works out to $1,350/month) -- up to 12 automations, 40 hours/month (roll over 1 month, max 10), extra hours $40/hr only with approval, software up to $150/month, 4 inboxes, 60-minute monthly review call.
+Billing: pay monthly (billed each month on the sign-up date) and cancel with 30 days' notice, or save 10% with a 12-month Retainer paid upfront for the year, renewing yearly with a 30-day email notice; leave a Retainer early and the rest of the year is refunded, keeping only the 10% discount on months used. The founding offer is monthly only. The first month covers setup and isn't refundable once setup begins.
+Founding Client offer (first 3 clients only): Business Support (22 hours) at $450/month for the first 90 days, then $900/month. The founding offer is monthly billing only.
 What we automate: missed-call text-back, instant lead replies, quote follow-ups, appointment reminders, review requests, invoice reminders, daily brief.`;
 
 export function faqAsText() {

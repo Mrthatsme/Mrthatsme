@@ -3,7 +3,7 @@
 // CONTRACT_VERSION bumps whenever the wording changes — old agreements keep
 // the version + hash they actually signed.
 
-export const CONTRACT_VERSION = "2026-10-14.1";
+export const CONTRACT_VERSION = "2026-10-18.1";
 
 const usd = (cents) => `$${(cents / 100).toLocaleString("en-US", { maximumFractionDigits: 0 })}`;
 
@@ -11,18 +11,29 @@ const usd = (cents) => `$${(cents / 100).toLocaleString("en-US", { maximumFracti
 export function contractText({ businessName, plan, foundingOffer }) {
   const retainer = plan.billing === "retainer";
   const priceLine = foundingOffer
-    ? `${usd(plan.priceCents)}/month for your first 90 days (Founding Client offer: Business Support, ${plan.hours} hours/month), then ${usd(plan.afterFoundingCents)}/month for Business Support${retainer ? " on the 12-month Retainer" : ""}. Minutes Regained will remind Client 14 days before the price changes.`
-    : `${usd(plan.priceCents)}/month for the ${plan.label} plan.`;
+    ? `${usd(plan.priceCents)}/month for your first 90 days (Founding Client offer: Business Support, ${plan.hours} hours/month), then ${usd(plan.afterFoundingCents)}/month for Business Support. Minutes Regained will remind Client 14 days before the price changes.`
+    : retainer
+      ? `${usd(plan.chargeCents)} for twelve (12) months of the ${plan.planName} plan, paid in full at sign-up (equal to ${usd(plan.priceCents)}/month, 10% off the standard ${usd(plan.standardCents)}/month).`
+      : `${usd(plan.priceCents)}/month for the ${plan.label} plan.`;
   const billingLine = retainer
-    ? `12-month Retainer at 10% off the standard monthly price, billed monthly, in
-advance, by card on file via Stripe.`
-    : `Monthly, in advance, by card on file via Stripe. Month to month.`;
+    ? `Paid in full for the year, in advance, at sign-up, by card via Stripe.
+The Retainer renews for another twelve (12) months, paid in full at the
+Retainer price then published on minutesregained.com, unless Client cancels
+before the renewal date. Minutes Regained will email Client at least thirty
+(30) days before each renewal, stating the renewal date and price.`
+    : `Monthly, in advance, on the same day of the month as the start date, by
+card on file via Stripe. Month to month.`;
   const termText = retainer
-    ? `This agreement runs for twelve (12) months from the start date at the
-   Retainer price. If Client ends it early, Client repays only the discount
-   received to date (the difference between the standard monthly price and
-   the Retainer price for the months already billed), and nothing more.
-   Minutes Regained may end it with thirty (30) days' written notice.`
+    ? `This agreement runs for twelve (12) months from the start date and
+   renews as described under Billing. Client may end it early at any time
+   by written notice. Minutes Regained then refunds the amount prepaid for
+   the current year, less the standard monthly price (${usd(plan.standardCents)}) for each
+   month started, including the current month. In other words, Client gives
+   back only the 10% discount on the months used, and nothing more. If that
+   amount is zero or less, no refund is due and Client owes nothing further.
+   Refunds are made to the original card within ten (10) business days.
+   Minutes Regained may end it with thirty (30) days' written notice, and
+   then refunds every unused full month at the Retainer price.`
     : `This agreement runs month to month. Either party
    may cancel with thirty (30) days' written notice. There is no long-term
    commitment.`;
@@ -58,7 +69,7 @@ ${included}
    customers is taken without the authorization level Client has set.
 
 3. No financial access on Client's behalf. The payment set up through this
-   agreement is Client's monthly fee to Minutes Regained for the service
+   agreement is Client's fee to Minutes Regained for the service
    described above — nothing more. Minutes Regained will never request or
    store any banking credential or payment login belonging to Client, will
    never have the ability to transfer Client's funds, and will never charge,
@@ -83,7 +94,7 @@ ${included}
    data. It is used only to perform Client's work. It is not pooled across
    clients and is not used to train any model.
 
-6. Fees and refunds. ${priceLine} This monthly fee is the only payment
+6. Fees and refunds. ${priceLine} This fee is the only payment
    Minutes Regained collects under this agreement, apart from additional
    hours Client has approved in writing in advance at the rate above.
    Minutes Regained never bills, on Client's behalf, any amount owed to
@@ -92,8 +103,8 @@ ${included}
    existing subscriptions (such as email or accounting software) remain
    Client's. Each task is counted at the time a skilled assistant would
    take, and Client receives a monthly report listing every task. There is
-   no setup fee. The first month's fee covers setup and is not refundable
-   once setup begins.
+   no setup fee. The first month covers setup and is not refundable once
+   setup begins.
 
 7. No guarantee of uptime. Minutes Regained commits to a one-business-day
    response time, not an uptime percentage. Service interruptions delay

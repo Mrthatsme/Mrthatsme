@@ -12,6 +12,7 @@ import { notifyNewClient, sendNotificationEmail } from "./email.js";
 import { triageLead } from "./triage.js";
 import { sendDailyBrief, isBriefHour } from "./brief.js";
 import { screenSubmission, logSecurityEvent } from "./protect.js";
+import { sendRenewalNotices } from "./renewals.js";
 
 const JSON_HEADERS = { "Content-Type": "application/json; charset=utf-8" };
 
@@ -84,8 +85,12 @@ export default {
 
   // 8 AM / 8 PM Eastern brief (cron in wrangler.toml).
   async scheduled(event, env, ctx) {
-    if (!isBriefHour(new Date(event.scheduledTime))) return;
+    const at = new Date(event.scheduledTime);
+    if (!isBriefHour(at)) return;
     ctx.waitUntil(sendDailyBrief(env).catch((err) => console.error("daily brief failed", err)));
+    if (at.getUTCHours() >= 12) {
+      ctx.waitUntil(sendRenewalNotices(env).catch((err) => console.error("renewal notices failed", err)));
+    }
   },
 };
 
@@ -94,11 +99,12 @@ function handleContractText(url) {
   const founding = url.searchParams.get("founding") === "1";
   const billing = normalizeBilling(url.searchParams.get("billing"));
   const businessName = url.searchParams.get("business") || "[Your business]";
+  if (founding && billing !== "monthly") return json({ error: "founding_monthly_only" }, 400);
   const plan = resolvePlan(planId, founding, billing);
   if (!plan) return json({ error: "unknown_plan" }, 400);
 
   const text = contractText({ businessName, plan, foundingOffer: founding });
-  return json({ text, version: CONTRACT_VERSION, plan: { id: plan.id, label: plan.label, priceCents: plan.priceCents, billing } });
+  return json({ text, version: CONTRACT_VERSION, plan: { id: plan.id, label: plan.label, priceCents: plan.priceCents, chargeCents: plan.chargeCents, interval: plan.interval, billing } });
 }
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
@@ -224,6 +230,7 @@ async function handleAgree(request, env) {
   const billing = normalizeBilling((body || {}).billing);
   if (!planId || !signerName || !signerEmail || !businessName) return json({ error: "missing_fields" }, 400);
 
+  if (founding && billing !== "monthly") return json({ error: "founding_monthly_only" }, 400);
   const plan = resolvePlan(planId, !!founding, billing);
   if (!plan) return json({ error: "unknown_plan" }, 400);
 

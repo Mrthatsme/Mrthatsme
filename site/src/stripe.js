@@ -89,3 +89,10 @@ export async function verifyStripeSignature(rawBody, signatureHeader, webhookSec
   for (let i = 0; i < expected.length; i++) diff |= expected.charCodeAt(i) ^ v1.charCodeAt(i);
   return diff === 0;
 }
+
+export async function retrieveSubscription(secretKey, subscriptionId) {
+  const res = await fetch(`${STRIPE_API}/subscriptions/${subscriptionId}`, {
+    headers: { Authorization: `Bearer ${secretKey}` },
+  });
+  return res.json();
+}
