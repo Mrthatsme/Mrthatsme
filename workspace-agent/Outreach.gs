@@ -5,8 +5,8 @@
  * MinutesRegainedAgent.gs (it reuses CONFIG, getLabel_ and emailOf_ from it).
  *
  * How it works:
- *   - setupOutreach() creates the "Minutes Regained Prospects" sheet in this
- *     account's Drive (support@) with the starting list, and an hourly timer.
+ *   - setupOutreach() connects to the "Minutes Regained Prospects" sheet
+ *     (shared with support@) and starts an hourly timer.
  *   - You review the sheet. A prospect is only ever emailed after you type
  *     YES in its Approved column.
  *   - Approved prospects get a short intro email, a follow-up on day 3 and a
@@ -19,7 +19,8 @@
  */
 
 const OUT = {
-  sheetTitle: 'Minutes Regained Prospects',
+  // "Minutes Regained Prospects" -- shared with support@minutesregained.com
+  sheetId: '1La6Nx5t4ZVFcpl_ngOoTBTjBf4qDtd7ajH19Ra4fsvM',
   dailyCap: 15,
   sendHours: [9, 16],          // send window, Eastern, weekdays only
   followUpDays: [3, 7],        // days after the first email
@@ -33,56 +34,13 @@ const OUT_HEADERS = ['Business', 'Trade', 'City', 'Website', 'Email', 'Contact n
   'First email sent', 'Follow-up 1 sent', 'Follow-up 2 sent', 'Last update', 'Notes', 'Source', 'Thread ID'];
 const OUT_COL = {}; OUT_HEADERS.forEach((h, i) => { OUT_COL[h] = i; });
 
-// Starting list (Clay search + each company's own website, 2026-10-18).
-const OUT_SEED = [
-  ["Big Jag's Exterior Services", 'Pressure washing', 'Jacksonville', 'bigjagsexterior.com', '', '', 'Needs email (website was down)', 'Veteran-owned; 2 people'],
-  ['Elite Facility Services', 'Janitorial and handyman', 'Jacksonville', 'elitefacilityservices.com', 'dispatch@elitefacilityservices.com', '', 'Ready for review', '7 people'],
-  ['C&L Landscape', 'Landscaping and remodeling', 'Jacksonville', 'cllandscape.com', 'tessasmith@cllandscape.com', 'Tessa', 'Ready for review', 'Family-owned since 1983; woman-owned'],
-  ['TLC Total Lawn Care', 'Commercial lawn care', 'Green Cove Springs', 'tlctotallawncare.com', 'tlcinc@tlc.green', '', 'Ready for review', '8 people'],
-  ['Reliable Ducts Heating & Cooling', 'HVAC', 'Jacksonville', 'reliableductsac.com', 'leads@reliableductsac.com', '', 'Ready for review', 'Family-owned 50+ years; 14 people'],
-  ['Bemar Construction & Roofing', 'Roofing and repairs', 'Jacksonville', 'bemarconstruction.com', '', '', 'Needs email (website form only)', '8 people'],
-  ['1901 Contracting', 'Construction and repair', 'Jacksonville', '1901contracting.com', '', '', 'Needs email (website was down)', '3 people'],
-  ['Rhino Shield of Florida', 'Exterior coatings and painting', 'Jacksonville', 'rhinoshieldjax.com', '', '', 'Needs email (website form only)', '13 people'],
-  ['Ocean State Heating & Air', 'HVAC', 'Neptune Beach', 'oceanstateac.com', 'gjones@oceanstateac.com', '', 'Ready for review', 'Since 1975; 12 people'],
-  ['NEXGEN Roofing', 'Roofing', 'Jacksonville', 'nexgenfl.com', 'info@nexgenfl.com', '', 'Ready for review', '32 people'],
-  ['Pratt Guys Pools and Outdoor Living', 'Pools and outdoor living', 'Jacksonville', 'prattguys.com', '', '', 'Needs email (website form only)', '20 people'],
-  ['Donna Mancini Interiors and Flooring', 'Interiors and flooring', 'Ponte Vedra', 'dmiaf.com', '', '', 'Needs email (website was down)', '4 people'],
-  ['Bright Side Painting of Jax', 'Painting', 'Jacksonville Beach', 'brightsidepaintingjax.com', '', '', 'Needs email (website form only)', '4-5 people'],
-  ['Bigfoot Roofing & Construction', 'Roofing', 'Jacksonville', 'bigfootroofing.com', 'info@bigfootroofing.com', '', 'Ready for review', '6 people'],
-  ['A1 Plumbing Heating AC & Refrigeration', 'Plumbing and HVAC', 'Jacksonville', 'a1phvacr.com', '', '', 'Needs email (website form only)', 'Since 1970; 29 people'],
-  ['American Plumbing Contractors', 'Plumbing', 'Jacksonville', 'americanplumbingcontractors.com', '', '', 'Needs email (website form only)', 'Family-owned; 30 people'],
-  ['A&T Roofing and Exteriors', 'Roofing', 'Jacksonville', 'atroofingexterior.com', 'info@atroofingexterior.com', '', 'Ready for review', 'Family-owned; 4 people'],
-  ['Excel Roofing Contractors', 'Roofing', 'Jacksonville', 'excel-roofing.com', '', '', 'Needs email (website form only)', 'BBB A+; 7 people'],
-  ['E2 Roofing', 'Roofing', 'Jacksonville', 'e2roofingjax.com', '', '', 'Needs email (website form only)', '4 people'],
-  ['New Leaf Construction', 'Construction', 'Jacksonville', 'newleafci.com', '', '', 'Needs email (website form only)', '19 people'],
-  ['Duck Duck Rooter', 'Plumbing, septic and AC', 'St. Johns', 'duckduckrooter.com', '', '', 'Needs email (website form only)', '20 people'],
-  ['NorthPort Heating and Air Conditioning', 'HVAC', 'Jacksonville', 'jacksonvilleacservice.com', 'service@jacksonvilleacservice.com', '', 'Ready for review', 'Family-owned; 8 people'],
-  ['Crawford Pest Control', 'Pest control', 'Jacksonville', 'crawfordpestcontrol.com', '', '', 'Needs email (website form only)', 'Family-owned; 4 people'],
-  ['Recovery Roofing', 'Roofing', 'Jacksonville', 'recoveryroofinginc.com', 'estimating@recoveryroofinginc.com', '', 'Ready for review', '4 people'],
-  ['Summit Electrical Contractors', 'Electrical', 'Jacksonville', 'summitelectrical.com', 'contact@summitelectrical.com', '', 'Ready for review', '38 people'],
-];
-
 // ------------------------------------------------------------- setup ----
 
 function setupOutreach() {
   const props = PropertiesService.getScriptProperties();
-  let ss;
-  const existing = props.getProperty('outreachSheetId');
-  if (existing) {
-    ss = SpreadsheetApp.openById(existing);
-  } else {
-    ss = SpreadsheetApp.create(OUT.sheetTitle);
-    const sh = ss.getSheets()[0].setName('Prospects');
-    const rows = OUT_SEED.map((r) => [r[0], r[1], r[2], r[3], r[4], r[5], '', r[6], '', '', '', '', r[7],
-      'Clay search 2026-10-18' + (r[4] ? '; email from their website' : ''), '']);
-    sh.getRange(1, 1, 1, OUT_HEADERS.length).setValues([OUT_HEADERS]).setFontWeight('bold').setBackground('#E1ECEA');
-    sh.getRange(2, 1, rows.length, OUT_HEADERS.length).setValues(rows);
-    sh.setFrozenRows(1);
-    sh.getRange(2, OUT_COL['Approved'] + 1, 500, 1).setDataValidation(
-      SpreadsheetApp.newDataValidation().requireValueInList(['YES'], true).setAllowInvalid(false).build());
-    sh.autoResizeColumns(1, OUT_HEADERS.length);
-    props.setProperty('outreachSheetId', ss.getId());
-  }
+  const ss = SpreadsheetApp.openById(OUT.sheetId);   // fails here if the sheet isn't shared with support@
+  if (!ss.getSheetByName('Prospects')) throw new Error('The prospect sheet needs a tab named "Prospects".');
+  props.setProperty('outreachSheetId', OUT.sheetId);
   getLabel_('MR/Outreach');
 
   ScriptApp.getProjectTriggers()
@@ -90,8 +48,8 @@ function setupOutreach() {
     .forEach((t) => ScriptApp.deleteTrigger(t));
   ScriptApp.newTrigger('runOutreach').timeBased().everyHours(1).create();
 
-  GmailApp.sendEmail(CONFIG.myEmail, 'Your prospect sheet is ready',
-    'Review the list here: ' + ss.getUrl() + '\n\nType YES in the Approved column for each business you want emailed. ' +
+  GmailApp.sendEmail(CONFIG.myEmail, 'Outreach is switched on',
+    'Prospect sheet: ' + ss.getUrl() + '\n\nType YES in the Approved column for each business you want emailed. ' +
     'Nothing is sent until you do. Emails go out weekdays 9 AM to 4 PM, at most ' + OUT.dailyCap + ' a day.',
     { name: 'Minutes Regained Agent' });
   Logger.log('Outreach is set up. Prospect sheet: ' + ss.getUrl());
