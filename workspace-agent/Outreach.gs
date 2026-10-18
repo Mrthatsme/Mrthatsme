@@ -19,6 +19,9 @@
  */
 
 const OUT = {
+  // MASTER SWITCH. false = collect and review prospects only; nothing is ever
+  // emailed. Change to true only when the legal setup is finished.
+  sendingEnabled: false,
   // "Minutes Regained Prospects" -- shared with support@minutesregained.com
   sheetId: '1La6Nx5t4ZVFcpl_ngOoTBTjBf4qDtd7ajH19Ra4fsvM',
   dailyCap: 15,
@@ -48,6 +51,10 @@ function setupOutreach() {
     .forEach((t) => ScriptApp.deleteTrigger(t));
   ScriptApp.newTrigger('runOutreach').timeBased().everyHours(1).create();
 
+  if (!OUT.sendingEnabled) {
+    Logger.log('Connected to the prospect sheet. Sending is OFF (OUT.sendingEnabled = false), so nothing will be emailed.');
+    return;
+  }
   GmailApp.sendEmail(CONFIG.myEmail, 'Outreach is switched on',
     'Prospect sheet: ' + ss.getUrl() + '\n\nType YES in the Approved column for each business you want emailed. ' +
     'Nothing is sent until you do. Emails go out weekdays 9 AM to 4 PM, at most ' + OUT.dailyCap + ' a day.',
@@ -100,7 +107,8 @@ function runOutreach() {
       }
     }
 
-    // 2. Sends: only approved rows, only in the weekday window, under the daily cap.
+    // 2. Sends: only when switched on, only approved rows, weekday window, under the daily cap.
+    if (!OUT.sendingEnabled) continue;
     if (String(row[OUT_COL['Approved']]).toUpperCase() !== 'YES' || !canSend || sentToday >= OUT.dailyCap) continue;
     const first = row[OUT_COL['First email sent']];
     const days = first ? (now - new Date(first)) / 86400000 : 0;
