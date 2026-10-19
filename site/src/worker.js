@@ -13,6 +13,7 @@ import { triageLead } from "./triage.js";
 import { sendDailyBrief, isBriefHour } from "./brief.js";
 import { screenSubmission, logSecurityEvent } from "./protect.js";
 import { sendRenewalNotices } from "./renewals.js";
+import { recordHeartbeat } from "./health.js";
 
 const JSON_HEADERS = { "Content-Type": "application/json; charset=utf-8" };
 
@@ -62,6 +63,11 @@ export default {
       }
       if (path === "/api/feedback" && request.method === "POST") {
         return await handleFeedback(request, env);
+      }
+      if (path === "/api/heartbeat" && request.method === "POST") {
+        if (!(await tokenValid(request, env.HEARTBEAT_TOKEN))) return json({ error: "unauthorized" }, 401);
+        const body = (await readJson(request)) || {};
+        return (await recordHeartbeat(env, body.agent, body.detail)) ? json({ ok: true }) : json({ error: "unknown_agent" }, 400);
       }
       if (path === "/api/ops/summary" && request.method === "GET") {
         if (!(await opsTokenValid(request, env))) return json({ error: "unauthorized" }, 401);
@@ -376,8 +382,12 @@ async function handleStripeWebhook(request, env, ctx) {
 
 // Read-only key for the scheduled operations agent. Separate from the
 // admin password so it can be revoked on its own and can never write.
-async function opsTokenValid(request, env) {
-  const expected = env.OPS_TOKEN;
+function opsTokenValid(request, env) {
+  return tokenValid(request, env.OPS_TOKEN);
+}
+
+// Background agents check in with their own key, separate from OPS_TOKEN.
+async function tokenValid(request, expected) {
   const auth = request.headers.get("Authorization") || "";
   if (!expected || !auth.startsWith("Bearer ")) return false;
   const enc = new TextEncoder();

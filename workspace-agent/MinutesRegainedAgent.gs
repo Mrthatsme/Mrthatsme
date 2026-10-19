@@ -10,12 +10,17 @@
  *     one friendly follow-up draft for emails you sent that got no reply.
  *   - 8 AM and 8 PM Eastern: emails you an Inbox brief (needs you,
  *     unanswered, drafts waiting for your OK, calendar, what was sorted).
+ *   - Health check, both ways: checks in with minutesregained.com every hour
+ *     (the website's brief warns you if it goes quiet), and its own brief
+ *     warns you if the website's brief didn't arrive.
  *
  * What it never does: send email to anyone but you, delete, archive, trash,
  * or touch payments. Organizing = labels only. Replies = drafts only.
  *
  * Setup: paste this file into a new Apps Script project, choose `setup` in
  * the toolbar, click Run, and approve Google's permission screen.
+ * Health check: add the Script Property HEARTBEAT_TOKEN (Project Settings >
+ * Script Properties), then run `connectHealthCheck` once.
  */
 
 const CONFIG = {
@@ -26,6 +31,7 @@ const CONFIG = {
     'Minutes Regained · support@minutesregained.com · (877) 896-8784',
     'Provident Watch LLC · 7901 4th St N #36617, St. Petersburg, FL 33702',
   ].join('\n'),
+  heartbeatUrl: 'https://minutesregained.com/api/heartbeat',
   followUpAfterDays: 2,     // follow up on your sent email after this many days of silence
   maxDraftsPerRun: 10,
   // Paying clients: add their email addresses or domains here, e.g. 'firstcoastcarpetcare.com'.
@@ -126,6 +132,45 @@ function organizeInbox() {
     sortedCounts: JSON.stringify(sorted),
     draftsCreated: JSON.stringify(drafted.slice(-30)),
   });
+  checkIn_('sorted ' + fresh.length + ', drafted ' + made);
+}
+
+// ------------------------------------------------------------ health -----
+
+// Run once after adding the HEARTBEAT_TOKEN Script Property. It also asks
+// Google for the one new permission this needs (connecting to the website).
+function connectHealthCheck() {
+  const ok = checkIn_('connected');
+  Logger.log(ok ? 'Connected. The website brief will now show "Inbox agent: OK".'
+    : 'Not connected. Check that the Script Property HEARTBEAT_TOKEN is set exactly as given.');
+}
+
+// Tells minutesregained.com this agent is alive. Never throws: a failed
+// check-in must not stop the inbox work, and the website notices the silence.
+function checkIn_(detail) {
+  const token = PropertiesService.getScriptProperties().getProperty('HEARTBEAT_TOKEN');
+  if (!token) return false;
+  try {
+    const res = UrlFetchApp.fetch(CONFIG.heartbeatUrl, {
+      method: 'post', contentType: 'application/json', muteHttpExceptions: true,
+      headers: { Authorization: 'Bearer ' + token },
+      payload: JSON.stringify({ agent: 'inbox', detail: detail }),
+    });
+    return res.getResponseCode() === 200;
+  } catch (e) {
+    return false;
+  }
+}
+
+// The website sends its own brief at 8 AM and 8 PM; if none arrived in the
+// last 13 hours, something on the website side has stopped.
+function websiteBriefLine_() {
+  const t = GmailApp.search('from:notifications@minutesregained.com subject:"brief:" newer_than:2d', 0, 1)[0];
+  const last = t && latestMessage_(t);
+  if (last && Date.now() - last.getDate().getTime() < 13 * 3600000) {
+    return { ok: true, line: '- Website brief: OK, last one arrived ' + ago_(last.getDate()) };
+  }
+  return { ok: false, line: '- Website brief: MISSING. None in over 12 hours. Open the Cloudflare dashboard > Workers > minutesregained > Logs, or tell Claude.' };
 }
 
 // ------------------------------------------------------------- brief -----
@@ -176,10 +221,14 @@ function sendInboxBrief() {
   const short = (n) => n.replace('MR/', '').replace('-', ' ');
   const counts = Object.keys(sorted).map((k) => `${short(k)} ${sorted[k]}`).join(' · ');
   lines.push('SORTED SINCE LAST BRIEF', counts || 'No new mail.', '');
+
+  const site = websiteBriefLine_();
+  lines.push('SYSTEM HEALTH', site.line, '');
   lines.push('Your Workspace agent only labels and drafts. It never sends anything except this brief to you, and never deletes or archives.');
 
   const subject = `${isMorning ? 'Morning' : 'Evening'} inbox brief: ${Utilities.formatDate(now, CONFIG.timeZone, 'EEEE, MMM d')}` +
-    (needsYou.length ? ` -- ${needsYou.length} need${needsYou.length === 1 ? 's' : ''} you` : '');
+    (needsYou.length ? ` -- ${needsYou.length} need${needsYou.length === 1 ? 's' : ''} you` : '') +
+    (site.ok ? '' : ' -- SYSTEM CHECK NEEDED');
   GmailApp.sendEmail(CONFIG.myEmail, subject, lines.join('\n'), { name: 'Minutes Regained Agent' });
 
   props.setProperties({ sortedCounts: '{}', draftsCreated: '[]' });

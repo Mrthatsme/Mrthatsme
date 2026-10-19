@@ -1,6 +1,7 @@
 import { listLeads, listContracts, listClients, listPayments } from "./db.js";
 import { sendNotificationEmail } from "./email.js";
 import { securitySummary } from "./protect.js";
+import { scoreboardLines, healthLines, spotCheckLines } from "./health.js";
 
 // Weekday morning brief, sent by the Worker's own cron trigger. Plain data
 // from D1, no model call and no mailbox access -- so it costs nothing to run
@@ -63,6 +64,8 @@ export async function sendDailyBrief(env) {
   const newContracts = contracts.filter((c) => (c.created_at || "") >= since);
   const failed = payments.filter((p) => (p.occurred_at || "") >= since && p.status === "failed");
   const active = clients.filter((c) => c.status === "active");
+  const health = await healthLines(env, leads, now);
+  const isMonday = easternLabel(now, { weekday: "short" }) === "Mon";
 
   const lines = [
     `${isMorning ? "Good morning" : "Good evening"}. Here's what happened at Minutes Regained in the last 12 hours.`,
@@ -80,15 +83,19 @@ export async function sendDailyBrief(env) {
     `- Agreements waiting on payment: ${pending.length}`,
     `- Active clients: ${active.length}`,
     ``,
+    ...(isMorning ? [...scoreboardLines(leads, contracts, clients, now), ``] : []),
+    ...health.lines,
+    ``,
     ...protectionLines(security),
     ``,
+    ...(isMorning && isMonday ? [...spotCheckLines(leads, now), ``] : []),
     `Full details: https://minutesregained.com/api/admin/dashboard`,
     ``,
     `Sent automatically by minutesregained.com every day at 8 AM and 8 PM Eastern.`,
   ];
 
   await sendNotificationEmail(env, {
-    subject: `${isMorning ? "Morning" : "Evening"} brief: ${easternLabel(now, { weekday: "long", month: "short", day: "numeric" })}${needYou.length ? ` -- ${needYou.length} need${needYou.length === 1 ? "s" : ""} you` : ""}`,
+    subject: `${isMorning ? "Morning" : "Evening"} brief: ${easternLabel(now, { weekday: "long", month: "short", day: "numeric" })}${needYou.length ? ` -- ${needYou.length} need${needYou.length === 1 ? "s" : ""} you` : ""}${health.problems ? " -- SYSTEM CHECK NEEDED" : ""}`,
     text: lines.join("\n"),
   });
 }
