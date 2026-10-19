@@ -103,12 +103,17 @@ function leadSummaryLines({ leadId, name, business, contact, phone, pain }) {
   ].filter(Boolean);
 }
 
+// Prospect replies must land in the support@ inbox, where the inbox agent
+// labels them and flags any left unanswered -- never in notifications@.
+const REPLY_TO = "support@minutesregained.com";
+
 const SIGNATURE = `--\nMinutes Regained · support@minutesregained.com · (877) 896-8784\nProvident Watch LLC · 7901 4th St N #36617, St. Petersburg, FL 33702`;
 
 async function sendAcknowledgment(env, { name, contact }) {
   const firstName = (name || "").trim().split(/\s+/)[0] || "there";
   await sendNotificationEmail(env, {
     to: contact.trim(),
+    replyTo: REPLY_TO,
     subject: `We got your message -- Minutes Regained`,
     text: `Hi ${firstName},\n\nThanks for reaching out to Minutes Regained. We got your message, and a real person will get back to you within one business day. If it's easier, you can call us at (877) 896-8784.\n\n${SIGNATURE}`,
   });
@@ -204,6 +209,7 @@ export async function triageLead(env, lead) {
     try {
       await sendNotificationEmail(env, {
         to: contact.trim(),
+        replyTo: REPLY_TO,
         subject: `Re: your question for Minutes Regained`,
         text: `${decision.reply_body}\n\n${SIGNATURE}`,
       });
