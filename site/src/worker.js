@@ -79,6 +79,9 @@ export default {
           await sendDailyBrief(env);
           return json({ sent: true });
         }
+        if (path === "/api/admin/lead-status" && request.method === "POST") {
+          return await handleLeadStatus(request, env);
+        }
         return await handleAdmin(path, env);
       }
       if (!path.startsWith("/api/")) return await notFoundPage(env, url);
@@ -425,6 +428,19 @@ async function handleOpsSummary(url, env) {
     clients,
     payments: recent(payments, "occurred_at"),
   });
+}
+
+// Mark a lead's stage by hand, e.g. "test" for the owner's own site tests,
+// so the brief's scoreboard counts only real inquiries.
+const LEAD_STATUSES = ["new", "contacted", "assessed", "converted", "lost", "test"];
+
+async function handleLeadStatus(request, env) {
+  const body = (await readJson(request)) || {};
+  if (!body.id || !LEAD_STATUSES.includes(body.status)) {
+    return json({ error: "invalid", allowed: LEAD_STATUSES }, 400);
+  }
+  const res = await env.DB.prepare(`UPDATE leads SET status = ? WHERE id = ?`).bind(body.status, body.id).run();
+  return res.meta && res.meta.changes ? json({ ok: true }) : json({ error: "lead_not_found" }, 404);
 }
 
 async function handleAdmin(path, env) {

@@ -6,7 +6,7 @@ import { PLANS } from "./plans.js";
 const AGENTS = { inbox: "Inbox agent (Gmail)" };
 const HEARTBEAT_STALE_HOURS = 3;     // it runs hourly; 3 missed runs means it stopped
 const AUTO_REPLY_TARGET_MIN = 5;     // first reply to a new inquiry, when the site can answer it
-const isTest = (l) => /^qa test$/i.test(String(l.name || "").trim());
+const isTest = (l) => l.status === "test" || /^qa test$/i.test(String(l.name || "").trim());
 
 function minutesBetween(a, b) {
   return (new Date(b) - new Date(a)) / 60000;
