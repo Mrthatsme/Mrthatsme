@@ -1,7 +1,7 @@
 import { listLeads, listContracts, listClients, listPayments } from "./db.js";
 import { sendNotificationEmail } from "./email.js";
 import { securitySummary } from "./protect.js";
-import { scoreboardLines, healthLines } from "./health.js";
+import { scoreboardLines, healthLines, isTest } from "./health.js";
 
 // Weekday morning brief, sent by the Worker's own cron trigger. Plain data
 // from D1, no model call and no mailbox access -- so it costs nothing to run
@@ -57,7 +57,7 @@ export async function sendDailyBrief(env) {
     listLeads(env.DB, 500), listContracts(env.DB, 500), listClients(env.DB, 500), listPayments(env.DB, 500),
     securitySummary(env, since).catch(() => []),
   ]);
-  const newLeads = leads.filter((l) => (l.created_at || "") >= since);
+  const newLeads = leads.filter((l) => (l.created_at || "") >= since && !isTest(l));
   const needYou = newLeads;
   const pending = contracts.filter((c) => c.status === "pending_payment");
   const newContracts = contracts.filter((c) => (c.created_at || "") >= since);
