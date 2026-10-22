@@ -5,21 +5,13 @@ import { PLANS } from "./plans.js";
 
 const AGENTS = { inbox: "Inbox agent (Gmail)" };
 const HEARTBEAT_STALE_HOURS = 3;     // it runs hourly; 3 missed runs means it stopped
-const AUTO_REPLY_TARGET_MIN = 5;     // first reply to a new inquiry, when the site can answer it
 const isTest = (l) => l.status === "test" || /^qa test$/i.test(String(l.name || "").trim());
 
 function minutesBetween(a, b) {
   return (new Date(b) - new Date(a)) / 60000;
 }
 
-function median(nums) {
-  if (!nums.length) return null;
-  const s = [...nums].sort((x, y) => x - y);
-  const mid = Math.floor(s.length / 2);
-  return s.length % 2 ? s[mid] : (s[mid - 1] + s[mid]) / 2;
-}
 
-const fmtMin = (m) => (m < 1 ? "under 1 min" : m < 90 ? `${Math.round(m)} min` : `${(m / 60).toFixed(1)} hrs`);
 const usd = (cents) => `$${Math.round(cents / 100).toLocaleString("en-US")}`;
 
 export async function recordHeartbeat(env, agent, detail) {
@@ -38,8 +30,6 @@ export function scoreboardLines(leads, contracts, clients, now = new Date()) {
   const inRange = (iso, fromDays, toDays) => iso && iso >= new Date(now - fromDays * day).toISOString() && iso < new Date(now - toDays * day).toISOString();
   const week = real.filter((l) => inRange(l.created_at, 7, 0));
   const prev = real.filter((l) => inRange(l.created_at, 14, 7));
-  const auto = week.filter((l) => l.triage_status === "auto_replied" && l.triaged_at);
-  const speed = median(auto.map((l) => minutesBetween(l.created_at, l.triaged_at)));
   const signedWeek = contracts.filter((c) => inRange(c.created_at, 7, 0) && c.status === "active").length;
   const leads30 = real.filter((l) => inRange(l.created_at, 30, 0)).length;
   const signed30 = contracts.filter((c) => inRange(c.created_at, 30, 0) && c.status === "active").length;
@@ -51,9 +41,7 @@ export function scoreboardLines(leads, contracts, clients, now = new Date()) {
   return [
     `SCOREBOARD (last 7 days, the 7 before in brackets)`,
     `- New inquiries: ${week.length} (${prev.length})`,
-    `- Answered automatically: ${auto.length} of ${week.length}` +
-      (speed === null ? "" : `, typically in ${fmtMin(speed)} (target: under ${AUTO_REPLY_TARGET_MIN} min)${speed > AUTO_REPLY_TARGET_MIN ? "  << SLOW" : ""}`),
-    `- Sent to you to answer: ${week.filter((l) => l.triage_status === "escalated").length}`,
+    `- Waiting on your answer: every inquiry gets an instant "we got your message"; you send the real reply`,
     `- New paying clients: ${signedWeek}`,
     `- Close rate, last 30 days: ${leads30 ? `${signed30} of ${leads30} inquiries (${Math.round((signed30 / leads30) * 100)}%)` : "no inquiries yet"}`,
     `- Monthly revenue at standard prices: ${usd(mrr)} from ${clients.filter((c) => c.status === "active").length} active client(s)`,
@@ -89,26 +77,7 @@ export async function healthLines(env, leads, now = new Date()) {
   const cap = Number(env.TRIAGE_DAILY_CAP) || 50;
   const usage = await env.DB.prepare(`SELECT calls FROM triage_usage WHERE usage_date = ?`)
     .bind(now.toISOString().slice(0, 10)).first().catch(() => null);
-  if (usage && usage.calls >= cap) { problems++; lines.push(`- Daily limit of ${cap} automatic answers reached; new inquiries go to you until midnight UTC.`); }
+  if (usage && usage.calls >= cap) { problems++; lines.push(`- Daily limit of ${cap} inquiry checks reached; inquiries still get the acknowledgement, without a suggested reply, until midnight UTC.`); }
 
   return { lines, problems };
-}
-
-// Monday mornings: three recent automatic answers for a human to check.
-export function spotCheckLines(leads, now = new Date()) {
-  const since = new Date(now - 7 * 86400000).toISOString();
-  const auto = leads.filter((l) => !isTest(l) && l.triage_status === "auto_replied" && (l.created_at || "") >= since && l.triage_reply_body);
-  const pick = auto.sort(() => Math.random() - 0.5).slice(0, 3);
-  const lines = [`WEEKLY SPOT-CHECK: were these automatic answers right? (${pick.length} of ${auto.length} this week)`];
-  if (!pick.length) return [...lines, "No automatic answers this week."];
-  pick.forEach((l, i) => {
-    lines.push(
-      `${i + 1}. ${l.name} (${l.business}) asked:`,
-      `   "${String(l.pain || "(no message)").trim().slice(0, 240)}"`,
-      `   The site replied:`,
-      ...String(l.triage_reply_body).trim().slice(0, 600).split("\n").map((s) => `   | ${s}`),
-    );
-  });
-  lines.push(`If any answer was wrong or off-tone, tell Claude which one and why, and the assistant's instructions get tightened.`);
-  return lines;
 }

@@ -1,7 +1,7 @@
 import { listLeads, listContracts, listClients, listPayments } from "./db.js";
 import { sendNotificationEmail } from "./email.js";
 import { securitySummary } from "./protect.js";
-import { scoreboardLines, healthLines, spotCheckLines } from "./health.js";
+import { scoreboardLines, healthLines } from "./health.js";
 
 // Weekday morning brief, sent by the Worker's own cron trigger. Plain data
 // from D1, no model call and no mailbox access -- so it costs nothing to run
@@ -58,14 +58,12 @@ export async function sendDailyBrief(env) {
     securitySummary(env, since).catch(() => []),
   ]);
   const newLeads = leads.filter((l) => (l.created_at || "") >= since);
-  const needYou = newLeads.filter((l) => l.triage_status !== "auto_replied");
-  const answered = newLeads.filter((l) => l.triage_status === "auto_replied");
+  const needYou = newLeads;
   const pending = contracts.filter((c) => c.status === "pending_payment");
   const newContracts = contracts.filter((c) => (c.created_at || "") >= since);
   const failed = payments.filter((p) => (p.occurred_at || "") >= since && p.status === "failed");
   const active = clients.filter((c) => c.status === "active");
   const health = await healthLines(env, leads, now);
-  const isMonday = easternLabel(now, { weekday: "short" }) === "Mon";
 
   const lines = [
     `${isMorning ? "Good morning" : "Good evening"}. Here's what happened at Minutes Regained in the last 12 hours.`,
@@ -74,9 +72,6 @@ export async function sendDailyBrief(env) {
     ...(needYou.length || failed.length ? [] : ["Nothing right now."]),
     ...needYou.map(leadLine),
     ...failed.map((p) => `- Failed payment: ${p.amount_cents / 100} ${p.currency || ""} (contract ${p.contract_id})`),
-    ``,
-    `AUTO-ANSWERED BY THE SITE (${answered.length})`,
-    ...(answered.length ? answered.map(leadLine) : ["None."]),
     ``,
     `MONEY`,
     `- New agreements signed: ${newContracts.length}`,
@@ -88,7 +83,7 @@ export async function sendDailyBrief(env) {
     ``,
     ...protectionLines(security),
     ``,
-    ...(isMorning && isMonday ? [...spotCheckLines(leads, now), ``] : []),
+
     `Full details: https://minutesregained.com/api/admin/dashboard`,
     ``,
     `Sent automatically by minutesregained.com every day at 8 AM and 8 PM Eastern.`,

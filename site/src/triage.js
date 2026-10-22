@@ -110,7 +110,7 @@ function leadSummaryLines({ leadId, name, business, contact, phone, pain }) {
 // labels them and flags any left unanswered -- never in notifications@.
 const REPLY_TO = "support@minutesregained.com";
 
-const SIGNATURE = `--\nMinutes Regained · support@minutesregained.com · (877) 896-8784\nProvident Watch LLC · 7901 4th St N #36617, St. Petersburg, FL 33702`;
+const SIGNATURE = `--\nMinutes Regained · support@minutesregained.com`;
 
 async function sendAcknowledgment(env, { name, contact }) {
   const firstName = (name || "").trim().split(/\s+/)[0] || "there";
@@ -118,11 +118,11 @@ async function sendAcknowledgment(env, { name, contact }) {
     to: contact.trim(),
     replyTo: REPLY_TO,
     subject: `We got your message -- Minutes Regained`,
-    text: `Hi ${firstName},\n\nThanks for reaching out to Minutes Regained. We got your message, and a real person will get back to you within one business day. If it's easier, you can call us at (877) 896-8784.\n\n${SIGNATURE}`,
+    text: `Hi ${firstName},\n\nThanks for reaching out to Minutes Regained. We got your message, and a real person will get back to you within one business day.\n\n${SIGNATURE}`,
   });
 }
 
-async function notifyHuman(env, lead, { status, note, replyBody, acked, noAckReason }) {
+async function notifyHuman(env, lead, { status, note, replyBody, acked, noAckReason, suggestedReply }) {
   const header = status === "auto_replied"
     ? `Auto-answered by the triage agent. Here's what went out:`
     : `Needs your attention: ${note}\n${acked ? "(They were sent an automatic \"we got your message, we'll reply within one business day\" email.)" : `(No automatic reply went out: ${noAckReason || "no email address was given, so they need a phone call."})`}`;
@@ -131,6 +131,7 @@ async function notifyHuman(env, lead, { status, note, replyBody, acked, noAckRea
     ``,
     ...leadSummaryLines(lead),
     replyBody ? `\n--- Auto-reply sent to prospect ---\n${replyBody}` : null,
+    suggestedReply ? `\n--- Suggested reply (NOT sent: edit it and send it yourself) ---\n${suggestedReply}` : null,
   ].filter(Boolean).join("\n");
 
   await sendNotificationEmail(env, {
@@ -140,11 +141,10 @@ async function notifyHuman(env, lead, { status, note, replyBody, acked, noAckRea
 }
 
 /**
- * Decide whether to auto-answer a lead's request or escalate it, within
- * hard spend guardrails. Owns the single human-facing notification for
- * this lead end to end (so the human is never double-emailed), and
- * additionally emails the prospect directly when answerable and they gave
- * an email address (not just a phone number).
+ * Acknowledge the lead and hand it to the owner, within hard spend
+ * guardrails. The model writes an internal note, a spam check and, when it
+ * can, a suggested reply for the owner to edit and send -- never sent by us.
+ * Owns the single human-facing notification for this lead end to end.
  *
  * Never throws in a way that should break the caller's response -- callers
  * should still wrap this in ctx.waitUntil(...).catch(...) as defense in depth.
@@ -155,7 +155,7 @@ export async function triageLead(env, lead) {
 
   // Every lead with an email address hears back right away, even when the
   // question needs a human -- a silent form is exactly what we sell against.
-  const escalate = async (note, { suspicious = false } = {}) => {
+  const escalate = async (note, { suspicious = false, suggestedReply } = {}) => {
     let acked = false;
     let noAckReason;
     if (suspicious) {
@@ -174,7 +174,7 @@ export async function triageLead(env, lead) {
       }
     }
     await recordLeadTriage(env.DB, { leadId, status: "escalated", note });
-    await notifyHuman(env, lead, { status: "escalated", note, acked, noAckReason });
+    await notifyHuman(env, lead, { status: "escalated", note, acked, noAckReason, suggestedReply });
   };
 
   if (!env.ANTHROPIC_API_KEY) {
@@ -208,25 +208,7 @@ export async function triageLead(env, lead) {
     return escalate(`Repeat message from the same address within 24 hours. ${decision.note}`);
   }
 
-  if (decision.answerable && decision.reply_body && isEmail) {
-    try {
-      await sendNotificationEmail(env, {
-        to: contact.trim(),
-        replyTo: REPLY_TO,
-        subject: `Re: your question for Minutes Regained`,
-        text: `${decision.reply_body}\n\n${SIGNATURE}`,
-      });
-      await recordLeadTriage(env.DB, { leadId, status: "auto_replied", note: decision.note, replyBody: decision.reply_body });
-      await notifyHuman(env, lead, { status: "auto_replied", note: decision.note, replyBody: decision.reply_body });
-      return;
-    } catch (err) {
-      console.error("auto-reply send failed", err);
-      return escalate(`Could answer but auto-reply send failed (${String(err.message || err)}).`);
-    }
-  }
-
-  const reason = decision.answerable && decision.reply_body && !isEmail
-    ? "Could answer, but contact given was a phone number, not an email -- needs a human to follow up."
-    : decision.note;
-  return escalate(reason);
+  // Acknowledgement only (Agent Spec §1, §6): nothing AI-written goes to a
+  // prospect. A usable answer rides along in the owner's email as a draft.
+  return escalate(decision.note, { suggestedReply: decision.answerable ? decision.reply_body : undefined });
 }
