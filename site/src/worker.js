@@ -14,6 +14,7 @@ import { sendDailyBrief, isBriefHour } from "./brief.js";
 import { screenSubmission, logSecurityEvent } from "./protect.js";
 import { sendRenewalNotices } from "./renewals.js";
 import { recordHeartbeat } from "./health.js";
+import { createClientAgent, authenticateClientAgent, draftForClient, logClientAgentEvent } from "./clientagent.js";
 
 const JSON_HEADERS = { "Content-Type": "application/json; charset=utf-8" };
 
@@ -69,6 +70,22 @@ export default {
         const body = (await readJson(request)) || {};
         return (await recordHeartbeat(env, body.agent, body.detail)) ? json({ ok: true }) : json({ error: "unknown_agent" }, 400);
       }
+      if (path.startsWith("/api/agent/") && request.method === "POST") {
+        const agent = await authenticateClientAgent(request, env);
+        if (!agent) return json({ error: "unauthorized" }, 401);
+        const body = (await readJson(request)) || {};
+        if (path === "/api/agent/draft") {
+          try {
+            return json(await draftForClient(env, agent, body));
+          } catch (err) {
+            console.error("client agent draft failed", err);
+            await logClientAgentEvent(env, agent.id, "needs_you", `Drafting failed for "${body.subject || ""}"; needs a person.`);
+            return json({ action: "handoff", reason: "Drafting failed; this one needs you." });
+          }
+        }
+        if (path === "/api/agent/checkin") return json({ ok: true });
+        return json({ error: "not found" }, 404);
+      }
       if (path === "/api/ops/summary" && request.method === "GET") {
         if (!(await opsTokenValid(request, env))) return json({ error: "unauthorized" }, 401);
         return await handleOpsSummary(url, env);
@@ -78,6 +95,11 @@ export default {
         if (path === "/api/admin/send-brief" && request.method === "POST") {
           await sendDailyBrief(env);
           return json({ sent: true });
+        }
+        if (path === "/api/admin/client-agent" && request.method === "POST") {
+          const body = (await readJson(request)) || {};
+          if (!body.label) return json({ error: "missing_label" }, 400);
+          return json(await createClientAgent(env, body));
         }
         if (path === "/api/admin/contract-status" && request.method === "POST") {
           return await handleContractStatus(request, env);

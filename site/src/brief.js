@@ -2,6 +2,7 @@ import { listLeads, listContracts, listClients, listPayments } from "./db.js";
 import { sendNotificationEmail } from "./email.js";
 import { securitySummary } from "./protect.js";
 import { scoreboardLines, healthLines, isTest } from "./health.js";
+import { clientInboxLines } from "./clientagent.js";
 
 // Weekday morning brief, sent by the Worker's own cron trigger. Plain data
 // from D1, no model call and no mailbox access -- so it costs nothing to run
@@ -64,6 +65,8 @@ export async function sendDailyBrief(env) {
   const failed = payments.filter((p) => (p.occurred_at || "") >= since && p.status === "failed");
   const active = clients.filter((c) => c.status === "active");
   const health = await healthLines(env, leads, now);
+  const inboxes = await clientInboxLines(env, since, now).catch(() => ({ lines: [], problems: 0 }));
+  health.problems += inboxes.problems;
 
   const lines = [
     `${isMorning ? "Good morning" : "Good evening"}. Here's what happened at Minutes Regained in the last 12 hours.`,
@@ -79,6 +82,7 @@ export async function sendDailyBrief(env) {
     `- Active clients: ${active.length}`,
     ``,
     ...(isMorning ? [...scoreboardLines(leads, contracts, clients, now), ``] : []),
+    ...(inboxes.lines.length ? [...inboxes.lines, ``] : []),
     ...health.lines,
     ``,
     ...protectionLines(security),
