@@ -1,3 +1,5 @@
+# Deployed by Cloudflare Workers Builds on every push to the
+# claude/virtual-service-startup-32flre branch (root directory: site).
 name = "minutesregained"
 main = "src/worker.js"
 compatibility_date = "2026-10-06"
