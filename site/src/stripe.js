@@ -41,6 +41,9 @@ export async function createCheckoutSession(secretKey, { priceId, contractId, cu
     "line_items[0][price]": priceId,
     "line_items[0][quantity]": 1,
     customer_email: customerEmail,
+    // The client's billing address: printed on invoices, and what sales tax
+    // is worked out from if tax collection is switched on.
+    billing_address_collection: "required",
     "subscription_data[description]": `${businessName} · ${planLabel}`,
     "subscription_data[metadata][business_name]": businessName,
     client_reference_id: contractId,
