@@ -145,8 +145,10 @@ function out_greeting_(row) {
   return 'Hi ' + (name ? name.split(/\s+/)[0] : 'there') + ',';
 }
 
+// Sent by the system, so it signs as the company, never as a person
+// (Master Register, Standing Constraints 1 and 8).
 function out_close_() {
-  return '\n\n' + [CONFIG.signerName, CONFIG.signature, '', OUT.footer].join('\n');
+  return '\n\n' + ['The Minutes Regained team', CONFIG.signature, '', OUT.footer].join('\n');
 }
 
 function out_subject_(row) {
@@ -157,7 +159,7 @@ function out_intro_(row) {
   const biz = row[OUT_COL['Business']];
   return [
     out_greeting_(row), '',
-    "I'm Jerome with Minutes Regained, a veteran-owned team that sets up automations for Florida service businesses like " + biz +
+    "Minutes Regained is a veteran-owned team that sets up automations for Florida service businesses like " + biz +
       ': instant replies to new inquiries, missed-call text-back, quote follow-ups and appointment reminders, all checked daily.', '',
     'In ' + String(row[OUT_COL['Trade']]).toLowerCase() + ', the job usually goes to whoever answers first. I\'d be glad to run a free check of how quickly ' +
       biz + ' responds to a new web inquiry and send you the results. No cost and no obligation.', '',

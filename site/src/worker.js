@@ -6,7 +6,7 @@ import {
   countFoundingOfferTaken, listLeads, listContracts, listClients, listPayments,
   claimContractForCheckout, isCheckoutClaimPending,
 } from "./db.js";
-import { createCheckoutSession, retrieveCheckoutSession, verifyStripeSignature } from "./stripe.js";
+import { createCheckoutSession, retrieveCheckoutSession, verifyStripeSignature, updateCustomer } from "./stripe.js";
 import { requireAdmin, unauthorizedResponse, renderAdminPage } from "./admin.js";
 import { notifyNewClient, sendNotificationEmail } from "./email.js";
 import { triageLead } from "./triage.js";
@@ -324,6 +324,8 @@ async function handleCheckout(request, env, url) {
     priceId,
     contractId,
     customerEmail: contract.signer_email,
+    businessName: contract.business_name,
+    planLabel: plan.label,
     successUrl: `${origin}/start.html?status=success&contract=${contractId}`,
     cancelUrl: `${origin}/start.html?status=canceled&contract=${contractId}`,
   });
@@ -350,6 +352,12 @@ async function handleStripeWebhook(request, env, ctx) {
         stripeCustomerId: session.customer,
         stripeSubscriptionId: session.subscription,
       });
+      if (contract && session.customer) {
+        ctx.waitUntil(
+          updateCustomer(env.STRIPE_SECRET_KEY, session.customer, { name: contract.business_name, contractId })
+            .catch((err) => console.error("stripe customer name update failed", err))
+        );
+      }
       if (contract) {
         ctx.waitUntil(
           notifyNewClient(env, {

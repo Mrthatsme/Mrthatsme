@@ -35,17 +35,29 @@ async function stripeRequest(secretKey, path, body) {
   return data;
 }
 
-export async function createCheckoutSession(secretKey, { priceId, contractId, customerEmail, successUrl, cancelUrl }) {
+export async function createCheckoutSession(secretKey, { priceId, contractId, customerEmail, businessName, planLabel, successUrl, cancelUrl }) {
   return stripeRequest(secretKey, "/checkout/sessions", {
     mode: "subscription",
     "line_items[0][price]": priceId,
     "line_items[0][quantity]": 1,
     customer_email: customerEmail,
+    "subscription_data[description]": `${businessName} · ${planLabel}`,
+    "subscription_data[metadata][business_name]": businessName,
     client_reference_id: contractId,
     success_url: successUrl,
     cancel_url: cancelUrl,
     "metadata[contract_id]": contractId,
     "subscription_data[metadata][contract_id]": contractId,
+  });
+}
+
+// Invoices and receipts are addressed to the customer's name, so it is set to
+// the business that signed the agreement rather than the cardholder.
+export async function updateCustomer(secretKey, customerId, { name, contractId }) {
+  return stripeRequest(secretKey, `/customers/${customerId}`, {
+    name,
+    "metadata[business_name]": name,
+    "metadata[contract_id]": contractId,
   });
 }
 

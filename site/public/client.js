@@ -1,17 +1,15 @@
 (function(){
   "use strict";
   /* ------------------------------------------------------------------
-     Paste the two links here once the accounts exist.
+     PORTAL_URL is the Stripe customer portal login link (Stripe Dashboard >
+     Settings > Billing > Customer portal). Clients sign in with their
+     email and a one-time code; we never handle their card details.
 
-       SIGN_URL  the e-signature template link for the service agreement
-       PAY_URL   the recurring payment link for the agreed plan
-
-     While either is empty its button stays visibly disabled and the
+     While it is empty the button stays visibly disabled and the
      explanation underneath is shown instead, so a client never clicks a
-     dead link and never sees a broken page.
+     dead link.
      ------------------------------------------------------------------ */
-  var SIGN_URL = "";
-  var PAY_URL  = "";
+  var PORTAL_URL = "";
 
   function wire(linkId, noteId, url){
     var a = document.getElementById(linkId), n = document.getElementById(noteId);
@@ -27,8 +25,7 @@
       a.setAttribute("role","link");
     }
   }
-  wire("sign-link","sign-pending",SIGN_URL);
-  wire("pay-link","pay-pending",PAY_URL);
+  wire("pay-link","pay-pending",PORTAL_URL);
 
   var y = document.getElementById("yr2");
   if(y) y.textContent = String(new Date().getFullYear());
