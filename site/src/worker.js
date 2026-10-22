@@ -79,6 +79,9 @@ export default {
           await sendDailyBrief(env);
           return json({ sent: true });
         }
+        if (path === "/api/admin/contract-status" && request.method === "POST") {
+          return await handleContractStatus(request, env);
+        }
         if (path === "/api/admin/lead-status" && request.method === "POST") {
           return await handleLeadStatus(request, env);
         }
@@ -277,6 +280,24 @@ async function handleAgree(request, env) {
     return json({ error: "founding_offer_full" }, 409);
   }
 
+  // The signer's copy: the exact text they agreed to, plus the record of how
+  // it was signed. A copy goes to support@ for our file.
+  const certificate = [
+    `SIGNATURE RECORD`,
+    `Signed by: ${signerName} (${signerEmail}) for ${businessName}`,
+    `Signed at: ${new Date().toISOString()} (UTC), from IP ${clientIp(request) || "unknown"}`,
+    `Agreement: version ${CONTRACT_VERSION}, record ${contractId}`,
+    `Fingerprint (SHA-256 of the exact text below): ${hash}`,
+    `Method: read to the end, checked "I agree", typed full name.`,
+  ].join("\n");
+  const copy = `${certificate}\n\n----------------------------------------\n\n${text}`;
+  try {
+    await sendNotificationEmail(env, { to: signerEmail, replyTo: "support@minutesregained.com", subject: "Your signed Minutes Regained service agreement", text: copy });
+    await sendNotificationEmail(env, { subject: `[Agreement signed] ${businessName} (${plan.label})`, text: copy });
+  } catch (err) {
+    console.error("signed copy email failed", err);
+  }
+
   return json({ contractId });
 }
 
@@ -449,6 +470,18 @@ async function handleLeadStatus(request, env) {
   }
   const res = await env.DB.prepare(`UPDATE leads SET status = ? WHERE id = ?`).bind(body.status, body.id).run();
   return res.meta && res.meta.changes ? json({ ok: true }) : json({ error: "lead_not_found" }, 404);
+}
+
+// Mark an agreement (and its client, if one was created) as a test or as
+// canceled, so the brief's money section counts only real business.
+async function handleContractStatus(request, env) {
+  const body = (await readJson(request)) || {};
+  if (!body.id || !["test", "canceled"].includes(body.status)) {
+    return json({ error: "invalid", allowed: ["test", "canceled"] }, 400);
+  }
+  const res = await env.DB.prepare(`UPDATE contracts SET status = ? WHERE id = ?`).bind(body.status, body.id).run();
+  await env.DB.prepare(`UPDATE clients SET status = ? WHERE contract_id = ?`).bind(body.status, body.id).run();
+  return res.meta && res.meta.changes ? json({ ok: true }) : json({ error: "contract_not_found" }, 404);
 }
 
 async function handleAdmin(path, env) {
