@@ -30,7 +30,12 @@ const OUT = {
   closeAfterDays: 14,          // no reply by then: mark closed
   bookingUrl: 'https://calendar.app.google/mL2TQQSCAgLAURZC6',
   demoUrl: 'https://minutesregained.com/demo',
-  footer: 'This is a business offer from Minutes Regained. Reply "stop" and we won\'t email you again.',
+  // US law (CAN-SPAM) requires a postal address in commercial email, so it
+  // appears here and nowhere else.
+  footer: [
+    'This is a business offer from Minutes Regained. Reply "stop" and we won\'t email you again.',
+    'Minutes Regained, operated by Provident Watch LLC · 7901 4th St N #36617, St. Petersburg, FL 33702',
+  ].join('\n'),
 };
 
 const OUT_HEADERS = ['Business', 'Trade', 'City', 'Website', 'Email', 'Contact name', 'Approved', 'Status',

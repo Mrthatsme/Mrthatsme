@@ -27,10 +27,8 @@ const CONFIG = {
   myEmail: 'support@minutesregained.com',
   timeZone: 'America/New_York',
   signerName: 'Jerome',
-  signature: [
-    'Minutes Regained · support@minutesregained.com · (877) 896-8784',
-    'Provident Watch LLC · 7901 4th St N #36617, St. Petersburg, FL 33702',
-  ].join('\n'),
+  // No street address, city, state or phone (Master Register, Standing Constraint 1).
+  signature: 'Minutes Regained · support@minutesregained.com',
   heartbeatUrl: 'https://minutesregained.com/api/heartbeat',
   followUpAfterDays: 2,     // follow up on your sent email after this many days of silence
   maxDraftsPerRun: 10,
