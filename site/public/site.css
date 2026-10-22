@@ -313,3 +313,11 @@ section.tight{padding-block:clamp(40px,6vw,64px)}
 .notfound{display:grid;gap:18px;max-width:720px}
 /* honeypot: invisible to people, tempting to form-filling bots */
 .hp{position:absolute!important;left:-10000px!important;width:1px;height:1px;overflow:hidden}
+
+/* Privacy and other legal text pages */
+.legal{max-width:760px;padding-block:48px 72px}
+.legal h1{margin:0 0 4px}
+.legal h2{margin:32px 0 8px;font-size:1.25rem}
+.legal p,.legal li{line-height:1.65}
+.legal ul{padding-left:1.2em;display:grid;gap:6px}
+.legal-date{color:var(--muted,#51606C);margin:0 0 20px}

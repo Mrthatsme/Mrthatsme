@@ -15,6 +15,7 @@ import { screenSubmission, logSecurityEvent } from "./protect.js";
 import { sendRenewalNotices } from "./renewals.js";
 import { recordHeartbeat } from "./health.js";
 import { createClientAgent, authenticateClientAgent, draftForClient, logClientAgentEvent } from "./clientagent.js";
+import { createConnectInvite, connectLanding, connectStart, connectCallback, pollConnectedInboxes } from "./connect.js";
 
 const JSON_HEADERS = { "Content-Type": "application/json; charset=utf-8" };
 
@@ -70,6 +71,10 @@ export default {
         const body = (await readJson(request)) || {};
         return (await recordHeartbeat(env, body.agent, body.detail)) ? json({ ok: true }) : json({ error: "unknown_agent" }, 400);
       }
+      if (path === "/api/connect" && request.method === "GET") return await connectLanding(env, url);
+      if (path === "/api/connect/start" && request.method === "GET") return await connectStart(env, url);
+      const cb = path.match(/^\/api\/connect\/(google|microsoft)\/callback$/);
+      if (cb && request.method === "GET") return await connectCallback(env, url, cb[1]);
       if (path.startsWith("/api/agent/") && request.method === "POST") {
         const agent = await authenticateClientAgent(request, env);
         if (!agent) return json({ error: "unauthorized" }, 401);
@@ -96,6 +101,11 @@ export default {
           await sendDailyBrief(env);
           return json({ sent: true });
         }
+        if (path === "/api/admin/connect-invite" && request.method === "POST") {
+          const body = (await readJson(request)) || {};
+          if (!body.agentId && !body.label) return json({ error: "missing_label_or_agentId" }, 400);
+          return json(await createConnectInvite(env, `${url.protocol}//${url.host}`, body));
+        }
         if (path === "/api/admin/client-agent" && request.method === "POST") {
           const body = (await readJson(request)) || {};
           if (!body.label) return json({ error: "missing_label" }, 400);
@@ -119,6 +129,12 @@ export default {
 
   // 8 AM / 8 PM Eastern brief (cron in wrangler.toml).
   async scheduled(event, env, ctx) {
+    // Connected client inboxes are checked every 10 minutes on their own cron,
+    // so they never double up with the brief runs.
+    if (event.cron === "*/10 * * * *") {
+      ctx.waitUntil(pollConnectedInboxes(env).catch((err) => console.error("inbox poll failed", err)));
+      return;
+    }
     const at = new Date(event.scheduledTime);
     if (!isBriefHour(at)) return;
     ctx.waitUntil(sendDailyBrief(env).catch((err) => console.error("daily brief failed", err)));

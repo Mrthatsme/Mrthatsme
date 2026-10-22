@@ -12,8 +12,9 @@ run_worker_first = ["/api/*", "/demo-video.mp4"]
 # Brief to support@ every day at 8 AM and 8 PM Eastern. Fires at both
 # candidate UTC hours; the Worker sends only the one that is 8 o'clock
 # Eastern, so it stays right across daylight-saving changes.
+# Plus every 10 minutes: check connected client inboxes (src/connect.js).
 [triggers]
-crons = ["0 0,1,12,13 * * *"]
+crons = ["0 0,1,12,13 * * *", "*/10 * * * *"]
 
 [vars]
 # support@minutesregained.com is the only business address used anywhere
