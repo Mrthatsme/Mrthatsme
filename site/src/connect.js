@@ -9,6 +9,18 @@
 // that this file never calls a send endpoint.
 
 import { createClientAgent, draftForClient, logClientAgentEvent, ensureClientAgentTables } from "./clientagent.js";
+import { sendNotificationEmail } from "./email.js";
+
+// A customer cancelling or rescheduling is time-critical: the owner gets an
+// alert in their own inbox right away, with a holding reply ready to send.
+async function alertOwner(env, conn, profile, from, subject, out) {
+  await sendNotificationEmail(env, {
+    to: conn.email,
+    replyTo: "support@minutesregained.com",
+    subject: `Needs you now: ${from.replace(/<.*>/, "").trim() || "a customer"} wants to cancel or change something`,
+    text: `${out.reason || ""}\n\nTheir email: "${subject}"\n\nNothing has been confirmed, cancelled or changed. A short holding reply is waiting in your Drafts; check it, send it, then decide.\n\n-- Minutes Regained, for ${profile.business || "your business"}`,
+  }).catch((err) => console.error("owner alert failed", err));
+}
 
 const PROVIDERS = {
   google: {
@@ -31,7 +43,7 @@ const PROVIDERS = {
   },
 };
 
-const LABELS = { draft: "MR/Draft-Ready", needsYou: "MR/Needs-You" };
+const LABELS = { draft: "MR/Draft-Ready", needsYou: "MR/Needs-You", urgent: "MR/Urgent" };
 const INVITE_DAYS = 14;
 const MAX_PER_RUN = 10;
 
@@ -333,7 +345,8 @@ async function pollGmail(env, conn, token) {
     }
     const out = await draftForClient(env, agentRow(conn), { from, subject, body: gmailText(msg.payload) });
     labelIds = labelIds || await gmailLabelIds(token);
-    if (out.action === "draft" && out.draft) {
+    const replyText = out.action === "draft" ? out.draft : out.urgent ? out.holding : null;
+    if (replyText) {
       const raw = [
         `To: ${h["reply-to"] || from}`,
         `Subject: ${/^re:/i.test(subject) ? subject : "Re: " + subject}`,
@@ -341,13 +354,13 @@ async function pollGmail(env, conn, token) {
         h["message-id"] ? `References: ${[h.references, h["message-id"]].filter(Boolean).join(" ")}` : null,
         `Content-Type: text/plain; charset="UTF-8"`,
         ``,
-        out.draft,
+        replyText,
       ].filter((l) => l !== null).join("\r\n");
       await gmail(token, "drafts", { method: "POST", body: JSON.stringify({ message: { raw: b64url(enc.encode(raw)), threadId: msg.threadId } }) });
-      await gmail(token, `messages/${id}/modify`, { method: "POST", body: JSON.stringify({ addLabelIds: [labelIds.draft] }) });
-    } else if (out.action === "handoff") {
-      await gmail(token, `messages/${id}/modify`, { method: "POST", body: JSON.stringify({ addLabelIds: [labelIds.needsYou] }) });
     }
+    const add = out.action === "draft" ? [labelIds.draft] : out.action === "handoff" ? [labelIds.needsYou, ...(out.urgent ? [labelIds.urgent] : [])] : [];
+    if (add.length) await gmail(token, `messages/${id}/modify`, { method: "POST", body: JSON.stringify({ addLabelIds: add }) });
+    if (out.urgent) await alertOwner(env, conn, profile, from, subject, out);
     await markDone(env, conn, id);
     handled++;
   }
@@ -379,12 +392,13 @@ async function pollOutlook(env, conn, token) {
     }
     const out = await draftForClient(env, agentRow(conn), { from, subject: m.subject || "", body: (m.body && m.body.content) || "" });
     const cats = new Set(m.categories || []);
-    if (out.action === "draft" && out.draft) {
-      await graph(token, `messages/${m.id}/createReply`, { method: "POST", body: JSON.stringify({ comment: out.draft }) }); // saved in Drafts, not sent
-      cats.add(LABELS.draft.replace("/", " "));
-    } else if (out.action === "handoff") {
-      cats.add(LABELS.needsYou.replace("/", " "));
+    const replyText = out.action === "draft" ? out.draft : out.urgent ? out.holding : null;
+    if (replyText) {
+      await graph(token, `messages/${m.id}/createReply`, { method: "POST", body: JSON.stringify({ comment: replyText }) }); // saved in Drafts, not sent
     }
+    if (out.action === "draft") cats.add(LABELS.draft.replace("/", " "));
+    if (out.action === "handoff") cats.add(LABELS.needsYou.replace("/", " "));
+    if (out.urgent) { cats.add(LABELS.urgent.replace("/", " ")); await alertOwner(env, conn, profile, from, m.subject || "", out); }
     if (cats.size !== (m.categories || []).length) {
       await graph(token, `messages/${m.id}`, { method: "PATCH", body: JSON.stringify({ categories: [...cats] }) });
     }
