@@ -3,7 +3,7 @@
 // CONTRACT_VERSION bumps whenever the wording changes — old agreements keep
 // the version + hash they actually signed.
 
-export const CONTRACT_VERSION = "2026-10-18.1";
+export const CONTRACT_VERSION = "2026-10-26.1";
 
 const usd = (cents) => `$${(cents / 100).toLocaleString("en-US", { maximumFractionDigits: 0 })}`;
 

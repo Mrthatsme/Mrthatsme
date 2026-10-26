@@ -12,7 +12,7 @@ export const PLANS = {
     retainerCents: 40500,
     envKey: "STRIPE_PRICE_ESSENTIAL",
     retainerEnvKey: "STRIPE_PRICE_ESSENTIAL_RETAINER",
-    automations: 3, hours: 10, rollover: "Unused hours don't roll over",
+    automations: 3, hours: 10, rollover: "Unused hours roll over 1 month, up to 3",
     extraHourly: 50, softwareAllowance: 50, inboxes: 1, reviewCall: null,
   },
   business_support: {
