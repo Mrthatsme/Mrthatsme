@@ -170,10 +170,17 @@ export async function clientInboxLines(env, sinceIso, now = new Date()) {
     ).bind(a.id, sinceIso).all();
     const drafted = ev.filter((e) => e.kind === "drafted").length;
     const needs = ev.filter((e) => e.kind === "needs_you");
+    // Only an agent that has started working can go quiet. One still waiting
+    // for its owner to tap the connect link is not a problem.
+    const conn = await env.DB.prepare(`SELECT status FROM client_connections WHERE agent_id = ? ORDER BY connected_at DESC LIMIT 1`)
+      .bind(a.id).first().catch(() => null);
     const hrs = a.last_seen ? (now - new Date(a.last_seen)) / 3600000 : null;
-    const stale = hrs === null || hrs > 3;
-    if (stale) problems++;
-    lines.push(`- ${a.label}: ${drafted} draft(s) waiting for the owner, ${needs.length} need you. ${stale ? `AGENT QUIET: last check-in ${hrs === null ? "never" : Math.round(hrs) + " hours ago"}.` : "Agent OK."}`);
+    let state;
+    if (conn && conn.status === "disconnected") { problems++; state = "DISCONNECTED: send a new connect link."; }
+    else if (!conn && hrs === null) state = "Waiting for the owner to connect.";
+    else if (hrs === null || hrs > 3) { problems++; state = `AGENT QUIET: last check-in ${hrs === null ? "never" : Math.round(hrs) + " hours ago"}.`; }
+    else state = "Agent OK.";
+    lines.push(`- ${a.label}: ${drafted} draft(s) waiting for the owner, ${needs.length} need you. ${state}`);
     needs.forEach((e) => lines.push(`  [${a.label}] ${e.summary}`));
   }
   return { lines, problems };

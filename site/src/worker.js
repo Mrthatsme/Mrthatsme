@@ -112,6 +112,12 @@ export default {
           if (!body.agentId && !body.label) return json({ error: "missing_label_or_agentId" }, 400);
           return json(await createConnectInvite(env, `${url.protocol}//${url.host}`, body));
         }
+        if (path === "/api/admin/client-agent-status" && request.method === "POST") {
+          const body = (await readJson(request)) || {};
+          if (!body.id || !["active", "retired"].includes(body.status)) return json({ error: "invalid", allowed: ["active", "retired"] }, 400);
+          const r = await env.DB.prepare(`UPDATE client_agents SET status = ? WHERE id = ?`).bind(body.status, body.id).run();
+          return r.meta && r.meta.changes ? json({ ok: true }) : json({ error: "agent_not_found" }, 404);
+        }
         if (path === "/api/admin/client-agent" && request.method === "POST") {
           const body = (await readJson(request)) || {};
           if (!body.label) return json({ error: "missing_label" }, 400);
