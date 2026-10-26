@@ -34,6 +34,8 @@ const CONFIG = {
   maxDraftsPerRun: 10,
   // Paying clients: add their email addresses or domains here, e.g. 'firstcoastcarpetcare.com'.
   clients: [],
+  // Your own other addresses. Mail from these is never treated as a customer lead.
+  ownerAddresses: ['jescott22@gmail.com'],
   // Tools and services you pay for or use.
   vendorDomains: [
     'stripe.com', 'cloudflare.com', 'google.com', 'resend.com', 'resend.dev',
@@ -90,6 +92,12 @@ function organizeInbox() {
       getLabel_(name).addToThread(thread);
       sorted[name] = (sorted[name] || 0) + 1;
     });
+  });
+
+  // 2a. Needs-You comes off a thread once you have replied in it.
+  GmailApp.search('label:mr-needs-you', 0, 100).forEach((thread) => {
+    const last = latestMessage_(thread);
+    if (last && isMe_(last.getFrom())) thread.removeLabel(getLabel_(LABELS.needsYou));
   });
 
   // 2. Customer email you haven't answered within 1 business day.
@@ -247,6 +255,11 @@ function classify_(msg) {
     return [];
   }
   if (isMe_(from)) return [];
+  if (CONFIG.ownerAddresses.some((a) => from.includes(a))) return [];          // your own forwards and notes
+  // Routine account notices never need you: codes, welcomes, "now active".
+  if (/verification code|verify your email|one-time code|\bwelcome\b|is active|is now active|confirm your (email|account)/.test(subject)) {
+    return [CONFIG.vendorDomains.some((d) => domain === d || domain.endsWith('.' + d)) ? LABELS.vendors : LABELS.lowPriority];
+  }
   if (domain.includes('northwestregisteredagent')) return [LABELS.needsYou, LABELS.vendors];  // legal/state mail
   if (/payment (failed|declined)|past due|card (was )?declined|action required|final notice/.test(subject)) {
     return [LABELS.needsYou, LABELS.billing];
