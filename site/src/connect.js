@@ -151,10 +151,18 @@ export async function connectLanding(env, url) {
   const token = url.searchParams.get("i");
   if (!(await findInvite(env, token))) return expired();
   const link = (p) => `/api/connect/start?i=${encodeURIComponent(token)}&p=${p}`;
+  // Only providers whose app settings are in place get a button.
+  const ready = (p) => env[PROVIDERS[p].idKey] && env[PROVIDERS[p].secretKey];
+  const buttons = [
+    ready("google") ? `<a class="btn" href="${link("google")}">Gmail or Google Workspace</a>` : "",
+    ready("microsoft") ? `<a class="btn ms" href="${link("microsoft")}">Outlook or Microsoft 365</a>` : "",
+  ].join("");
+  if (!buttons) {
+    return page("Not ready yet", `<h1>Not ready yet</h1><p>This connection isn't switched on yet. Please email support@minutesregained.com.</p>`, 503);
+  }
   return page("Connect your email", `<h1>Connect your email</h1>
 <p>Tap the one you use for your business. You'll sign in as usual and tap <b>Allow</b>. That's it.</p>
-<a class="btn" href="${link("google")}">Gmail or Google Workspace</a>
-<a class="btn ms" href="${link("microsoft")}">Outlook or Microsoft 365</a>
+${buttons}
 <p class="small">We read new email and save reply drafts in your Drafts folder. We never send, forward or delete anything; you send every reply yourself. You can disconnect any time from your Google or Microsoft account.</p>`);
 }
 
