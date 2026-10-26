@@ -47,6 +47,10 @@ const LABELS = { draft: "MR/Draft-Ready", needsYou: "MR/Needs-You", urgent: "MR/
 const INVITE_DAYS = 14;
 const MAX_PER_RUN = 10;
 
+// Settings pasted into the Cloudflare dashboard can carry stray spaces or
+// line breaks; read them trimmed everywhere.
+const cfg = (env, key) => (env[key] == null ? "" : String(env[key]).trim());
+
 let tablesReady = false;
 async function ensureTables(env) {
   if (tablesReady) return;
@@ -78,8 +82,9 @@ const randomToken = (n = 32) => b64url(crypto.getRandomValues(new Uint8Array(n))
 const sha256 = async (s) => b64url(await crypto.subtle.digest("SHA-256", enc.encode(s)));
 
 async function tokenKey(env) {
-  if (!env.TOKEN_ENC_KEY || env.TOKEN_ENC_KEY.length < 32) throw new Error("TOKEN_ENC_KEY is not set");
-  const base = await crypto.subtle.importKey("raw", enc.encode(env.TOKEN_ENC_KEY), "HKDF", false, ["deriveKey"]);
+  const secret = cfg(env, "TOKEN_ENC_KEY");
+  if (secret.length < 32) throw new Error("TOKEN_ENC_KEY is not set");
+  const base = await crypto.subtle.importKey("raw", enc.encode(secret), "HKDF", false, ["deriveKey"]);
   return crypto.subtle.deriveKey(
     { name: "HKDF", hash: "SHA-256", salt: enc.encode("minutesregained-connect"), info: enc.encode("refresh-tokens-v1") },
     base, { name: "AES-GCM", length: 256 }, false, ["encrypt", "decrypt"]
@@ -152,7 +157,7 @@ export async function connectLanding(env, url) {
   if (!(await findInvite(env, token))) return expired();
   const link = (p) => `/api/connect/start?i=${encodeURIComponent(token)}&p=${p}`;
   // Only providers whose app settings are in place get a button.
-  const ready = (p) => env[PROVIDERS[p].idKey] && env[PROVIDERS[p].secretKey];
+  const ready = (p) => cfg(env, PROVIDERS[p].idKey) && cfg(env, PROVIDERS[p].secretKey);
   const buttons = [
     ready("google") ? `<a class="btn" href="${link("google")}">Gmail or Google Workspace</a>` : "",
     ready("microsoft") ? `<a class="btn ms" href="${link("microsoft")}">Outlook or Microsoft 365</a>` : "",
@@ -172,14 +177,14 @@ export async function connectStart(env, url) {
   const provider = PROVIDERS[url.searchParams.get("p")];
   const inv = await findInvite(env, url.searchParams.get("i"));
   if (!inv || !provider) return expired();
-  if (!env[provider.idKey] || !env[provider.secretKey]) {
+  if (!cfg(env, provider.idKey) || !cfg(env, provider.secretKey)) {
     return page("Not ready yet", `<h1>Not ready yet</h1><p>This connection isn't switched on yet. Please email support@minutesregained.com.</p>`, 503);
   }
   const state = randomToken(24), verifier = randomToken(48);
   await env.DB.prepare(`INSERT INTO oauth_states (state, invite_id, provider, verifier, created_at) VALUES (?, ?, ?, ?, ?)`)
     .bind(state, inv.id, url.searchParams.get("p"), verifier, new Date().toISOString()).run();
   const params = new URLSearchParams({
-    client_id: env[provider.idKey],
+    client_id: cfg(env, provider.idKey),
     redirect_uri: `${url.origin}/api/connect/${url.searchParams.get("p")}/callback`,
     response_type: "code",
     scope: provider.scope,
@@ -209,7 +214,7 @@ export async function connectCallback(env, url, providerId) {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: new URLSearchParams({
-      client_id: env[provider.idKey], client_secret: env[provider.secretKey],
+      client_id: cfg(env, provider.idKey), client_secret: cfg(env, provider.secretKey),
       code: url.searchParams.get("code") || "", code_verifier: row.verifier,
       grant_type: "authorization_code", redirect_uri: `${url.origin}/api/connect/${providerId}/callback`,
     }),
@@ -251,7 +256,7 @@ async function accessToken(env, conn) {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: new URLSearchParams({
-      client_id: env[provider.idKey], client_secret: env[provider.secretKey],
+      client_id: cfg(env, provider.idKey), client_secret: cfg(env, provider.secretKey),
       refresh_token: await unseal(env, conn.enc_refresh_token), grant_type: "refresh_token",
       ...(conn.provider === "microsoft" ? { scope: provider.scope } : {}),
     }),
