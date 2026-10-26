@@ -101,6 +101,12 @@ export default {
           await sendDailyBrief(env);
           return json({ sent: true });
         }
+        // Which settings the live version can see: yes/no only, never values.
+        if (path === "/api/admin/config-check" && request.method === "GET") {
+          const keys = ["GOOGLE_CLIENT_ID", "GOOGLE_CLIENT_SECRET", "MICROSOFT_CLIENT_ID", "MICROSOFT_CLIENT_SECRET", "TOKEN_ENC_KEY",
+            "ANTHROPIC_API_KEY", "RESEND_API_KEY", "STRIPE_SECRET_KEY", "HEARTBEAT_TOKEN", "OPS_TOKEN"];
+          return json(Object.fromEntries(keys.map((k) => [k, !!(env[k] && String(env[k]).trim())])));
+        }
         if (path === "/api/admin/connect-invite" && request.method === "POST") {
           const body = (await readJson(request)) || {};
           if (!body.agentId && !body.label) return json({ error: "missing_label_or_agentId" }, 400);
