@@ -38,7 +38,7 @@
         'Source tagged, so you can see which ads and listings actually produce work',
         'Duplicate check against existing customers before a second record is created'
       ],
-      owner: 'Reply to it. A holding reply has already gone out, and a drafted answer waits for your OK.'
+      owner: 'Approve the drafted reply with one tap, or edit it first. A holding reply has already gone out.'
     },
     appts: {
       title: 'Appointments',
