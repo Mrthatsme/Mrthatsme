@@ -16,6 +16,7 @@ import { sendRenewalNotices } from "./renewals.js";
 import { recordHeartbeat } from "./health.js";
 import { createClientAgent, authenticateClientAgent, draftForClient, logClientAgentEvent } from "./clientagent.js";
 import { createConnectInvite, connectLanding, connectStart, connectCallback, pollConnectedInboxes } from "./connect.js";
+import { intakePage, handleIntake, voicePage, handleVoice, createClientLinks } from "./clientpages.js";
 
 const JSON_HEADERS = { "Content-Type": "application/json; charset=utf-8" };
 
@@ -71,6 +72,14 @@ export default {
         const body = (await readJson(request)) || {};
         return (await recordHeartbeat(env, body.agent, body.detail)) ? json({ ok: true }) : json({ error: "unknown_agent" }, 400);
       }
+      const fm = path.match(/^\/f\/([a-z0-9-]{3,40})\/?$/);
+      if (fm && request.method === "GET") return await intakePage(env, fm[1], url);
+      const im = path.match(/^\/api\/intake\/([a-z0-9-]{3,40})$/);
+      if (im && request.method === "POST") return await handleIntake(request, env, im[1], ctx);
+      const vm = path.match(/^\/v\/([A-Za-z0-9_-]{20,64})\/?$/);
+      if (vm && request.method === "GET") return await voicePage(env, vm[1]);
+      const vu = path.match(/^\/api\/voice\/([A-Za-z0-9_-]{20,64})$/);
+      if (vu && request.method === "POST") return await handleVoice(request, env, vu[1], ctx);
       if (path === "/api/connect" && request.method === "GET") return await connectLanding(env, url);
       if (path === "/api/connect/start" && request.method === "GET") return await connectStart(env, url);
       const cb = path.match(/^\/api\/connect\/(google|microsoft)\/callback$/);
@@ -112,6 +121,12 @@ export default {
           const body = (await readJson(request)) || {};
           if (!body.agentId && !body.label) return json({ error: "missing_label_or_agentId" }, 400);
           return json(await createConnectInvite(env, `${url.protocol}//${url.host}`, body));
+        }
+        if (path === "/api/admin/client-links" && request.method === "POST") {
+          const body = (await readJson(request)) || {};
+          if (!body.agentId) return json({ error: "missing_agentId" }, 400);
+          const out = await createClientLinks(env, `${url.protocol}//${url.host}`, body);
+          return json(out, out.error ? 400 : 200);
         }
         if (path === "/api/admin/client-agent-status" && request.method === "POST") {
           const body = (await readJson(request)) || {};

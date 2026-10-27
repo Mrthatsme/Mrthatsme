@@ -7,7 +7,7 @@ compatibility_date = "2026-10-06"
 [assets]
 directory = "./public"
 binding = "ASSETS"
-run_worker_first = ["/api/*", "/demo-video.mp4"]
+run_worker_first = ["/api/*", "/demo-video.mp4", "/f/*", "/v/*"]
 
 # Brief to support@ every day at 8 AM and 8 PM Eastern. Fires at both
 # candidate UTC hours; the Worker sends only the one that is 8 o'clock
@@ -26,6 +26,10 @@ crons = ["0 0,1,12,13 * * *", "*/10 * * * *"]
 # the lead record (never lost), it just won't reach an inbox yet.
 NOTIFY_EMAIL = "support@minutesregained.com"
 TRIAGE_DAILY_CAP = "50"
+
+# Speech-to-text for client voice notes (src/clientpages.js).
+[ai]
+binding = "AI"
 
 [[d1_databases]]
 binding = "DB"
