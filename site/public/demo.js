@@ -22,7 +22,7 @@
   ];
 
   var activity = [
-    { t: 'Answered a 7:12pm emergency text', s: 'Replied in 40 seconds with a tonight ETA and dispatched the on-call tech.', m: '7:12pm', hold: false },
+    { t: 'Answered a 7:12pm emergency text', s: 'Holding reply in 40 seconds. Owner tapped OK at 7:15pm; tonight ETA sent, on-call tech dispatched.', m: '7:12pm', hold: false },
     { t: 'Deposit invoice held for approval', s: '$1,850 on the Hanley repipe. Money-moving steps wait for a yes.', m: '4:38pm', hold: true },
     { t: 'Rescheduled Tuesday 9am for a parts delay', s: 'Moved two jobs, notified both customers and the tech, updated the calendar.', m: '2:05pm', hold: false },
     { t: 'Sent review request on a closed job', s: 'Three days after the water heater swap, with the photos attached.', m: '11:20am', hold: false }
@@ -111,13 +111,14 @@
       steps: [
         { what: 'Inquiry captured', how: 'Text parsed into a record: name, number, address, and the problem described.', min: 2 },
         { what: 'CRM record created', how: 'Checked against existing customers, flagged urgent on the shut-off valve detail.', min: 3 },
-        { what: 'Customer response sent', how: 'Replied in 40 seconds with a tonight ETA. She does not wait until morning.', min: 4 },
-        { what: 'Owner notified', how: 'One text: name, address, job type, and that it has already been answered.', min: 1 },
-        { what: 'Follow-up task created', how: 'Dated for the morning after, to confirm the repair held.', min: 2 },
-        { what: 'On-call tech dispatched', how: 'Checked who was on call, sent the address, confirmed an 8:40pm arrival window.', min: 6 }
+        { what: 'Holding reply sent', how: 'In 40 seconds: "Got it, we\u2019re reaching the owner now." It promises nothing, and it is the only thing that goes out on its own.', min: 1 },
+        { what: 'Owner alerted right away', how: 'Marked urgent: name, address and the problem, so it is not waiting for the evening brief.', min: 1 },
+        { what: 'Reply drafted, waiting for your OK', how: 'A tonight ETA, written in your voice. One tap sends it; you can edit it first.', min: 4 },
+        { what: 'On-call tech lined up', how: 'Checked who is on call and prepared the dispatch with the address and an 8:40pm window. It goes out when you approve.', min: 6 },
+        { what: 'Follow-up task created', how: 'Dated for the morning after, to confirm the repair held.', min: 2 }
       ],
-      approvals: 0,
-      log: { t: 'Answered an after-hours emergency', s: 'Replied in 40 seconds, dispatched the on-call tech for 8:40pm.', hold: false }
+      approvals: 1,
+      log: { t: 'Emergency text picked up at 7:12pm', s: 'Holding reply sent in 40 seconds. ETA reply and tech dispatch ready for your one-tap OK.', hold: true }
     },
     {
       id: 'books',
@@ -415,7 +416,7 @@
       { key: 'completed', n: 'Completed', c: 27 }
     ];
     activity = [
-      { t: 'Answered a 7:12pm emergency text', s: 'Replied in 40 seconds with a tonight ETA and dispatched the on-call tech.', m: '7:12pm', hold: false },
+      { t: 'Answered a 7:12pm emergency text', s: 'Holding reply in 40 seconds. Owner tapped OK at 7:15pm; tonight ETA sent, on-call tech dispatched.', m: '7:12pm', hold: false },
       { t: 'Deposit invoice held for approval', s: '$1,850 on the Hanley repipe. Money-moving steps wait for a yes.', m: '4:38pm', hold: true },
       { t: 'Rescheduled Tuesday 9am for a parts delay', s: 'Moved two jobs, notified both customers and the tech, updated the calendar.', m: '2:05pm', hold: false },
       { t: 'Sent review request on a closed job', s: 'Three days after the water heater swap, with the photos attached.', m: '11:20am', hold: false }
