@@ -8,7 +8,7 @@
 // even by mistake; Google has no draft-only permission, so there the fence is
 // that this file never calls a send endpoint.
 
-import { createClientAgent, draftForClient, logClientAgentEvent, ensureClientAgentTables } from "./clientagent.js";
+import { createClientAgent, draftForClient, logClientAgentEvent, ensureClientAgentTables, outsideBusinessHours, afterHoursHoldingText } from "./clientagent.js";
 import { sendNotificationEmail } from "./email.js";
 
 // A customer cancelling or rescheduling, or an emergency, is time-critical:
@@ -17,14 +17,52 @@ import { sendNotificationEmail } from "./email.js";
 async function alertOwner(env, conn, profile, from, subject, out) {
   const who = from.replace(/<.*>/, "").trim() || "a customer";
   const routed = out.routedTo && out.routedTo.length ? `Sent to ${out.routedTo.join(", ")} (on call) right away.` : "Nobody is on call right now, so this needs you.";
+  const holdingNote = out.autoHolding
+    ? `Because it came in outside your business hours, the customer was sent this automatically:\n\n${out.autoHolding}\n\nAny arrival time is still yours to send.`
+    : "Nothing has been promised to the customer. A short holding reply is waiting in your Drafts; check it and send it.";
   await sendNotificationEmail(env, {
     to: conn.email,
     replyTo: "support@minutesregained.com",
     subject: out.emergency ? `Emergency: ${who}. ${out.routedTo && out.routedTo.length ? "On-call tech alerted" : "Nobody on call"}` : `Needs you now: ${who} wants to cancel or change something`,
     text: out.emergency
-      ? `${out.reason || ""}\n\n${out.emergency_brief || ""}\n\n${routed}\n\nTheir email: "${subject}"\n\nNothing has been promised to the customer. A short holding reply is waiting in your Drafts; check it and send it.\n\n-- Minutes Regained, for ${profile.business || "your business"}`
+      ? `${out.reason || ""}\n\n${out.emergency_brief || ""}\n\n${routed}\n\nTheir email: "${subject}"\n\n${holdingNote}\n\n-- Minutes Regained, for ${profile.business || "your business"}`
       : `${out.reason || ""}\n\nTheir email: "${subject}"\n\nNothing has been confirmed, cancelled or changed. A short holding reply is waiting in your Drafts; check it, send it, then decide.\n\n-- Minutes Regained, for ${profile.business || "your business"}`,
   }).catch((err) => console.error("owner alert failed", err));
+}
+
+// Outside the client's business hours an emergency gets the fixed holding
+// note right away. It goes from our address under the business's name, with
+// replies going to the shop's inbox, so we still never send as the client.
+// At most one per customer every 6 hours. Returns the text sent, or null.
+const AUTO_HOLDING_GAP_HOURS = 6;
+export async function sendAfterHoursHolding(env, conn, profile, { replyTo, subject, messageId, out }) {
+  if (!out.emergency || profile.afterHoursAutoReply === false || !outsideBusinessHours(profile)) return null;
+  const m = String(replyTo || "").match(/<([^>]+)>/);
+  const to = (m ? m[1] : String(replyTo || "")).trim().toLowerCase();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(to) || sameAddress(to, conn.email)) return null;
+  await env.DB.prepare(`CREATE TABLE IF NOT EXISTS auto_holding_sent (
+    agent_id TEXT NOT NULL, recipient TEXT NOT NULL, sent_at TEXT NOT NULL)`).run();
+  const since = new Date(Date.now() - AUTO_HOLDING_GAP_HOURS * 3600000).toISOString();
+  if (await env.DB.prepare(`SELECT 1 FROM auto_holding_sent WHERE agent_id = ? AND recipient = ? AND sent_at >= ?`)
+    .bind(conn.agent_id, to, since).first()) return null;
+  const text = afterHoursHoldingText(profile, out.routedTo);
+  try {
+    await sendNotificationEmail(env, {
+      to,
+      fromName: `${profile.business || "Our team"} (assistant)`,
+      replyTo: conn.email,
+      subject: /^re:/i.test(subject || "") ? subject : `Re: ${subject || "your message"}`,
+      text,
+      headers: messageId ? { "In-Reply-To": messageId, References: messageId } : undefined,
+    });
+  } catch (err) {
+    console.error("after-hours holding reply failed", err);
+    return null;
+  }
+  await env.DB.prepare(`INSERT INTO auto_holding_sent (agent_id, recipient, sent_at) VALUES (?, ?, ?)`)
+    .bind(conn.agent_id, to, new Date().toISOString()).run();
+  await logClientAgentEvent(env, conn.agent_id, "auto_holding", `After-hours holding note sent to ${to} for "${subject}".`);
+  return text;
 }
 
 const PROVIDERS = {
@@ -363,7 +401,8 @@ async function pollGmail(env, conn, token) {
     }
     const out = await draftForClient(env, agentRow(conn), { from, subject, body: gmailText(msg.payload) });
     labelIds = labelIds || await gmailLabelIds(token);
-    const replyText = out.action === "draft" ? out.draft : out.urgent ? out.holding : null;
+    out.autoHolding = await sendAfterHoursHolding(env, conn, profile, { replyTo: h["reply-to"] || from, subject, messageId: h["message-id"], out });
+    const replyText = out.action === "draft" ? out.draft : out.urgent && !out.autoHolding ? out.holding : null;
     if (replyText) {
       const raw = [
         `To: ${h["reply-to"] || from}`,
@@ -399,7 +438,7 @@ async function pollOutlook(env, conn, token) {
   const profile = JSON.parse(conn.profile || "{}");
   const since = new Date(conn.connected_at).toISOString();
   const list = await graph(token,
-    `mailFolders/inbox/messages?$filter=receivedDateTime ge ${since}&$orderby=receivedDateTime desc&$top=${MAX_PER_RUN}&$select=id,subject,from,replyTo,body,categories,isDraft`);
+    `mailFolders/inbox/messages?$filter=receivedDateTime ge ${since}&$orderby=receivedDateTime desc&$top=${MAX_PER_RUN}&$select=id,subject,from,replyTo,body,categories,isDraft,internetMessageId`);
   let handled = 0;
   for (const m of list.value || []) {
     if (m.isDraft || await alreadyDone(env, conn, m.id)) continue;
@@ -410,7 +449,9 @@ async function pollOutlook(env, conn, token) {
     }
     const out = await draftForClient(env, agentRow(conn), { from, subject: m.subject || "", body: (m.body && m.body.content) || "" });
     const cats = new Set(m.categories || []);
-    const replyText = out.action === "draft" ? out.draft : out.urgent ? out.holding : null;
+    const replyAddr = m.replyTo && m.replyTo[0] && m.replyTo[0].emailAddress ? m.replyTo[0].emailAddress.address : fromAddr;
+    out.autoHolding = await sendAfterHoursHolding(env, conn, profile, { replyTo: replyAddr, subject: m.subject || "", messageId: m.internetMessageId || null, out });
+    const replyText = out.action === "draft" ? out.draft : out.urgent && !out.autoHolding ? out.holding : null;
     if (replyText) {
       await graph(token, `messages/${m.id}/createReply`, { method: "POST", body: JSON.stringify({ comment: replyText }) }); // saved in Drafts, not sent
     }

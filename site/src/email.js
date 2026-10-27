@@ -5,8 +5,11 @@
 const RESEND_API = "https://api.resend.com/emails";
 
 const FROM_ADDRESS = "Minutes Regained <notifications@minutesregained.com>";
+const FROM_EMAIL = "notifications@minutesregained.com";
 
-export async function sendNotificationEmail(env, { to, subject, text, replyTo }) {
+// fromName shows a client's business as the sender name (the address stays
+// ours); headers carries threading headers such as In-Reply-To.
+export async function sendNotificationEmail(env, { to, subject, text, replyTo, fromName, headers }) {
   const destination = to || env.NOTIFY_EMAIL;
   if (!env.RESEND_API_KEY || !destination) {
     throw new Error("email not configured: missing RESEND_API_KEY or a destination address");
@@ -18,11 +21,12 @@ export async function sendNotificationEmail(env, { to, subject, text, replyTo })
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      from: FROM_ADDRESS,
+      from: fromName ? `${fromName.replace(/[<>"\r\n]/g, "")} <${FROM_EMAIL}>` : FROM_ADDRESS,
       to: [destination],
       subject,
       text,
       ...(replyTo ? { reply_to: replyTo } : {}),
+      ...(headers ? { headers } : {}),
     }),
   });
   if (!res.ok) {

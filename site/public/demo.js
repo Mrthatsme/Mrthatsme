@@ -111,7 +111,7 @@
       steps: [
         { what: 'Inquiry captured', how: 'Text parsed into a record: name, number, address, and the problem described.', min: 2 },
         { what: 'CRM record created', how: 'Checked against existing customers, flagged urgent on the shut-off valve detail.', min: 3 },
-        { what: 'Holding reply sent', how: 'In 40 seconds: "Got it, we\u2019re reaching the owner now." It promises nothing, and it is the only thing that goes out on its own.', min: 1 },
+        { what: 'Holding reply sent', how: 'It is after your business hours, so in 40 seconds the customer gets a short note from your assistant: the on-call team has been alerted. It promises no time, and it is the only thing that goes out on its own.', min: 1 },
         { what: 'Owner alerted right away', how: 'Marked urgent: name, address, the problem and who was sent, so it is not waiting for the evening brief.', min: 1 },
         { what: 'On-call tech alerted', how: 'Mike is on call tonight, so he got the name, address, callback number and the problem right away. Your promise: a tech within 2 hours.', min: 6 },
         { what: 'Reply drafted, waiting for your OK', how: 'A tonight ETA, written in your voice. One tap sends it; you can edit it first.', min: 4 },

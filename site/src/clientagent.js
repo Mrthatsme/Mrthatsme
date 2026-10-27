@@ -181,6 +181,31 @@ export async function draftForClient(env, agent, { from, subject, body }) {
 // { name, email, days: "daily" | "weekdays" | "weekends" | [0-6], from: "17:00", to: "08:00" }.
 // A shift that runs past midnight belongs to the day it started.
 export function onCallNow(profile, now = new Date()) {
+  return (profile.onCall || []).filter((c) => c.email && inSchedule(c, profile, now));
+}
+
+// Business hours use the same shape as an on-call entry, one or several.
+// With none set we never assume the business is closed.
+export function outsideBusinessHours(profile, now = new Date()) {
+  const hours = [].concat(profile.businessHours || []);
+  return hours.length > 0 && !hours.some((h) => inSchedule(h, profile, now));
+}
+
+// The one message the system sends to a customer on its own (Security Clauses
+// 6.6): fixed wording, no AI text, no arrival time, and it says who sent it.
+export function afterHoursHoldingText(profile, routedTo) {
+  const business = profile.business || "our team";
+  return [
+    `Thank you for contacting ${business}. We received your message outside our regular hours.`,
+    routedTo && routedTo.length
+      ? `Our on-call team has been alerted and will contact you as soon as possible.`
+      : `The owner has been alerted and will contact you as soon as possible.`,
+    ``,
+    `-- ${business}'s assistant (sent automatically)`,
+  ].join("\n");
+}
+
+function inSchedule(c, profile, now) {
   const tz = profile.timezone || "America/New_York";
   const parts = Object.fromEntries(new Intl.DateTimeFormat("en-US", {
     timeZone: tz, weekday: "short", hour: "2-digit", minute: "2-digit", hourCycle: "h23",
@@ -190,13 +215,10 @@ export function onCallNow(profile, now = new Date()) {
   const toMins = (t) => { const [h, m] = String(t || "0:0").split(":").map(Number); return h * 60 + (m || 0); };
   const onDay = (days, d) => days === "weekdays" ? d >= 1 && d <= 5 : days === "weekends" ? d === 0 || d === 6
     : Array.isArray(days) ? days.includes(d) : true;
-  return (profile.onCall || []).filter((c) => {
-    if (!c.email) return false;
-    const from = toMins(c.from), to = toMins(c.to);
-    if (from === to) return onDay(c.days, day);
-    if (from < to) return onDay(c.days, day) && mins >= from && mins < to;
-    return (onDay(c.days, day) && mins >= from) || (onDay(c.days, (day + 6) % 7) && mins < to);
-  });
+  const from = toMins(c.from), to = toMins(c.to);
+  if (from === to) return onDay(c.days, day);
+  if (from < to) return onDay(c.days, day) && mins >= from && mins < to;
+  return (onDay(c.days, day) && mins >= from) || (onDay(c.days, (day + 6) % 7) && mins < to);
 }
 
 // An emergency goes straight to whoever the client has on call, so a tech can
