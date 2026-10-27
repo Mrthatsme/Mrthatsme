@@ -239,7 +239,7 @@ export function outsideBusinessHours(profile, now = new Date()) {
 export function afterHoursHoldingText(profile, routedTo) {
   const business = profile.business || "our team";
   return [
-    `Thank you for contacting ${business}. We received your message outside our regular hours.`,
+    `Thank you for contacting ${business.replace(/\.$/, "")}. We received your message outside our regular hours.`,
     routedTo && routedTo.length
       ? `Our on-call team has been alerted and will contact you as soon as possible.`
       : `The owner has been alerted and will contact you as soon as possible.`,

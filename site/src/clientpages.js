@@ -51,7 +51,7 @@ button:disabled{opacity:.55}.rec{background:#C2500F}.rec.on{background:#B3261E}.
   return new Response(html, {
     headers: {
       "Content-Type": "text/html; charset=utf-8",
-      "Content-Security-Policy": "default-src 'none'; script-src 'self'; connect-src 'self'; style-src 'unsafe-inline'; media-src blob:; base-uri 'none'; form-action 'none'; frame-ancestors 'none'",
+      "Content-Security-Policy": "default-src 'none'; script-src 'self' https://static.cloudflareinsights.com; connect-src 'self' https://cloudflareinsights.com; style-src 'unsafe-inline'; media-src blob:; base-uri 'none'; form-action 'none'; frame-ancestors 'none'",
       "Permissions-Policy": mic ? "microphone=(self), camera=(), geolocation=()" : "microphone=(), camera=(), geolocation=()",
       "Referrer-Policy": "no-referrer",
       "X-Content-Type-Options": "nosniff",
@@ -148,7 +148,7 @@ async function processIntake(env, agent, lead) {
     const owner = await ownerEmail(env, agent, profile);
     ack = out.emergency && outsideBusinessHours(profile)
       ? afterHoursHoldingText(profile, out.routedTo)
-      : `Thank you for contacting ${business}. We received your request and will be in touch soon.\n\n-- ${business}'s assistant (sent automatically)`;
+      : `Thank you for contacting ${business.replace(/\.$/, "")}. We received your request and will be in touch soon.\n\n-- ${business}'s assistant (sent automatically)`;
     await sendNotificationEmail(env, {
       to: lead.email, fromName: `${business} (assistant)`, replyTo: owner,
       subject: `We received your request`, text: ack,
