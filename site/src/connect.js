@@ -11,14 +11,19 @@
 import { createClientAgent, draftForClient, logClientAgentEvent, ensureClientAgentTables } from "./clientagent.js";
 import { sendNotificationEmail } from "./email.js";
 
-// A customer cancelling or rescheduling is time-critical: the owner gets an
-// alert in their own inbox right away, with a holding reply ready to send.
+// A customer cancelling or rescheduling, or an emergency, is time-critical:
+// the owner gets an alert in their own inbox right away, with a holding reply
+// ready to send. Emergencies also go to the client's on-call staff (clientagent.js).
 async function alertOwner(env, conn, profile, from, subject, out) {
+  const who = from.replace(/<.*>/, "").trim() || "a customer";
+  const routed = out.routedTo && out.routedTo.length ? `Sent to ${out.routedTo.join(", ")} (on call) right away.` : "Nobody is on call right now, so this needs you.";
   await sendNotificationEmail(env, {
     to: conn.email,
     replyTo: "support@minutesregained.com",
-    subject: `Needs you now: ${from.replace(/<.*>/, "").trim() || "a customer"} wants to cancel or change something`,
-    text: `${out.reason || ""}\n\nTheir email: "${subject}"\n\nNothing has been confirmed, cancelled or changed. A short holding reply is waiting in your Drafts; check it, send it, then decide.\n\n-- Minutes Regained, for ${profile.business || "your business"}`,
+    subject: out.emergency ? `Emergency: ${who}. ${out.routedTo && out.routedTo.length ? "On-call tech alerted" : "Nobody on call"}` : `Needs you now: ${who} wants to cancel or change something`,
+    text: out.emergency
+      ? `${out.reason || ""}\n\n${out.emergency_brief || ""}\n\n${routed}\n\nTheir email: "${subject}"\n\nNothing has been promised to the customer. A short holding reply is waiting in your Drafts; check it and send it.\n\n-- Minutes Regained, for ${profile.business || "your business"}`
+      : `${out.reason || ""}\n\nTheir email: "${subject}"\n\nNothing has been confirmed, cancelled or changed. A short holding reply is waiting in your Drafts; check it, send it, then decide.\n\n-- Minutes Regained, for ${profile.business || "your business"}`,
   }).catch((err) => console.error("owner alert failed", err));
 }
 
