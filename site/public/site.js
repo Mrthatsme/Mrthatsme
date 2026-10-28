@@ -75,7 +75,7 @@
   /* ---------- searchable FAQ (no model, no network) ---------- */
   var FAQ = [
     ["Do you need my password?",
-     "No. You add us the way you'd add a new employee: Gmail calls it \u201Cgrant access,\u201D and Google Calendar, your Google listing, Jobber, Housecall Pro, QuickBooks and Square each have a team or user page. You choose what we can see and remove us yourself in seconds. Your two-factor never leaves your phone. The steps for each tool are at minutesregained.com/access."],
+     "Usually not. You add us the way you'd add a new employee: Gmail calls it \u201Cgrant access,\u201D and Google Calendar, your Google listing, Jobber, Housecall Pro, QuickBooks and Square each have a team or user page. You choose what we can see and remove us yourself in seconds. If one of your tools has no way to add a user, you can share that one login through 1Password instead, from your own vault or into a vault we keep for you alone that you can see and empty at any time. A person uses it, never the automated system. We never accept a bank, card or payroll login, or the login to your main email account, and you change any shared password when we part ways. The steps are at minutesregained.com/access."],
     ["Can it spend my money or run a card?",
      "No. Never. Not at any setting and not if you ask. There is no banking credential, no payment login and no transfer tool anywhere in the system. When a card needs charging, you are told and you charge it. Every chargeback and refund stays yours, because we were never near it."],
     ["Can it send quotes or emails without asking me?",

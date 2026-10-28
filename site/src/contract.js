@@ -3,7 +3,7 @@
 // CONTRACT_VERSION bumps whenever the wording changes — old agreements keep
 // the version + hash they actually signed.
 
-export const CONTRACT_VERSION = "2026-10-28.1";
+export const CONTRACT_VERSION = "2026-10-28.2";
 
 const usd = (cents) => `$${(cents / 100).toLocaleString("en-US", { maximumFractionDigits: 0 })}`;
 
@@ -80,11 +80,20 @@ ${included}
    Client's own tools. Every charge, invoice, and payment is issued and
    collected by Client directly, through Client's own systems.
 
-4. Access and revocation. Client grants access only through the delegated-
-   access mechanisms of the platforms Client already uses (e.g. Google
-   "grant access"). Client may revoke this access at
+4. Access and revocation. Client grants access through the user, team-
+   member or delegated-access features of the platforms Client already uses
+   (e.g. adding Minutes Regained as a team member, or Google "grant
+   access"). Where a platform has no such feature, Client may instead share
+   that platform's login through a password manager, either from Client's
+   own vault or into a vault Minutes Regained keeps for Client alone, which
+   Client can view and remove access from at any time. A shared login is
+   used only by a person at Minutes Regained, never by its automated
+   systems, and is never a banking, card or payroll login or the login to
+   Client's primary email account. Client may revoke any access at
    any time, directly, without needing Minutes Regained's involvement. Upon
-   cancellation, Minutes Regained will confirm in writing within five (5)
+   cancellation, Minutes Regained will delete every shared login it holds
+   for Client, will list them so Client can change those passwords, and
+   will confirm in writing within five (5)
    business days that no access and no copy of Client's data remains,
    beyond what tax and business recordkeeping requires. Automations built
    for Client live in Client's own accounts and keep running after
