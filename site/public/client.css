@@ -17,3 +17,9 @@
 .cc-help{padding:0 0 70px;max-width:760px}
 .cc-help p{color:var(--muted);margin-top:12px}
 @media (max-width:760px){ .cc-grid{grid-template-columns:1fr} .cc-head{padding-top:36px} }
+.acc-list{padding:0 0 48px;max-width:860px}
+.acc-list .cc-small{margin:10px 0 18px}
+.acc-list ol{margin:14px 0 0;padding-left:22px;display:grid;gap:8px;color:var(--muted);max-width:68ch}
+.acc-list ol b,.acc-list details p b{color:var(--ink);font-weight:600}
+.cc-grid-3{grid-template-columns:repeat(3,1fr)}
+@media (max-width:960px){ .cc-grid-3{grid-template-columns:1fr} }

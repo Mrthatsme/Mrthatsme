@@ -5,7 +5,7 @@
 
 export const FAQ = [
   ["Do you need my password?",
-   "No, and we refuse it if offered. Every system you use can grant access without handing over the account — Gmail calls it “grant access to your account.” You grant it, and you can take it back yourself in about four seconds. Your two-factor never leaves your phone."],
+   "No. You add us the way you'd add a new employee: Gmail calls it “grant access,” and Google Calendar, your Google listing, Jobber, Housecall Pro, QuickBooks and Square each have a team or user page. You choose what we can see and remove us yourself in seconds. Your two-factor never leaves your phone. The steps for each tool are at minutesregained.com/access."],
   ["Can it spend my money or run a card?",
    "No. Never. Not at any setting and not if you ask. There is no banking credential, no payment login and no transfer tool anywhere in the system. When a card needs charging, you are told and you charge it. Every chargeback and refund stays yours, because we were never near it."],
   ["Can it send quotes or emails without asking me?",
@@ -21,7 +21,7 @@ export const FAQ = [
   ["Can bots or spam run up costs on my website?",
    "No. The question box on your site answers from your approved answers with no AI behind it, so a bot asking a thousand questions costs nothing. Contact forms screen out bots with a hidden trap field, a too-fast check and a limit per sender, and every block is counted in your daily brief. Your bill is flat either way."],
   ["What stops someone running up your costs — or mine?",
-   "Your bill can't move. It's a flat fee with no usage meter and no overage line, so nobody else's behaviour becomes a charge to you. Each client also runs under its own ceiling, so one busy month can't degrade anyone else."],
+   "Your monthly fee is flat. The one thing that can add to it is your own voice notes past your plan's monthly allowance, at $10 for each extra 100, and you're emailed at 80% and again when you go over. Bots, spam and other clients can't become a charge to you. Each client also runs under its own ceiling, so one busy month can't degrade anyone else."],
   ["Is my information mixed in with other clients?",
    "No. Each client's data sits in its own space and there is no path from one to another. Your information is used to do your work. It is not pooled and it is not used to train anything."],
   ["What if someone tries to trick it?",
