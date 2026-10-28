@@ -12,6 +12,7 @@
 
 import { draftForClient, voiceNoteForClient, logClientAgentEvent, ensureClientAgentTables, outsideBusinessHours, afterHoursHoldingText } from "./clientagent.js";
 import { sendNotificationEmail } from "./email.js";
+import { afterVoiceNote } from "./usage.js";
 import { screenSubmission, logSecurityEvent } from "./protect.js";
 
 const STT_MODEL = "@cf/openai/whisper-large-v3-turbo";
@@ -256,12 +257,13 @@ async function processVoice(env, agent, audio) {
     text: [...sections.filter(Boolean), `WHAT YOU SAID\n${transcript}`, `[GAP] marks anything you didn't say. Nothing here was sent to a customer.\n\n-- Minutes Regained, for ${profile.business || "your business"}`].join("\n\n"),
   });
   await logClientAgentEvent(env, agent.id, "voice_note", `Voice note written up: ${(note && note.title) || "transcript only"}.`);
+  await afterVoiceNote(env, agent, profile, owner);
 }
 
 // ------------------------------------------------------------------ admin --
 
 // Gives a client their intake form address and a voice-note link.
-export async function createClientLinks(env, origin, { agentId, formSlug, ownerEmail: oe }) {
+export async function createClientLinks(env, origin, { agentId, formSlug, ownerEmail: oe, clientId, plan, billing }) {
   await ensureTables(env);
   const agent = await env.DB.prepare(`SELECT * FROM client_agents WHERE id = ?`).bind(agentId).first();
   if (!agent) return { error: "agent_not_found" };
@@ -273,6 +275,10 @@ export async function createClientLinks(env, origin, { agentId, formSlug, ownerE
     profile.formSlug = formSlug;
   }
   if (oe) profile.ownerEmail = oe;
+  // Ties the agent to its paying client, for the voice-note allowance and billing.
+  if (clientId) profile.clientId = clientId;
+  if (plan) profile.plan = plan;
+  if (billing) profile.billing = billing;
   await env.DB.prepare(`UPDATE client_agents SET profile = ? WHERE id = ?`).bind(JSON.stringify(profile), agentId).run();
   const token = await createVoiceLink(env, agentId);
   return {

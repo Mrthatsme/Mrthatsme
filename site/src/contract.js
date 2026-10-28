@@ -3,7 +3,7 @@
 // CONTRACT_VERSION bumps whenever the wording changes — old agreements keep
 // the version + hash they actually signed.
 
-export const CONTRACT_VERSION = "2026-10-26.1";
+export const CONTRACT_VERSION = "2026-10-28.1";
 
 const usd = (cents) => `$${(cents / 100).toLocaleString("en-US", { maximumFractionDigits: 0 })}`;
 
@@ -43,6 +43,7 @@ card on file via Stripe. Month to month.`;
     `Additional hours only with Client's prior written approval, at $${plan.extraHourly}/hour`,
     `Software used to serve Client included, up to $${plan.softwareAllowance}/month`,
     `${plan.inboxes} inbox${plan.inboxes === 1 ? "" : "es"} managed`,
+    `${plan.voiceNotes} voice notes per month written up; beyond that, $10 for each additional 100 (or part of 100), added to the next monthly invoice (for a Retainer, invoiced separately for that month). Unused voice notes don't roll over`,
     plan.reviewCall,
     `Daily brief. Monitoring, repairs and the daily brief never use Client's hours`,
   ].filter(Boolean).map((l) => `  - ${l}`).join("\n");

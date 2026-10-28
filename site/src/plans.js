@@ -13,7 +13,7 @@ export const PLANS = {
     envKey: "STRIPE_PRICE_ESSENTIAL",
     retainerEnvKey: "STRIPE_PRICE_ESSENTIAL_RETAINER",
     automations: 3, hours: 10, rollover: "Unused hours roll over 1 month, up to 3",
-    extraHourly: 50, softwareAllowance: 50, inboxes: 1, reviewCall: null,
+    extraHourly: 50, softwareAllowance: 50, inboxes: 1, reviewCall: null, voiceNotes: 100,
   },
   business_support: {
     label: "Business Support",
@@ -22,7 +22,7 @@ export const PLANS = {
     envKey: "STRIPE_PRICE_BUSINESS_SUPPORT",
     retainerEnvKey: "STRIPE_PRICE_BUSINESS_SUPPORT_RETAINER",
     automations: 6, hours: 22, rollover: "Unused hours roll over 1 month, up to 5",
-    extraHourly: 45, softwareAllowance: 100, inboxes: 2, reviewCall: "30-minute monthly review call",
+    extraHourly: 45, softwareAllowance: 100, inboxes: 2, reviewCall: "30-minute monthly review call", voiceNotes: 250,
   },
   operations_plus: {
     label: "Operations+",
@@ -31,7 +31,7 @@ export const PLANS = {
     envKey: "STRIPE_PRICE_OPERATIONS_PLUS",
     retainerEnvKey: "STRIPE_PRICE_OPERATIONS_PLUS_RETAINER",
     automations: 12, hours: 40, rollover: "Unused hours roll over 1 month, up to 10",
-    extraHourly: 40, softwareAllowance: 150, inboxes: 4, reviewCall: "60-minute monthly review call",
+    extraHourly: 40, softwareAllowance: 150, inboxes: 4, reviewCall: "60-minute monthly review call", voiceNotes: 500,
   },
 };
 
@@ -45,6 +45,11 @@ export const FOUNDING_OFFER = {
   envKey: "STRIPE_PRICE_FOUNDING_OFFER",
   maxClients: 3,
 };
+
+// Voice notes beyond the plan's monthly allowance: $10 for each extra 100 or
+// part of 100. Monthly clients see it on their next invoice; Retainer clients
+// get a separate invoice for that month. Unused notes don't roll over.
+export const VOICE_OVERAGE = { blockSize: 100, blockCents: 1000 };
 
 export const BILLING_OPTIONS = ["monthly", "retainer"];
 

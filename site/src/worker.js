@@ -17,6 +17,7 @@ import { recordHeartbeat } from "./health.js";
 import { createClientAgent, authenticateClientAgent, draftForClient, logClientAgentEvent } from "./clientagent.js";
 import { createConnectInvite, connectLanding, connectStart, connectCallback, pollConnectedInboxes } from "./connect.js";
 import { intakePage, handleIntake, voicePage, handleVoice, createClientLinks } from "./clientpages.js";
+import { billVoiceOverages } from "./usage.js";
 
 const JSON_HEADERS = { "Content-Type": "application/json; charset=utf-8" };
 
@@ -128,6 +129,9 @@ export default {
           const out = await createClientLinks(env, `${url.protocol}//${url.host}`, body);
           return json(out, out.error ? 400 : 200);
         }
+        if (path === "/api/admin/bill-voice-overages" && request.method === "POST") {
+          return json({ report: await billVoiceOverages(env) });
+        }
         if (path === "/api/admin/client-agent-status" && request.method === "POST") {
           const body = (await readJson(request)) || {};
           if (!body.id || !["active", "retired"].includes(body.status)) return json({ error: "invalid", allowed: ["active", "retired"] }, 400);
@@ -168,6 +172,8 @@ export default {
     ctx.waitUntil(sendDailyBrief(env).catch((err) => console.error("daily brief failed", err)));
     if (at.getUTCHours() >= 12) {
       ctx.waitUntil(sendRenewalNotices(env).catch((err) => console.error("renewal notices failed", err)));
+      // On the 1st, bill last month's voice notes over each plan's allowance (once per client).
+      if (at.getUTCDate() === 1) ctx.waitUntil(billVoiceOverages(env, at).catch((err) => console.error("voice overage billing failed", err)));
     }
   },
 };
