@@ -63,7 +63,7 @@ Operations+: $1,500/month ($16,200/year on a 12-month Retainer, paid upfront; wo
 Voice notes over the monthly allowance: $10 per extra 100, added to the next invoice.
 Billing: pay monthly (billed each month on the sign-up date) and cancel with 30 days' notice, or save 10% with a 12-month Retainer paid upfront for the year, renewing yearly with a 30-day email notice; leave a Retainer early and the rest of the year is refunded, keeping only the 10% discount on months used. The founding offer is monthly only. The first month covers setup and isn't refundable once setup begins.
 Founding Client offer (first 3 clients only): Business Support (22 hours) at $450/month for the first 90 days, then $900/month. The founding offer is monthly billing only.
-What we automate: missed-call text-back, instant lead replies, quote follow-ups, appointment reminders, review requests, invoice reminders, daily brief.`;
+What we automate: website chat and social replies, instant lead replies, quote follow-ups, appointment reminders, review requests, invoice reminders, daily brief.`;
 
 export function faqAsText() {
   return FAQ.map(([q, a]) => `Q: ${q}\nA: ${a}`).join("\n\n");
