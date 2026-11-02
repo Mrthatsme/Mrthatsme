@@ -382,3 +382,4 @@ form.sign { display: grid; gap: 0.9rem; }
 @media (max-width: 1040px) { .tasks { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 720px) { .tasks, .never { grid-template-columns: 1fr; } .brief-card .row { grid-template-columns: 3rem minmax(0, 1fr); row-gap: 0.1rem; } .brief-card .row time { grid-row: span 2; } .brief-card .row > :nth-child(3) { grid-column: 2; } }
 .task .chip-status { justify-self: start; }
+.hero .who { margin-top: 1rem; max-width: 46ch; font-size: 0.98rem; color: var(--ink); font-weight: 500; }
