@@ -36,7 +36,7 @@
     ['Approved reply sent', function (t) { return 'Your wording · ' + t.reply + ' after it came in'; }],
     [function (t) { return t.route[0]; }, function (t) { return t.route[1]; }],
     ['Follow-ups lined up', function () { return 'Day 1, 3 and 7 by email, waiting for your OK'; }],
-    ["In tonight's brief", function () { return 'Waiting for you at 6:00 PM'; }]
+    ["In your next brief", function () { return 'Your brief lands at 6:00 PM each day'; }]
   ];
 
   var $ = function (id) { return document.getElementById(id); };
@@ -84,7 +84,7 @@
     fill.style.height = (upto <= 1 ? 0 : (upto - 1) / (STEPS.length - 1) * 100) + '%';
     $('mSteps').textContent = upto;
     $('mYou').textContent = upto >= 5 ? '1' : '0';
-    $('stSummary').textContent = 'Example for ' + t.label + ': ' + t.cust + ' writes "' + t.them + '" The approved reply goes out ' + t.reply + ' later, the lead is saved, ' + t.route[0].toLowerCase() + ', follow-ups are set and it shows up in tonight’s brief. One thing waits for you: OK the follow-ups.';
+    $('stSummary').textContent = 'Example for ' + t.label + ': ' + t.cust + ' writes "' + t.them + '" The approved reply goes out ' + t.reply + ' later, the lead is saved, ' + t.route[0].toLowerCase() + ', follow-ups are set and it shows up in your next daily brief. One thing waits for you: OK the follow-ups.';
   }
 
   function settle(t) {
@@ -143,27 +143,27 @@
 /* ---------- the five automations ---------- */
 (function () {
   var AUTOS = [
-    { name: 'Lead Catcher', status: ['live', 'Website chat: live today · Facebook & Instagram: coming soon'], short: 'Website chat and social messages answered in minutes',
+    { name: 'Lead Catcher', status: ['setup', 'Built during onboarding · Facebook & Instagram later'], short: 'Website chat answered in minutes',
       sum: 'Every message in your website chat gets a reply in minutes, from your approved answers. Facebook and Instagram inboxes are next. The lead lands in a simple CRM, and anything urgent goes straight to whoever is on call. Missed calls are logged at the top of your brief so you can call back.',
       strip: [['0:00', 'Message comes in', true], ['Minutes', 'Approved reply'], ['Day 1', 'Check-in'], ['Day 3', 'Email check-in'], ['Day 7', 'Last email check-in']],
       quote: "Hi {name}, thanks for messaging {your business}. We got your message about {service}, and you'll hear back {reply window}. If it's easier, you can pick a time here: {booking link}",
-      trigger: 'A new message in your website chat (Facebook and Instagram coming soon)', stops: 'The customer replies or books, or after the third check-in. Later check-ins go by email, only if they gave one', you: 'Every reply, anything urgent, and any question about price or timing' },
-    { name: 'Quote Chaser', status: ['live', 'Live today · follow-ups wait for your OK'], short: 'Follow-ups on every open quote',
+      trigger: 'A new message in your website chat', stops: 'The customer replies or books, or after the third check-in. Later check-ins go by email, only if they gave one', you: 'Every reply, anything urgent, and any question about price or timing' },
+    { name: 'Quote Chaser', status: ['setup', 'Built during onboarding · follow-ups wait for your OK'], short: 'Follow-ups on every open quote',
       sum: 'You send the quote. We line up email follow-ups for day 2, 5 and 10 so it never goes quiet. Each one waits for your OK until you approve it to go on its own. It never changes, discounts or explains a price.',
       strip: [['Day 0', 'You send the quote', true], ['Day 2', 'Came through OK?'], ['Day 5', 'Want a call?'], ['Day 10', 'Last check-in']],
       quote: 'Hi {name}, following up on your quote for {job}. Happy to walk through it with you. Would you like {owner} to give you a call?',
       trigger: 'You mark a quote as sent', stops: 'The customer replies, accepts, declines or books', you: 'Every reply, especially anything about price or scope' },
-    { name: 'Booking & Reminders', status: ['live', 'Live today · reminders wait for your OK'], short: 'Confirmations, reminders and no-show follow-up',
+    { name: 'Booking & Reminders', status: ['setup', 'Built during onboarding · reminders wait for your OK'], short: 'Confirmations, reminders and no-show follow-up',
       sum: 'Online booking within the rules you set, email confirmations, a day-before reminder, rescheduling from your real open times, and a follow-up if no one was home. Reminders wait for your OK until you approve them to go on their own.',
       strip: [['Booked', 'Confirmation email'], ['Day before', 'Reminder email'], ['After', 'No-show follow-up']],
       quote: 'Reminder: {your business} is scheduled for tomorrow, {day}, arriving {window}. Need to change it? Pick a new time here: {reschedule link}',
       trigger: 'An appointment is created or changed on your calendar', stops: 'The appointment happens or is cancelled', you: 'A reschedule with no open slot, a cancellation, any job-day question' },
-    { name: 'Job Wrap-Up', status: ['setup', 'Set up during onboarding'], short: 'Review requests and invoice heads-ups',
+    { name: 'Job Wrap-Up', status: ['setup', 'Built during onboarding'], short: 'Review requests and invoice heads-ups',
       sum: 'When a job is marked done, every customer gets the same review request by email. If an invoice still needs charging, you get told. We never touch the money.',
       strip: [['Job done', 'You mark it complete', true], ['Next morning', 'Review request'], ['Day 5', 'One reminder'], ['If due', 'Invoice reminder, your link']],
       quote: "Thanks for choosing {your business}, {name}. If you have a minute, a quick review helps a small business like ours a lot: {review link}. And if anything wasn't right, just reply to this email.",
       trigger: 'A job is marked complete', stops: 'A review is left, a reply comes in, or after one reminder', you: 'Every reply, and a note when an invoice needs charging' },
-    { name: 'Daily Brief', status: ['live', 'Live today'], short: 'One evening summary with only your decisions',
+    { name: 'Daily Brief', status: ['live', 'Ready now'], short: 'One evening summary with only your decisions',
       sum: 'Your inbox sorted, replies drafted, voice notes from the truck turned into job notes, and one brief that lists what got handled and the few things that need you.',
       strip: [['All day', 'Inbox sorted, replies drafted'], ['As you go', 'Voice notes to job notes'], ['6:00 PM', 'Your brief lands', true]],
       quote: 'NEEDS YOU: Missed call at 2:14, call back. NEEDS YOU: Quote ready for the Johnson job. DONE: Website chat answered, lead saved. DONE: Day-5 follow-up sent on 2 open quotes. Automations: 5 of 5 running.',
@@ -177,7 +177,7 @@
     b.innerHTML = '<span class="tab__n">0' + (i + 1) + '</span><span><b></b><span></span><em></em></span>';
     b.querySelector('b').textContent = a.name;
     b.querySelector('span span').textContent = a.short;
-    b.querySelector('em').textContent = a.status[0] === 'live' ? 'Live today' : 'Set up during onboarding';
+    b.querySelector('em').textContent = a.status[0] === 'live' ? 'Ready now' : 'Built during onboarding';
     b.addEventListener('click', function () { show(i); });
     b.addEventListener('keydown', function (e) {
       var k = e.key, n = null;

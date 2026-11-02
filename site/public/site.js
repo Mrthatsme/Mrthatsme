@@ -92,12 +92,14 @@
      "No. The question box on your site answers from your approved answers with no AI behind it, so a bot asking a thousand questions costs nothing. Contact forms screen out bots with a hidden trap field, a too-fast check and a limit per sender, and every block is counted in your daily brief. Your bill is flat either way."],
     ["What stops someone running up your costs \u2014 or mine?",
      "Your monthly fee is flat. The one thing that can add to it is your own voice notes past your plan's monthly allowance, at $10 for each extra 100, and you're emailed at 80% and again when you go over. Bots, spam and other clients can't become a charge to you. Each client also runs under its own ceiling, so one busy month can't degrade anyone else."],
+    ["Which AI do you use, and what can it see?",
+     "Drafts are written by Claude, from Anthropic. For each draft it sees the one message being answered and your approved wording, and Anthropic does not train on it. Voice notes are turned into text by Cloudflare. To connect Gmail we ask Google for permission to read and organize your mail and save drafts; Google's name for that permission also covers sending, but our system has no send function and never sends from your mailbox. On Microsoft we ask only to read and write mail, not to send. The full list is on our privacy page."],
     ["Is my information mixed in with other clients?",
-     "No. Each client's data sits in its own space and there is no path from one to another. Your information is used to do your work. It is not pooled and it is not used to train anything."],
+     "No. Each client has its own email connection, its own assistant and its own records, and every lookup our system makes is limited to the one client it is working for. Your access is stored encrypted and separately from anyone else's. Your information is used to do your work. It is not pooled and it is not used to train anything."],
     ["What if someone tries to trick it?",
      "They will \u2014 it's the first thing we planned for. Emails, attachments and web pages are treated as information, never as instructions. And the part that matters more: the dangerous actions have no tool behind them. A convincing email asking us to redirect a payment can't succeed, because nothing in the system can move a payment."],
     ["How long does setup take?",
-     "About an hour, once. Granting access, walking through how you actually work, and setting the levels. Then the first two weeks run read-only while you watch \u2014 it drafts everything and sends nothing."],
+     "About an hour, once. Granting access, walking through how you actually work, and setting the levels. Then the first two weeks run read-only while you watch \u2014 it drafts everything and sends nothing. The trial is part of your first month, not an extra charge."],
     ["How big does my business need to be?",
      "Roughly one to twenty-five people. The fit is situation more than headcount: you need help and you are not ready to hire another full-time person. Industry doesn't matter."],
     ["Do you work with my industry?",
@@ -119,23 +121,30 @@
     ["If I cancel, do I lose the automations?",
      "No. They live in your own accounts and keep running. We just stop monitoring and maintaining them."],
     ["How many hours do I get?",
-     "Every plan includes a set number of support hours: 10, 22 or 40, used for new builds and hands-on admin. We count each task at the time a skilled assistant would take (for example, 5 minutes to schedule an appointment), and you get a monthly report showing every task. We never bill extra hours without asking first."],
+     "Every plan includes 10, 22 or 40 hours of a person's time: building new automations, and one-off admin you hand us, like rescheduling a week of jobs or cleaning up your contact list. Automations you've approved never use your hours, however often they run, and neither do monitoring, repairs or your daily brief. Each hands-on task is counted at the time a skilled assistant would take (for example, 5 minutes to schedule an appointment), and your monthly report lists every one. Unused hours roll over one month. We never bill extra hours without asking first."],
     ["Is software included?",
-     "Yes. The tools we use to serve you are included in your plan, up to an allowance. Your own existing subscriptions, like your email or accounting software, stay yours."],
+     "Yes. The tools we use to serve you are included in your plan, up to an allowance. We never bill you for software above it: if a tool you'd need costs more, we tell you first and you decide. Your own existing subscriptions, like your email or accounting software, stay yours."],
     ["Can I cancel?",
      "Monthly plans: cancel any time with 30 days' notice. Retainers are paid upfront for 12 months at 10% off. Leave early and we refund the rest of the year, keeping only the 10% discount on the months you used. The first month covers setup and isn't refundable once setup begins."],
     ["Who does the work?",
-     "AI agents do the work, set up and supervised by a person, and nothing important goes out without your approval level."]
+     "Both, and here's the split. Automations do the routine work you've approved, every day, and never use your hours. A person, the owner of Minutes Regained, sets up your account, does the hands-on admin your hours pay for, fixes anything that breaks, and answers your emails. Nothing important goes out without the approval level you set."]
   ];
 
   var list = $("faq-list"), q = $("faq-q"), meta = $("faq-meta");
+  // With no search, show the six questions owners ask first; the rest are one tap away.
+  var TOP = ["What do you actually do?", "How many hours do I get?", "Who does the work?",
+    "Can it send quotes or emails without asking me?", "Do you need my password?", "Can I cancel?"];
+  var showAll = false;
 
   function draw(filter){
     if(!list) return;
     list.innerHTML = "";
     var f = (filter||"").toLowerCase().trim();
     var shown = 0;
-    FAQ.forEach(function(item, i){
+    var items = (f || showAll) ? FAQ : TOP.map(function(t){
+      for(var i = 0; i < FAQ.length; i++) if(FAQ[i][0] === t) return FAQ[i];
+    }).filter(Boolean);
+    items.forEach(function(item, i){
       var hay = (item[0] + " " + item[1]).toLowerCase();
       if(f && hay.indexOf(f) < 0) return;
       shown++;
@@ -149,6 +158,14 @@
       d.appendChild(sm); d.appendChild(p);
       list.appendChild(d);
     });
+    if(!f && !showAll){
+      var more = document.createElement("button");
+      more.type = "button";
+      more.className = "btn btn--line btn-sm faq-more";
+      more.textContent = "Show all " + FAQ.length + " questions";
+      more.addEventListener("click", function(){ showAll = true; draw(""); });
+      list.appendChild(more);
+    }
     if(!shown){
       var n = document.createElement("p");
       n.className = "note";

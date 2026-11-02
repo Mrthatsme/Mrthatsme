@@ -3,7 +3,7 @@
 // CONTRACT_VERSION bumps whenever the wording changes — old agreements keep
 // the version + hash they actually signed.
 
-export const CONTRACT_VERSION = "2026-10-28.2";
+export const CONTRACT_VERSION = "2026-11-02.1";
 
 const usd = (cents) => `$${(cents / 100).toLocaleString("en-US", { maximumFractionDigits: 0 })}`;
 
@@ -111,7 +111,11 @@ ${included}
    Client by Client's own customers. Software Minutes Regained uses to serve
    Client is included up to the monthly allowance above; Client's own
    existing subscriptions (such as email or accounting software) remain
-   Client's. Each task is counted at the time a skilled assistant would
+   Client's, and no software cost above the allowance is billed to Client.
+   Support hours cover a person's hands-on work: new builds and one-off
+   admin. Automations Client has approved to run on their own never use
+   Client's hours, and neither do monitoring, repairs or the daily brief.
+   Each hands-on task is counted at the time a skilled assistant would
    take, and Client receives a monthly report listing every task. There is
    no setup fee. The first month covers setup and is not refundable once
    setup begins.
