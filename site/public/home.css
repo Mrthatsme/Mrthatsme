@@ -408,3 +408,12 @@ form.sign { display: grid; gap: 0.9rem; }
 .support-note b { color: var(--ink); }
 .faq-more { margin-top: 1rem; }
 @media (max-width: 760px) { .who-list { grid-template-columns: 1fr; } }
+
+/* ---------------- plan details toggle ---------------- */
+.plan details.detail { font-size: 0.86rem; line-height: 1.5; opacity: 1; }
+.plan details.detail summary { cursor: pointer; list-style: none; display: inline-flex; align-items: center; gap: 0.4rem; min-height: 2.75rem; font-weight: 600; text-decoration: underline; text-underline-offset: 0.2em; }
+.plan details.detail summary::-webkit-details-marker { display: none; }
+.plan details.detail summary::after { content: "+"; font-weight: 500; text-decoration: none; }
+.plan details.detail[open] summary::after { content: "\2013"; }
+.plan details.detail ul { margin: 0.25rem 0 0.5rem; padding-left: 1.1rem; display: grid; gap: 0.3rem; opacity: 0.8; }
+.plan details.detail a { font-size: 0.84rem; opacity: 0.8; text-underline-offset: 0.2em; }

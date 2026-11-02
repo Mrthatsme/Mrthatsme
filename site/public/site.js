@@ -103,7 +103,7 @@
     ["How big does my business need to be?",
      "Roughly one to twenty-five people. The fit is situation more than headcount: you need help and you are not ready to hire another full-time person. Industry doesn't matter."],
     ["Do you work with my industry?",
-     "Almost certainly. Industry doesn't matter — trades, cleaning, photographers, designers, studios and shops all fit. What matters is the situation: roughly one to twenty-five people, more admin than you can keep up with, and not ready to hire another full-time person."],
+     "Yes. Every small business runs on the same back office: an inbox, a calendar, quotes, invoices and follow-ups. If it's work you'd hand to an assistant, it fits, whether you run a crew, an office, a studio or a shop. Your free assessment is where we learn how your business actually works, everything is set to your rules before anything runs, and anything that needs your professional judgment, like pricing or legal advice, always stays with you."],
     ["Do you text my customers?",
      "No, never. We reply only where the customer reached out, like your website chat or email, and Facebook and Instagram once those are connected. Missed calls go to the top of your daily brief so you can call back."],
     ["Can it handle my Instagram or Facebook messages?",
