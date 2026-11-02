@@ -33,359 +33,230 @@
 <title>Minutes Regained</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@112,700;112,800;100,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="/site.css?v=20261022">
-
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="/home.css?v=20261102">
 </head>
 <body>
-<header class="top">
-  <div class="wrap nav">
-    <a class="brand" href="#top" aria-label="Minutes Regained home"><svg class="logo" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="16.5" fill="none" stroke="currentColor" stroke-width="3"/><path d="M20 20 L20 6.5 A13.5 13.5 0 0 0 6.5 20 Z" fill="var(--accent)"/><path d="M20 3.5v4M36.5 20h-4M20 36.5v-4M3.5 20h4" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="20" cy="20" r="2.6" fill="currentColor"/></svg><span>Minutes <span class="acc">Regained</span><sup>&trade;</sup></span></a>
-    <ul>
-      <li><a href="#how">How it works</a></li>
-      <li><a href="#examples">Examples</a></li>
-      <li><a href="#handle">What we do</a></li>
-      <li><a href="#pricing">Pricing</a></li>
-      <li><a href="#onboarding">Getting started</a></li>
-      <li><a href="#faq">FAQ</a></li>
-    </ul>
-    <a class="btn btn-primary btn-sm" href="https://calendar.app.google/mL2TQQSCAgLAURZC6" target="_blank" rel="noopener">Book a call</a>
+<header class="top band">
+  <div class="wrap">
+    <a class="mark" href="#top" aria-label="Minutes Regained, back to top">
+      <svg viewBox="0 0 40 40" width="30" height="30" aria-hidden="true"><circle cx="20" cy="20" r="16.5" fill="none" stroke="var(--teal)" stroke-width="3"/><path d="M20 20 L20 6.5 A13.5 13.5 0 0 0 6.5 20 Z" fill="var(--signal)"/><circle cx="20" cy="20" r="2.6" fill="var(--teal)"/></svg>
+      <b>Minutes Regained</b>
+    </a>
+    <nav aria-label="Sections">
+      <a href="#automations">Automations</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#start">How it starts</a>
+      <a href="#faq">Questions</a>
+    </nav>
+    <a class="btn btn--go" href="https://calendar.app.google/mL2TQQSCAgLAURZC6" target="_blank" rel="noopener">Book a free assessment</a>
   </div>
 </header>
 
 <main id="top">
-  <section class="hero">
-    <div class="wrap hero-grid">
+
+  <section class="hero band" aria-labelledby="heroTitle">
+    <div class="wrap">
       <div>
         <p class="eyebrow">Automations for small service businesses</p>
-        <h1 class="mt16">We build it. We run it. <em>We watch it.</em></h1>
-        <p class="lede"><b>You don't have to learn any of this. We handle it, and you control what goes out.</b> Your back office, working 24/7: while you&rsquo;re on the job all day, and after you clock out. Automations monitored every day, with software included.</p>
-        <p class="strip-head">Speed fills the pipeline. Consistency keeps you booked.</p>
-        <ul class="strip" aria-label="What we automate">
-          <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/><path d="M16 3l5 5M21 3l-5 5"/></svg><span>Website chat and social replies</span></li>
-          <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 4 14h7l-1 8 9-12h-7z"/></svg><span>Instant lead replies</span></li>
-          <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M9 15l2 2 4-4"/></svg><span>Quote follow-ups</span></li>
-          <li><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><span>Appointment reminders</span></li>
-          <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 2.6 5.4 5.9.8-4.3 4.1 1 5.8L12 16.4 6.8 19.1l1-5.8L3.5 9.2l5.9-.8z"/></svg><span>Review requests</span></li>
-          <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12v18l-3-2-3 2-3-2-3 2z"/><path d="M9 8h6M9 12h6"/></svg><span>Invoice reminders</span></li>
-          <li><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4z"/><path d="M8 9h8M8 13h8M8 17h4"/></svg><span>Daily brief</span></li>
-        </ul>
-        <div class="cta-row">
-          <a class="btn btn-primary" href="https://calendar.app.google/mL2TQQSCAgLAURZC6" target="_blank" rel="noopener">Book a free operations assessment</a>
-          <a class="btn btn-ghost" href="#pricing">Starting at $450/mo</a>
+        <h1 id="heroTitle" class="display mt1">Every lead answered. <em>Even at dinner.</em></h1>
+        <p class="lede">We build and run five automations that answer your website chat, chase your quotes and keep your calendar straight, in words you approved. You do the work. We run the office.</p>
+        <div class="hero__go">
+          <a class="btn btn--go" href="https://calendar.app.google/mL2TQQSCAgLAURZC6" target="_blank" rel="noopener">Book a free assessment</a>
+          <a class="btn btn--line" href="#pricing">See pricing, from $450/mo</a>
+        </div>
+        <div class="trades">
+          <p id="tradeLabel">See it handle a lead for your trade</p>
+          <ul aria-labelledby="tradeLabel" id="tradeList"></ul>
         </div>
       </div>
 
-      <aside class="log" aria-label="Sample daily brief">
-        <div class="log-head"><span>Daily brief</span><span>Tue 18:00</span></div>
-        <div class="row"><span class="t">07:42</span><span><span class="tag done">DONE</span>Website chat answered in 2 min, lead saved.</span></div>
-        <div class="row"><span class="t">08:15</span><span><span class="tag done">DONE</span>Appointment booked Thu 10:00. Reminder scheduled.</span></div>
-        <div class="row"><span class="t">11:03</span><span><span class="tag ask">NEEDS YOU</span>Quote ready for the Johnson job. Waiting on your approval.</span></div>
-        <div class="row"><span class="t">13:30</span><span><span class="tag done">DONE</span>Day-5 follow-up sent on 2 open quotes.</span></div>
-        <div class="row"><span class="t">15:48</span><span><span class="tag flag">HANDED OFF</span>Customer asked for a discount. Sent to you, not answered.</span></div>
-        <div class="row"><span class="t">17:10</span><span><span class="tag done">DONE</span>Review request sent after job marked complete.</span></div>
-        <div class="foot">Automations checked: 7 of 7 healthy &middot; Tomorrow: 3 appointments</div>
-      </aside>
-    </div>
-    <div class="wrap works"><strong>Works with</strong><span>Gmail</span><span>Google Calendar</span><span>HubSpot</span><span>Your website forms</span><span>Most CRMs</span></div>
-    <div class="wrap works mt10"><strong>Built for</strong><span>Home services and trades</span><span>Cleaning and landscaping</span><span>Property managers and real estate</span><span>Consultants and coaches</span><span>Small professional offices</span><span>1&ndash;25 employees</span></div>
-  </section>
-
-  <section id="how" class="tight">
-    <div class="wrap">
-      <div class="sec-head">
-        <p class="eyebrow">How it works</p>
-        <h2>Build. Run. Watch.</h2>
-      </div>
-      <div class="how">
-        <div class="how-card"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.4-.6-.6-2.4z"/></svg><h3>1. Build</h3><p>We map your week and automate the repetitive parts.</p></div>
-        <div class="how-card"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="m10 8 6 4-6 4z"/></svg><h3>2. Run</h3><p>Our agents operate it daily and flag what needs you.</p></div>
-        <div class="how-card"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg><h3>3. Watch</h3><p>If anything breaks, we fix it, usually before you notice.</p></div>
-      </div>
+      <figure class="screen" aria-label="Example: an automation answering a new lead">
+        <div class="screen__bar">
+          <span class="live"><i aria-hidden="true"></i><span id="stTitle">Lead Catcher · running</span></span>
+          <span id="stBiz">Example business</span>
+        </div>
+        <div class="screen__body" aria-hidden="true">
+          <div class="phone">
+            <div class="phone__top"><span id="stClock">7:12 PM</span><span>Customer's view</span></div>
+            <div class="phone__who"><b id="stCust">Dana R.</b><span id="stChannel">Website chat</span></div>
+            <div class="thread">
+              <p class="bub bub--them" id="bThem"></p>
+              <span class="typing" id="bTyping"><i></i><i></i><i></i></span>
+              <p class="bub bub--us" id="bUs"></p>
+            </div>
+          </div>
+          <div class="flow">
+            <div class="flow__track"><div class="flow__fill" id="stFill"></div></div>
+            <ol id="stSteps"></ol>
+          </div>
+        </div>
+        <div class="screen__foot" aria-hidden="true">
+          <div class="meter"><span>First reply</span><b id="mReply">0:00</b></div>
+          <div class="meter"><span>Steps handled</span><b id="mSteps">0</b></div>
+          <div class="meter"><span>Needs your OK</span><b class="sig" id="mYou">0</b></div>
+        </div>
+        <figcaption class="screen__note"><span>An example, not a client's results. Replies use wording the owner approved.</span><button type="button" class="replay" id="replay">Replay</button></figcaption>
+        <p class="sr" id="stSummary"></p>
+      </figure>
     </div>
   </section>
 
-  <section id="examples" class="control">
+  <section class="rules band" aria-labelledby="rulesTitle">
     <div class="wrap">
-      <div class="sec-head">
-        <p class="eyebrow">What it looks like</p>
-        <h2>Before and after.</h2>
-        <p class="lede">Examples of what we build. These are not results from past clients. <a href="/demo">Try the interactive demo &rarr;</a></p>
-      </div>
-      <div class="ex-grid">
-        <div class="ex"><h3>Missed call</h3><p class="before"><b>Before</b> You're on a roof, the phone rings, and the customer calls your competitor.</p><p class="after"><b>After</b> The missed call goes to the top of your brief so you can call back. Anyone who messages your website chat, Facebook or Instagram gets a reply in minutes, in words you approved.</p></div>
-        <div class="ex"><h3>Quote follow-up</h3><p class="before"><b>Before</b> You send a quote and forget about it.</p><p class="after"><b>After</b> It follows itself up on day 2, 5 and 10, and you only hear about the replies.</p></div>
-        <div class="ex"><h3>Invoices</h3><p class="before"><b>Before</b> You chase payments at 10pm.</p><p class="after"><b>After</b> Polite reminders go out automatically, and your brief shows who's paid.</p></div>
-        <div class="ex"><h3>Reviews</h3><p class="before"><b>Before</b> Happy customers never leave reviews.</p><p class="after"><b>After</b> Every finished job triggers a review request the same day.</p></div>
-        <div class="ex"><h3>Something breaks</h3><p class="before"><b>Before</b> A form quietly stops working for three weeks.</p><p class="after"><b>After</b> We catch it the same day and fix it, usually before you notice.</p></div>
-      </div>
+      <h2 id="rulesTitle">What it never does</h2>
+      <ul>
+        <li>Send a text message. Replies happen where the customer reached out.</li>
+        <li>Quote a price, promise a date, or message anyone who didn't contact you first.</li>
+        <li>Touch your money. No payments, no refunds, no card ever run. You get told, you charge it.</li>
+        <li>Pretend to be you. If asked, it says it's your company's assistant.</li>
+      </ul>
     </div>
   </section>
 
-  <section id="handle">
+  <section class="sec band" id="automations" aria-labelledby="autoTitle">
     <div class="wrap">
-      <div class="sec-head">
-        <p class="eyebrow">What we can do</p>
-        <h2>The office work you can&rsquo;t get to, day or night.</h2>
-        <p class="lede">While you&rsquo;re on a roof, under a sink or with a customer, new leads still get picked up, quotes still get followed up and invoices still get chased. After hours the same work keeps going. Replies are drafted and waiting for your OK, so the only things left for you are the decisions only you can make.</p>
+      <div class="sec__head">
+        <p class="eyebrow">The five automations</p>
+        <h2 id="autoTitle" class="display">Five things we do really well.</h2>
+        <p class="lede">Each one is built in your own accounts, runs every day and gets fixed by us if it breaks. You approve every message before it goes live.</p>
       </div>
-      <div class="cards">
-        <div class="card"><h3>Leads and sales</h3><ul><li>Website chat, Facebook and Instagram replies</li><li>Instant email replies to web-form leads</li><li>A request form for your Instagram, Facebook or TikTok link</li><li>Quote and estimate follow-ups</li><li>Lead tracking in a simple CRM</li></ul></div>
-        <div class="card"><h3>Scheduling</h3><ul><li>Online booking</li><li>Appointment confirmations and reminders</li><li>Rescheduling</li><li>No-show follow-up</li><li>Emergencies sent straight to your on-call tech</li></ul></div>
-        <div class="card"><h3>Customers</h3><ul><li>Review requests after completed jobs</li><li>Thank-you and check-in messages</li><li>Customer intake forms</li></ul></div>
-        <div class="card"><h3>Money (never touching it)</h3><ul><li>Invoice-due and past-due reminders</li><li>Paid/unpaid tracking</li><li>Weekly cash-in summary</li></ul></div>
-        <div class="card"><h3>Admin</h3><ul><li>Email triage and drafted replies</li><li>Voice notes from the truck turned into job notes and follow-ups</li><li>Calendar management</li><li>Document and form routing</li><li>Daily brief</li></ul></div>
-        <div class="card"><h3>Monitoring</h3><ul><li>Every automation watched daily</li><li>Breaks fixed at no charge</li></ul></div>
+      <div class="board">
+        <div class="tabs" role="tablist" aria-label="Automations" id="tabs"></div>
+        <div class="panel" role="tabpanel" id="panel" aria-live="polite"></div>
       </div>
+      <div class="admin">
+        <b>Plus the admin, kept current.</b>
+        <span>No inbox left behind, no admin piling up, and your calendar kept up to date, business and personal too if you want.</span>
+      </div>
+      <p class="status-note"><b>Live today</b> means it runs for clients now. <b>Set up during onboarding</b> means we build it for you in your first weeks. Facebook and Instagram replies are coming soon, and we'll say so here the day they're live.</p>
     </div>
   </section>
 
-  <section id="pricing">
+  <section class="sec band" id="control" aria-labelledby="controlTitle">
     <div class="wrap">
-      <div class="sec-head">
-        <p class="eyebrow">Pricing</p>
-        <h2>Simple monthly pricing. Software included. No setup fee.</h2>
-        <p class="lede">Every plan includes automations built and monitored, your daily brief, and hands-on admin: email, scheduling, follow-ups and invoice reminders.</p>
-      </div>
-      <div class="plans">
-        <div class="plan">
-          <span class="tier">Essential</span>
-          <div class="price">$450<small> /month</small></div>
-          <ul><li>Up to 3 automations built and monitored</li><li>10 hours/month</li><li>Software included up to $50/mo</li><li>1 inbox &middot; 100 voice notes/mo</li><li>$4,860/yr on a 12-month Retainer (10% off)</li></ul>
-          <a class="btn btn-ghost" href="#book">Talk to us</a>
-          <a class="btn-link" href="/start?plan=essential">Already decided? Set up your plan &rarr;</a>
-        </div>
-        <div class="plan feat">
-          <span class="tier">Business Support</span>
-          <div class="price">$900<small> /month</small></div>
-          <ul><li>Up to 6 automations built and monitored</li><li>22 hours/month</li><li>Software included up to $100/mo</li><li>2 inboxes &middot; 250 voice notes/mo &middot; 30-min monthly review call</li><li>$9,720/yr on a 12-month Retainer (10% off)</li></ul>
-          <a class="btn btn-primary" href="https://calendar.app.google/mL2TQQSCAgLAURZC6" target="_blank" rel="noopener">Book a call</a>
-          <a class="btn-link" href="/start?plan=business_support">Already decided? Set up your plan &rarr;</a>
-        </div>
-        <div class="plan">
-          <span class="tier">Operations+</span>
-          <div class="price">$1,500<small> /month</small></div>
-          <ul><li>Up to 12 automations built and monitored</li><li>40 hours/month</li><li>Software included up to $150/mo</li><li>4 inboxes &middot; 500 voice notes/mo &middot; 60-min monthly review call</li><li>$16,200/yr on a 12-month Retainer (10% off)</li></ul>
-          <a class="btn btn-ghost" href="#book">Talk to us</a>
-          <a class="btn-link" href="/start?plan=operations_plus">Already decided? Set up your plan &rarr;</a>
-        </div>
-      </div>
-      <p class="price-note"><b>Monitoring, repairs and your daily brief never use your hours.</b></p>
-      <div class="table-scroll">
-        <table class="price-table">
-          <thead><tr><th>Plan</th><th>Monthly</th><th>12-mo Retainer, paid upfront (10% off)</th><th>Automations</th><th>Hours/mo</th><th>Unused hours</th><th>Extra hours (approved only)</th><th>Software allowance</th><th>Inboxes</th><th>Voice notes/mo</th><th>Review call</th></tr></thead>
-          <tbody>
-            <tr><th>Essential</th><td>$450</td><td>$4,860/yr</td><td>up to 3</td><td>10</td><td>Roll over 1 mo, max 3</td><td>$50/hr</td><td>up to $50/mo</td><td>1</td><td>100</td><td>&mdash;</td></tr>
-            <tr><th>Business Support</th><td>$900</td><td>$9,720/yr</td><td>up to 6</td><td>22</td><td>Roll over 1 mo, max 5</td><td>$45/hr</td><td>up to $100/mo</td><td>2</td><td>250</td><td>30 min</td></tr>
-            <tr><th>Operations+</th><td>$1,500</td><td>$16,200/yr</td><td>up to 12</td><td>40</td><td>Roll over 1 mo, max 10</td><td>$40/hr</td><td>up to $150/mo</td><td>4</td><td>500</td><td>60 min</td></tr>
-          </tbody>
-        </table>
-      </div>
-      <p class="price-note">Pay monthly, billed on your sign-up date each month, and cancel with 30 days' notice. Or save 10% with a 12-month Retainer, paid upfront for the year and renewed yearly with 30 days' notice. Voice notes over your monthly allowance are $10 for each extra 100, added to that month's bill.</p>
-      <p class="founding"><b>Founding client offer &mdash; first three only.</b> Business Support (22 hours) at <b>$450/mo for your first 90 days</b>, then $900/mo. Monthly billing only. We'll remind you 14 days before the price changes.</p>
-    </div>
-  </section>
-
-  <section id="crew" class="control">
-    <div class="wrap">
-      <div class="sec-head">
-        <p class="eyebrow">What your AI team covers</p>
-        <h2>Every job covered, one at a time.</h2>
-        <p class="lede">Instead of one chatbot trying to do everything, your AI team works through these jobs one by one, and the work is checked before anything goes out. Jobs marked <b>Live today</b> are running now. The rest are set up for you during onboarding.</p>
-      </div>
-      <div class="crew">
-        <div class="watch">
-          <div class="watch-head"><span class="station">Front of house</span><h3>Talks to your customers</h3><p>The first voice a customer hears from you.</p></div>
-          <div class="agent"><span class="badge" aria-hidden="true">CN</span><b>Concierge</b><em class="job-tag live">Live today</em><span>Answers questions on your website, day or night, from your approved answers. No AI behind it, so bots and busy days cost nothing.</span></div>
-          <div class="agent"><span class="badge" aria-hidden="true">IN</span><b>Intake</b><em class="job-tag live">Live today</em><span>Catches every lead from forms, calls and messages and gets the details right.</span></div>
-          <div class="agent"><span class="badge" aria-hidden="true">LD</span><b>Lead follow-up</b><em class="job-tag live">Live today</em><span>Has a reply drafted fast, lines up follow-ups on quiet leads and open quotes for your OK, and stops the moment someone answers.</span></div>
-          <div class="agent"><span class="badge" aria-hidden="true">CS</span><b>Customer care</b><em class="job-tag live">Live today</em><span>Drafts answers to routine questions for your OK and sends complaints straight to you.</span></div>
-        </div>
-        <div class="watch">
-          <div class="watch-head"><span class="station">Back office</span><h3>Keeps the paperwork moving</h3><p>The admin work that usually happens after dinner.</p></div>
-          <div class="agent"><span class="badge" aria-hidden="true">SC</span><b>Scheduling</b><em class="job-tag live">Live today</em><span>Books open slots within the rules you set and drafts reminders for your OK.</span></div>
-          <div class="agent"><span class="badge" aria-hidden="true">EM</span><b>Email</b><em class="job-tag live">Live today</em><span>Sorts your inbox, drafts replies and flags what needs you.</span></div>
-          <div class="agent"><span class="badge" aria-hidden="true">CR</span><b>CRM</b><em class="job-tag live">Live today</em><span>Keeps every customer record and job stage up to date without you typing a thing.</span></div>
-          <div class="agent"><span class="badge" aria-hidden="true">DC</span><b>Documents</b><em class="job-tag setup">Set up during onboarding</em><span>Drafts quotes, proposals and SOPs for you to approve.</span></div>
-          <div class="agent"><span class="badge" aria-hidden="true">VC</span><b>Vendor coordination</b><em class="job-tag setup">Set up during onboarding</em><span>Finds a contractor or supplier, gets quotes and tracks the job. You approve every quote before it's accepted.</span></div>
-        </div>
-        <div class="watch cmd">
-          <div class="watch-head"><span class="station">On watch</span><h3>Checks every job</h3><p>The team that makes sure nothing slips.</p></div>
-          <div class="agent"><span class="badge" aria-hidden="true">OM</span><b>Operations manager</b><em class="job-tag setup">Set up during onboarding</em><span>Hands out the work and makes sure every action follows your rules.</span></div>
-          <div class="agent"><span class="badge" aria-hidden="true">SE</span><b>Security</b><em class="job-tag live">Live today</em><span>Screens for phishing, fake requests and anything unusual before it runs.</span></div>
-          <div class="agent"><span class="badge" aria-hidden="true">VF</span><b>Verification</b><em class="job-tag setup">Set up during onboarding</em><span>Confirms the work actually happened in your calendar, inbox or CRM.</span></div>
-          <div class="agent"><span class="badge" aria-hidden="true">QA</span><b>Quality check</b><em class="job-tag setup">Set up during onboarding</em><span>Reviews messages and drafts for accuracy and tone before they go out.</span></div>
-          <div class="agent"><span class="badge" aria-hidden="true">AU</span><b>Audit log</b><em class="job-tag setup">Set up during onboarding</em><span>Records every action and approval, so you can always see who did what and when.</span></div>
-        </div>
-      </div>
-      <p class="crew-note">Everything is tracked, and anything unusual goes to a person. You see the results in your daily brief.</p>
-
-      <div class="flow-wrap">
-        <h3>What happens every time something comes in</h3>
-        <p>Once your setup is complete, a new lead, a reschedule request or a review each goes through the same checks, in this order.</p>
-        <ol class="flow">
-          <li><span class="node"><small>1</small>Something comes in</span></li>
-          <li><span class="node"><small>2</small>Operations manager</span></li>
-          <li><span class="node"><small>3</small>Security check</span></li>
-          <li><span class="node gate"><small>4</small>Your rules</span></li>
-          <li><span class="node"><small>5</small>Do the work</span></li>
-          <li><span class="node"><small>6</small>Verify it happened</span></li>
-          <li><span class="node"><small>7</small>Quality check</span></li>
-          <li><span class="node"><small>8</small>Log it</span></li>
-          <li><span class="node"><small>9</small>Tell you</span></li>
-        </ol>
-        <div class="branch" aria-label="What your rules decide at step 4">
-          <div class="b1"><b>Handle It</b>Goes straight to the work.</div>
-          <div class="b2"><b>Tell Me</b>Does the work, then it shows up in your daily brief.</div>
-          <div class="b3"><b>Ask Me</b>Waits for you or your backup to approve on a secure page.</div>
-          <div class="b4"><b>Never</b>Stops here and sends it to you instead.</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section id="control">
-    <div class="wrap">
-      <div class="sec-head">
+      <div class="sec__head">
         <p class="eyebrow">You're in control</p>
-        <h2>You write the rules. It follows them.</h2>
-        <p class="lede">Before anything goes live, you decide how much the AI can do on its own. Change any setting whenever you want, or pause everything with one switch.</p>
+        <h2 id="controlTitle" class="display">You write the rules. It follows them.</h2>
+        <p class="lede">Before anything goes live, you decide how much it does on its own. Change any setting whenever you want, or pause everything with one switch.</p>
       </div>
       <div class="levels">
-        <div class="level"><span class="dot d1" aria-hidden="true"></span><span class="name">Handle It</span><span class="what">Does it. No message to you.</span><span class="ex"><i>Example</i>Logs a new lead in your CRM</span></div>
-        <div class="level"><span class="dot d2" aria-hidden="true"></span><span class="name">Tell Me</span><span class="what">Does it, then reports it in your daily brief.</span><span class="ex"><i>Example</i>Books an appointment in an open weekday slot</span></div>
-        <div class="level"><span class="dot d3" aria-hidden="true"></span><span class="name">Ask Me</span><span class="what">Gets it ready and waits for your OK.</span><span class="ex"><i>Example</i>Sends a quote to a customer</span></div>
-        <div class="level"><span class="dot d4" aria-hidden="true"></span><span class="name">Never</span><span class="what">Won't do it, even if someone asks.</span><span class="ex"><i>Example</i>Quotes a price or signs a contract</span></div>
+        <div class="level"><b>Handle It</b><span>Does it. No message to you.</span><i>Example: logs a new lead in your CRM</i></div>
+        <div class="level"><b>Tell Me</b><span>Does it, then reports it in your daily brief.</span><i>Example: books an open weekday slot</i></div>
+        <div class="level"><b>Ask Me</b><span>Gets it ready and waits for your OK.</span><i>Example: sends a quote to a customer</i></div>
+        <div class="level"><b>Never</b><span>Won't do it, even if someone asks.</span><i>Example: quotes a price or signs a contract</i></div>
       </div>
+    </div>
+  </section>
 
-      <div class="guard">
-        <div class="yes">
-          <h3>Every job gets checked</h3>
+  <section class="sec sec--dark band" id="pricing" aria-labelledby="priceTitle">
+    <div class="wrap">
+      <div class="sec__head">
+        <p class="eyebrow">Pricing</p>
+        <h2 id="priceTitle" class="display">One monthly price. Software included.</h2>
+        <p class="lede">No setup fee. Monitoring, repairs and your daily brief never use your hours.</p>
+      </div>
+      <div class="plans">
+        <article class="plan">
+          <h3>Essential</h3>
+          <p class="plan__fit">For a solo owner who needs leads and follow-ups covered.</p>
+          <p class="plan__price"><b>$450</b><span>/month</span></p>
           <ul>
-            <li><b>Verified, not assumed.</b> After booking an appointment, we confirm the calendar has the right customer, place and time, and that the confirmation was delivered.</li>
-            <li><b>Mistakes show up.</b> Anything that fails is flagged in your brief. Nothing gets quietly marked done.</li>
-            <li><b>Full record.</b> Every action and every approval is logged with who, what and when.</li>
-            <li><b>Secure approvals.</b> You approve from a signed-in page. Nobody can approve by texting back "yes."</li>
+            <li class="key">3 of the 5 core automations</li>
+            <li>10 hours a month of hands-on admin</li>
+            <li>1 inbox · 100 voice notes a month</li>
+            <li>Software included up to $50/mo</li>
           </ul>
-        </div>
-        <div class="no">
-          <h3>What it will never do</h3>
+          <p class="detail">$4,860/yr on a 12-month Retainer · unused hours roll over 1 month (max 3) · extra hours $50/hr, only with your approval</p>
+          <div class="plan__go">
+            <a class="btn btn--line" href="#book">Talk to us</a>
+            <a class="small" href="/start?plan=essential">Already decided? Set up this plan</a>
+          </div>
+        </article>
+        <article class="plan plan--pick">
+          <p class="plan__flag">Founding clients: $450/mo for the first 90 days</p>
+          <h3>Business Support</h3>
+          <p class="plan__fit">For a small crew juggling leads, quotes and scheduling.</p>
+          <p class="plan__price"><b>$900</b><span>/month</span></p>
           <ul>
-            <li><b>Touch your money.</b> No payments, refunds or deposits, and no card ever run. No access to your bank. We only bill our own monthly plan.</li>
-            <li><b>Set prices.</b> No quotes, discounts or payment terms without your approval.</li>
-            <li><b>Give legal, tax or insurance advice.</b> Those questions go straight to you.</li>
-            <li><b>Make promises.</b> No warranties, dates or guarantees you didn't approve in writing.</li>
-            <li><b>Pretend to be you.</b> If a customer asks, it says it's your company's assistant.</li>
+            <li class="key">All 5 core automations, plus 1 custom</li>
+            <li>22 hours a month of hands-on admin</li>
+            <li>2 inboxes · 250 voice notes a month</li>
+            <li>Software included up to $100/mo</li>
+            <li>30-minute monthly review call</li>
           </ul>
-        </div>
+          <p class="detail">$9,720/yr on a 12-month Retainer · unused hours roll over 1 month (max 5) · extra hours $45/hr, only with your approval</p>
+          <div class="plan__go">
+            <a class="btn btn--go" href="https://calendar.app.google/mL2TQQSCAgLAURZC6" target="_blank" rel="noopener">Book a free assessment</a>
+            <a class="small" href="/start?plan=business_support">Already decided? Set up this plan</a>
+          </div>
+        </article>
+        <article class="plan">
+          <h3>Operations+</h3>
+          <p class="plan__fit">For a busy team with several inboxes and lots of moving parts.</p>
+          <p class="plan__price"><b>$1,500</b><span>/month</span></p>
+          <ul>
+            <li class="key">All 5 core automations, plus up to 7 custom</li>
+            <li>40 hours a month of hands-on admin</li>
+            <li>4 inboxes · 500 voice notes a month</li>
+            <li>Software included up to $150/mo</li>
+            <li>60-minute monthly review call</li>
+          </ul>
+          <p class="detail">$16,200/yr on a 12-month Retainer · unused hours roll over 1 month (max 10) · extra hours $40/hr, only with your approval</p>
+          <div class="plan__go">
+            <a class="btn btn--line" href="#book">Talk to us</a>
+            <a class="small" href="/start?plan=operations_plus">Already decided? Set up this plan</a>
+          </div>
+        </article>
       </div>
+      <p class="fine">Pay monthly, billed on your sign-up date, and cancel with 30 days' notice. Or save 10% with a 12-month Retainer, paid upfront for the year and renewed yearly with 30 days' notice. Voice notes over your monthly allowance are $10 for each extra 100, added to that month's bill. Founding offer, first three clients only: Business Support at $450/mo for your first 90 days, then $900/mo, monthly billing only, with a reminder 14 days before the price changes.</p>
     </div>
   </section>
 
-  <section id="onboarding" class="control">
+  <section class="sec band" id="start" aria-labelledby="startTitle">
     <div class="wrap">
-      <div class="sec-head">
-        <p class="eyebrow">Getting started</p>
-        <h2>From buried in admin to on autopilot, one step at a time.</h2>
+      <div class="sec__head">
+        <p class="eyebrow">How it starts</p>
+        <h2 id="startTitle" class="display">Live in about three weeks.</h2>
       </div>
-      <div class="steps">
-        <div class="step"><span class="n">STEP 1</span><h3>Free assessment</h3><p>A 30-minute call. We look at where your leads come from and what's slipping through the cracks.</p></div>
-        <div class="step"><span class="n">STEP 2</span><h3>Set your rules</h3><p>We walk through your control profile together. You pick what's Handle It, Tell Me, Ask Me and Never. Under an hour.</p></div>
-        <div class="step"><span class="n">STEP 3</span><h3>Two weeks read-only</h3><p>For the first two weeks it drafts everything and sends nothing, so you can see exactly how it would have worked.</p></div>
-        <div class="step"><span class="n">STEP 4</span><h3>Go live</h3><p>You flip it on. We watch it with you, adjust the rules and send your first weekly SITREP.</p></div>
-      </div>
+      <ol class="steps">
+        <li><b>STEP 1 · 30 MIN</b><h3>Free assessment</h3><p>We look at where your leads come from, what slips, and how long your admin takes now, so later we can show you the time you got back.</p></li>
+        <li><b>STEP 2 · UNDER 1 HR</b><h3>Approve your words</h3><p>You approve the replies that can go out on their own, and pick what's Handle It, Tell Me, Ask Me and Never.</p></li>
+        <li><b>STEP 3 · 2 WEEKS</b><h3>Read-only trial</h3><p>Everything is drafted and nothing is sent, so you see exactly what it would have done.</p></li>
+        <li><b>STEP 4 · GO LIVE</b><h3>Flip it on</h3><p>We watch it with you, tune the rules and send your first weekly report with the time you got back.</p></li>
+      </ol>
     </div>
   </section>
 
-  <section id="calculator">
+  <section class="sec faq band" id="faq" aria-labelledby="faqTitle">
     <div class="wrap">
-      <div class="sec-head">
-        <p class="eyebrow">See it for your business</p>
-        <h2>How many minutes would you get back?</h2>
-        <p class="lede">A rough, honest estimate. The real number comes from your free operations assessment, not a slider.</p>
-      </div>
-      <div class="calc">
-        <div class="calc-inputs">
-          <div class="calc-field">
-            <label for="calcLeads">Inbound requests / week</label>
-            <input type="range" id="calcLeads" min="1" max="100" value="15">
-            <output for="calcLeads" id="calcLeadsOut">15</output>
-          </div>
-          <div class="calc-field">
-            <label for="calcMinutes">Minutes handled manually, each</label>
-            <input type="range" id="calcMinutes" min="2" max="40" value="14">
-            <output for="calcMinutes" id="calcMinutesOut">14</output>
-          </div>
-          <div class="calc-field">
-            <label for="calcPct">% that could be Handle It or Tell Me</label>
-            <input type="range" id="calcPct" min="0" max="100" value="80">
-            <output for="calcPct" id="calcPctOut">80%</output>
-          </div>
-        </div>
-        <div class="calc-result">
-          <div><span class="calc-label">Minutes regained / week</span><span class="calc-number" id="calcWeekly">0</span></div>
-          <div><span class="calc-label">Hours regained / year</span><span class="calc-number" id="calcAnnual">0</span></div>
-        </div>
-      </div>
-      <p class="calc-note">How it's counted: requests set to Handle It or Tell Me take none of your time. Everything else is drafted for you and still takes about 3 minutes of your review, so even at 0% you save the drafting time. Results round down.</p>
-    </div>
-  </section>
-
-  <section id="faq" class="control">
-    <div class="wrap">
-      <div class="sec-head">
+      <div>
         <p class="eyebrow">Questions</p>
-        <h2>What owners usually ask us.</h2>
+        <h2 id="faqTitle" class="display mt1">What owners usually ask us.</h2>
+        <p class="lede mt1">Search the questions people actually ask. If yours isn't here, the form below reaches a person.</p>
       </div>
-      <div class="faq">
-        <details><summary>What do you actually do?</summary><p>We find the repetitive work eating your week, like missed calls, quote follow-ups, reminders and invoices, then build automations to handle it. Our agents run them daily and fix anything that breaks. Building your first automations is included. No setup fee.</p></details>
-        <details><summary>What happens if an automation breaks?</summary><p>We monitor every automation we build, and we fix breaks at no charge, usually within one business day and often before you notice. Repairs never use your hours.</p></details>
-        <details><summary>If I cancel, do I lose the automations?</summary><p>No. They live in your own accounts and keep running. We just stop monitoring and maintaining them.</p></details>
-        <details><summary>How many hours do I get?</summary><p>Every plan includes a set number of support hours: 10, 22 or 40, used for new builds and hands-on admin. We count each task at the time a skilled assistant would take (for example, 5 minutes to schedule an appointment), and you get a monthly report showing every task. We never bill extra hours without asking first.</p></details>
-        <details><summary>Is software included?</summary><p>Yes. The tools we use to serve you are included in your plan, up to an allowance. Your own existing subscriptions, like your email or accounting software, stay yours.</p></details>
-        <details><summary>Can I cancel?</summary><p>Monthly plans: cancel any time with 30 days' notice. Retainers are paid upfront for 12 months at 10% off. Leave early and we refund the rest of the year, keeping only the 10% discount on the months you used. The first month covers setup and isn't refundable once setup begins.</p></details>
-        <details><summary>Who does the work?</summary><p>AI agents do the work, set up and supervised by a person, and nothing important goes out without your approval level.</p></details>
-        <details><summary>Will my customers feel like they're talking to a robot?</summary><p>Messages are written in your words, and you approve the wording before anything goes out. If a customer asks who they're talking to, it tells them it's your company's assistant. It never claims to be you.</p></details>
-        <details><summary>Can it take payments or handle money?</summary><p>No. It has no access to your bank accounts and never takes, sends or refunds money for you. It never runs a card &mdash; if one needs charging, you get told and you charge it. We only bill our own monthly plan.</p></details>
-        <details><summary>What happens if it gets something wrong?</summary><p>Every action gets checked after it runs, and anything that fails shows up in your daily brief. You can pause everything with one switch, and nothing is lost while it's paused.</p></details>
-        <details><summary>Do I need to buy new software?</summary><p>No. We connect to what you already use &mdash; Gmail, Google Calendar, your website forms and most CRMs &mdash; and any tools we add to serve you are included in your plan, up to its software allowance.</p></details>
-        <details><summary>What if my internet goes down, or there's a storm?</summary><p>It keeps working. We work on your email and calendar online, where they already live. Your mail keeps arriving and keeps getting handled, and it's all waiting for you when you're back.</p></details>
-        <details><summary>Is my customer data safe?</summary><p>We connect by being added as a user to your tools, not by taking your passwords, give the system only the access it needs, and log every action. Your data stays in your own accounts, and your information is never mixed with another client's.</p></details>
-        <details><summary>What if I want to stop?</summary><p>Your data and your automations stay in your own accounts. You can also revoke our access yourself, instantly, without asking us. See &ldquo;Can I cancel?&rdquo; above for notice and retainer terms.</p></details>
-      </div>
-    </div>
-  </section>
-
-  <section id="ask">
-    <div class="wrap">
-      <div class="sec-head">
-        <p class="eyebrow">Ask us anything</p>
-        <h2>Questions before you book?</h2>
-        <p class="lede">Search the questions people actually ask. If yours isn't here, the form below reaches a person.</p>
-      </div>
-      <div class="chat" id="chat">
+      <div>
         <form class="chat-in" id="faq-form">
           <input id="faq-q" placeholder="Can it send quotes without asking me?" autocomplete="off" aria-label="Search questions">
-          <button class="btn btn-primary btn-sm" type="button" id="faq-clear">Clear</button>
+          <button class="btn btn--line btn-sm" type="button" id="faq-clear">Clear</button>
         </form>
-        <div id="faq-list" class="faq-list"></div>
         <p class="chat-meta" id="faq-meta">Nothing you type here leaves your browser.</p>
+        <div id="faq-list" class="faq-list"></div>
       </div>
     </div>
   </section>
 
-  <section id="book" class="book">
-    <div class="wrap book-grid">
+  <section class="close band" id="book" aria-labelledby="bookTitle">
+    <div class="wrap">
       <div>
-        <p class="eyebrow">Book a call</p>
-        <h2 class="mt14">Let's find the first thing to take off your plate.</h2>
+        <h2 id="bookTitle" class="display">Get your minutes back.</h2>
         <p class="lede">A free 30-minute operations assessment. You'll leave with a clear list of what can be automated, whether or not you sign up.</p>
         <ul>
           <li>No cost, no pressure</li>
-          <li>By phone, weekday evenings 5&ndash;8 PM Eastern</li>
+          <li>By phone, weekday evenings 5 to 8 PM Eastern</li>
           <li>A written summary sent after the call</li>
         </ul>
-        <p><a class="btn btn-primary" href="https://calendar.app.google/mL2TQQSCAgLAURZC6" target="_blank" rel="noopener">Pick a time on the calendar</a></p>
+        <a class="btn btn--go" href="https://calendar.app.google/mL2TQQSCAgLAURZC6" target="_blank" rel="noopener">Pick a time on the calendar</a>
       </div>
       <div class="book-card">
         <h3>Or send us a message</h3>
@@ -399,7 +270,7 @@
             <option>Evening, after 6pm</option><option>Weekends only</option><option>Email only, please</option></select></div>
           <div class="fld"><label for="f-pain">What eats most of your time right now?</label><textarea id="f-pain" name="pain" placeholder="Chasing quotes, answering the same questions, scheduling&hellip;"></textarea></div>
           <div class="hp" aria-hidden="true"><label for="f-hp">Company website</label><input id="f-hp" name="company_website" tabindex="-1" autocomplete="off"></div>
-          <button class="btn btn-primary" type="submit" id="f-send">Request assessment</button>
+          <button class="btn btn--go" type="submit" id="f-send">Request assessment</button>
           <p class="note" id="f-note">No cost and no obligation. We reply within one business day.</p>
         </form>
         <div class="ok hid" id="f-ok"></div>
@@ -408,17 +279,18 @@
   </section>
 </main>
 
-<footer>
-  <div class="wrap foot">
-    <span class="tagline tagline-row"><svg class="logo logo-24" viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="16.5" fill="none" stroke="currentColor" stroke-width="3"/><path d="M20 20 L20 6.5 A13.5 13.5 0 0 0 6.5 20 Z" fill="var(--accent)"/><path d="M20 3.5v4M36.5 20h-4M20 36.5v-4M3.5 20h4" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><circle cx="20" cy="20" r="2.6" fill="currentColor"/></svg>Minutes Regained&trade; &middot; Always on watch.</span>
+<footer class="foot band">
+  <div class="wrap">
+    <span class="tagline-row"><svg viewBox="0 0 40 40" width="22" height="22" aria-hidden="true"><circle cx="20" cy="20" r="16.5" fill="none" stroke="var(--teal)" stroke-width="3"/><path d="M20 20 L20 6.5 A13.5 13.5 0 0 0 6.5 20 Z" fill="var(--signal)"/><circle cx="20" cy="20" r="2.6" fill="var(--teal)"/></svg>Minutes Regained&trade; &middot; Always on watch.</span>
     <span>Veteran-owned business. Serving small businesses across the United States.</span>
     <span><a href="/services">Services</a> &middot; <a href="/pricing">Pricing</a> &middot; <a href="/demo">Demo</a> &middot; <a href="/client">Already a client? Sign or pay here</a> &middot; <a href="/privacy">Privacy</a></span>
-    <span>Minutes Regained is operated by Provident Watch LLC &middot; <a href="mailto:support@minutesregained.com">support@minutesregained.com</a></span>
+    <span>Minutes Regained is operated by Provident Watch LLC &middot; support@minutesregained.com</span>
     <span>&copy; <span id="yr">2026</span> Minutes Regained</span>
   </div>
 </footer>
 
-<script src="/site.js?v=20261028b" defer></script>
+<script src="/home.js?v=20261102" defer></script>
+<script src="/site.js?v=20261102" defer></script>
 
 <button id="fb-open" type="button" aria-haspopup="dialog">Report a problem</button>
 
@@ -430,9 +302,8 @@
       <div class="fld"><label for="fb-where">Where were you on the page?</label>
         <select id="fb-where" name="where">
           <option value="">Pick one</option>
-          <option>The top / first screen</option><option>What we handle</option>
-          <option>Your AI team</option><option>You're in control</option>
-          <option>Comparison table</option><option>Calculator</option><option>Pricing</option>
+          <option>The top / live demo</option><option>The five automations</option>
+          <option>You're in control</option><option>Pricing</option><option>How it starts</option>
           <option>Questions / FAQ search</option><option>The request form</option>
           <option>Somewhere else</option>
         </select></div>

@@ -22,7 +22,7 @@
   ];
 
   var activity = [
-    { t: 'Answered a 7:12pm emergency text', s: 'Holding reply in 40 seconds, on-call tech alerted at once. Owner tapped OK on the ETA at 7:15pm.', m: '7:12pm', hold: false },
+    { t: 'Answered a 7:12pm emergency web chat', s: 'Holding reply in 40 seconds, on-call tech alerted at once. Owner tapped OK on the ETA at 7:15pm.', m: '7:12pm', hold: false },
     { t: 'Deposit invoice held for approval', s: '$1,850 on the Hanley repipe. Money-moving steps wait for a yes.', m: '4:38pm', hold: true },
     { t: 'Rescheduled Tuesday 9am for a parts delay', s: 'Moved two jobs, notified both customers and the tech, updated the calendar.', m: '2:05pm', hold: false },
     { t: 'Sent review request on a closed job', s: 'Three days after the water heater swap, with the photos attached.', m: '11:20am', hold: false }
@@ -32,7 +32,7 @@
   var DETAILS = {
     leads: {
       title: 'New leads',
-      what: 'Every inquiry that came in by form, call, text, or web chat, captured as a record instead of a missed voicemail.',
+      what: 'Every inquiry that came in by form, call, email or web chat, captured as a record instead of a missed voicemail.',
       bullets: [
         'Caller ID and web form fields parsed into name, address, and the job described',
         'Source tagged, so you can see which ads and listings actually produce work',
@@ -105,11 +105,11 @@
     {
       id: 'new-lead',
       label: 'New Lead',
-      who: 'Inbound text message, 7:12pm',
+      who: 'Website chat message, 7:12pm',
       msg: '"Water’s pouring out from under my kitchen sink. I shut the valve. Can anyone come tonight?"',
       stage: 'new',
       steps: [
-        { what: 'Inquiry captured', how: 'Text parsed into a record: name, number, address, and the problem described.', min: 2 },
+        { what: 'Inquiry captured', how: 'Message parsed into a record: name, number, address, and the problem described.', min: 2 },
         { what: 'CRM record created', how: 'Checked against existing customers, flagged urgent on the shut-off valve detail.', min: 3 },
         { what: 'Holding reply sent', how: 'It is after your business hours, so in 40 seconds the customer gets a short note from your assistant: the on-call team has been alerted. It promises no time, and it is the only thing that goes out on its own.', min: 1 },
         { what: 'Owner alerted right away', how: 'Marked urgent: name, address, the problem and who was sent, so it is not waiting for the evening brief.', min: 1 },
@@ -118,7 +118,7 @@
         { what: 'Follow-up task created', how: 'Dated for the morning after, to confirm the repair held.', min: 2 }
       ],
       approvals: 1,
-      log: { t: 'Emergency text routed at 7:12pm', s: 'Holding reply in 40 seconds, on-call tech alerted at once. ETA reply waiting for your one-tap OK.', hold: true }
+      log: { t: 'Emergency web chat routed at 7:12pm', s: 'Holding reply in 40 seconds, on-call tech alerted at once. ETA reply waiting for your one-tap OK.', hold: true }
     },
     {
       id: 'books',
@@ -416,7 +416,7 @@
       { key: 'completed', n: 'Completed', c: 27 }
     ];
     activity = [
-      { t: 'Answered a 7:12pm emergency text', s: 'Holding reply in 40 seconds, on-call tech alerted at once. Owner tapped OK on the ETA at 7:15pm.', m: '7:12pm', hold: false },
+      { t: 'Answered a 7:12pm emergency web chat', s: 'Holding reply in 40 seconds, on-call tech alerted at once. Owner tapped OK on the ETA at 7:15pm.', m: '7:12pm', hold: false },
       { t: 'Deposit invoice held for approval', s: '$1,850 on the Hanley repipe. Money-moving steps wait for a yes.', m: '4:38pm', hold: true },
       { t: 'Rescheduled Tuesday 9am for a parts delay', s: 'Moved two jobs, notified both customers and the tech, updated the calendar.', m: '2:05pm', hold: false },
       { t: 'Sent review request on a closed job', s: 'Three days after the water heater swap, with the photos attached.', m: '11:20am', hold: false }
