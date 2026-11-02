@@ -361,3 +361,24 @@ form.sign { display: grid; gap: 0.9rem; }
 @media (max-width: 720px) { .close .wrap { grid-template-columns: 1fr; } }
 .tab .tab__n { display: grid; margin-top: 0; font-size: 0.8rem; opacity: 0.8; }
 .tab[aria-selected="true"] .tab__n { opacity: 1; }
+
+/* ---------------- specialty pages ---------------- */
+.spec-hero h1 { font-size: clamp(2.3rem, 4.6vw, 4.2rem); }
+.brief-card .row { display: grid; grid-template-columns: 3.4rem 5.8rem minmax(0, 1fr); gap: 0.6rem; padding: 0.6rem 0; border-top: 1px solid var(--st-line); font-size: 0.86rem; line-height: 1.45; }
+.brief-card .row:first-child { border-top: 0; }
+.brief-card time { font: 400 0.76rem/1.6 var(--f-mono); color: var(--st-dim); font-variant-numeric: tabular-nums; }
+.brief-card .tag { font: 600 0.66rem/1.8 var(--f-mono); letter-spacing: 0.06em; color: var(--st-ok); }
+.brief-card .tag.you { color: var(--st-signal); }
+.brief-card { padding-top: 0.6rem; }
+.tasks { margin-top: 2.5rem; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; }
+.task { padding: 1.3rem; border-radius: var(--r-lg); background: var(--surface); border: 1px solid var(--line); display: grid; gap: 0.6rem; align-content: start; }
+.task h3 { font: 700 1.15rem/1.2 var(--f-display); font-stretch: 112%; }
+.task p { font-size: 0.95rem; color: var(--ink-soft); }
+.never { margin-top: 2rem; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.75rem 2rem; }
+.never li { display: grid; grid-template-columns: 1.1rem minmax(0, 1fr); gap: 0.55rem; }
+.never li::before { content: ""; width: 0.8rem; height: 0.8rem; margin-top: 0.35rem; border-radius: 50%; border: 2px solid var(--signal); background: linear-gradient(135deg, transparent 44%, var(--signal) 44%, var(--signal) 56%, transparent 56%); }
+.qa-static { display: grid; gap: 0.5rem; }
+.price-line { margin-top: 1.5rem; display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; }
+@media (max-width: 1040px) { .tasks { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 720px) { .tasks, .never { grid-template-columns: 1fr; } .brief-card .row { grid-template-columns: 3rem minmax(0, 1fr); row-gap: 0.1rem; } .brief-card .row time { grid-row: span 2; } .brief-card .row > :nth-child(3) { grid-column: 2; } }
+.task .chip-status { justify-self: start; }
