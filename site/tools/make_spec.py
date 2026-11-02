@@ -78,14 +78,14 @@ PAGES = [
     "tasks": [
       ("Lead Catcher", "live", "Website chat answered in minutes, every lead saved to a simple CRM, and missed calls put at the top of your brief so you can call back."),
       ("Quote Chaser", "live", "Email follow-ups on open quotes on day 2, 5 and 10, waiting for your OK until you approve them to go on their own."),
-      ("Booking & Dispatch", "setup", "Online booking within your rules, confirmation and reminder emails, and each evening tomorrow's schedule checked for double bookings and impossible drive times. Once you approve it, each crew member gets their schedule by email."),
+      ("Booking & Dispatch", "setup", "Online booking within your rules, confirmation and reminder emails, and each evening tomorrow's schedule checked for double bookings and impossible drive times. Once you approve it, each crew member gets their schedule by email, or by text through your own scheduling app if you ask us to."),
       ("Job Wrap-Up", "setup", "A review request after every finished job, and a heads-up to you when an invoice still needs charging."),
       ("Supply reminders", "setup", "A flag in your brief when you're due to reorder, based on your own purchase history. You place the order."),
       ("Daily Brief", "live", "Your inbox sorted, replies drafted, voice notes from the truck turned into job notes, and one evening summary."),
     ],
     "never_title": "What it never does",
     "never": [
-      "Text your customers. Replies happen where they reached out.",
+      "Text your customers, or text anyone from a number of ours. Crew schedules go by email, or through your own app if you choose.",
       "Quote a price, give a discount or promise an arrival time you didn't set.",
       "Send a crew anywhere without your OK on the schedule.",
       "Order supplies or spend money. It flags, you buy.",
@@ -94,7 +94,7 @@ PAGES = [
     ],
     "fit": "You stay in charge. We're added as a user to your own tools, like your calendar, Jobber or Housecall Pro, instead of taking passwords. Every action is logged, and you can remove our access yourself at any time.",
     "faq": [
-      ("Do you send my crews out?", "Not on our own. Each evening we line up tomorrow's schedule and flag conflicts. Once you approve it, each crew member gets their schedule by email."),
+      ("Do you send my crews out?", "Not on our own. Each evening we line up tomorrow's schedule and flag conflicts. Once you approve it, each crew member gets their schedule by email. If your crews already get texts from your own scheduling app, like Jobber or Housecall Pro, we can send the schedule through that app instead. Nothing ever comes from a number of ours."),
       ("Do you text my customers?", "No, never. Replies happen where the customer reached out, like your website chat or email. Missed calls go to the top of your brief so you can call back."),
       ("What about emergencies after hours?", "You tell us what counts as an emergency and who's on call. An emergency goes straight to that person, and the customer gets a short holding reply so they're not left waiting."),
       ("Do you order supplies?", "No. We flag when you're due to reorder, based on your purchase history. You decide what to buy and place the order."),
