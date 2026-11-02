@@ -115,7 +115,7 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 /* photo + floating demo */
 .hero-visual { position: relative; padding-bottom: 0.5rem; }
 .hero-photo { width: 78%; margin-left: auto; border-radius: var(--r-xl); overflow: hidden; aspect-ratio: 5 / 5.4; background: var(--chip); box-shadow: var(--shadow); }
-.hero-photo img { width: 100%; height: 100%; object-fit: cover; object-position: 40% 30%; }
+.hero-photo img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 70%; }
 .hero-photo figcaption { position: absolute; }
 .hero-visual .screen { position: relative; margin-top: -42%; width: 92%; }
 
