@@ -101,6 +101,7 @@ body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-a
 .hero .lede { margin-top: 1.4rem; }
 .hero .who { margin-top: 1rem; max-width: 46ch; font-size: 1.02rem; color: var(--ink); font-weight: 500; }
 .hero__go { margin-top: 2rem; display: flex; flex-wrap: wrap; gap: 0.75rem; }
+.hero-assure { margin-top: 0.9rem; max-width: 46ch; }
 .trades { margin-top: 2.25rem; }
 .trades p { font: 600 0.9rem/1.2 var(--f-text); color: var(--ink-soft); }
 .trades ul { margin-top: 0.75rem; display: flex; flex-wrap: wrap; gap: 0.5rem; }
