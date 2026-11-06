@@ -246,6 +246,12 @@ All calls are admin-only (`/api/admin/...`, Basic auth). Times are counted minut
   (script only by per-request nonce, fetch only to this site) and `no-store`. Tested end to end in a browser
   against the Worker running on SQLite, at 375px and desktop.
 
+## Set up a client (dashboard, built November 6)
+
+`site/src/adminsetup.js`: one form on the dashboard creates the client's agent with its profile and approved answers,
+links its plan and owner email, and makes its three links (customer request form `/f/<address>`, voice-note link,
+inbox connect link, 14 days). Links show once on screen. `POST /api/admin/setup-client` does the same.
+
 ## The GM (built November 6)
 
 `site/src/gm.js`, tested by `node site/tools/test_gm.mjs`. Jerome kept the name "The GM".

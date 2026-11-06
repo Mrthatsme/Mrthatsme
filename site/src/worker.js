@@ -23,6 +23,7 @@ import { createBuild, updateEstimate, logTime, recordApproval, finishBuild, mont
 import { renderHoursPanel, HOURS_CSS, GM_CSS } from "./adminhours.js";
 import { askGM, saveAnswer, dismissGap, dashboardGaps } from "./gm.js";
 import { renderGmPanel } from "./admingm.js";
+import { setupClient, renderSetupPanel, SETUP_CSS } from "./adminsetup.js";
 import { agreementPage, startPage, signupsOpen, SIGNUPS_CLOSED_MESSAGE } from "./agreementpage.js";
 
 const JSON_HEADERS = { "Content-Type": "application/json; charset=utf-8" };
@@ -175,6 +176,10 @@ export default {
           return json(out, out.error ? 400 : 200);
         }
         // The GM: save an answer the owner approved, or dismiss a question that needs none.
+        if (path === "/api/admin/setup-client" && request.method === "POST") {
+          const out = await setupClient(env, `${url.protocol}//${url.host}`, (await readJson(request)) || {});
+          return json(out, out.error ? 400 : 200);
+        }
         if (path === "/api/admin/gm-answer" && request.method === "POST") {
           const out = await saveAnswer(env, (await readJson(request)) || {});
           return json(out, out.error ? 400 : 200);
@@ -622,7 +627,7 @@ async function handleAdmin(path, env) {
     const nonce = btoa(String.fromCharCode(...crypto.getRandomValues(new Uint8Array(16))));
     const hours = await dashboardHours(env).catch((err) => { console.error("hours panel failed", err); return []; });
     const gaps = await dashboardGaps(env).catch((err) => { console.error("GM panel failed", err); return []; });
-    return new Response(renderAdminPage({ leads, contracts, clients, payments, hoursPanel: renderGmPanel(gaps, nonce) + renderHoursPanel(hours, nonce), hoursCss: HOURS_CSS + GM_CSS }), {
+    return new Response(renderAdminPage({ leads, contracts, clients, payments, hoursPanel: renderGmPanel(gaps, nonce) + renderHoursPanel(hours, nonce) + renderSetupPanel(nonce), hoursCss: HOURS_CSS + GM_CSS + SETUP_CSS }), {
       headers: {
         "Content-Type": "text/html; charset=utf-8",
         "Cache-Control": "no-store",
