@@ -75,6 +75,19 @@ They are in the Shared Drive, folder 03 Operations & Automations.
   customer wrote to first). Recorded in `CLAUDE.md`. The Services never-list, `/for/contractors`, `/for/law-firms` and the
   triage agent's FAQ (`site/src/faq-data.js`) all say this now.
 
+### Fixes from the outside review (November 6)
+An outside "customer-perspective" review was written against an older version of the site. Most of it was already handled.
+Four points were still fair and are now fixed:
+- **Hours are a person's time.** Said plainly on `/pricing` and in the Services hours note; the hours FAQ adds "even when AI
+  tools help get it done faster".
+- **When something breaks** it shows in the daily brief with what failed. "Often before you notice" is gone.
+- **We don't answer the phone.** Said on the Lead Catcher card and in a new Services FAQ ("Do you answer our phones?").
+- **Opt-out.** The never-list and `CLAUDE.md` now say no message ever goes to anyone who asked to stop. The contractors FAQ
+  says a STOP reply ends it. The system must actually honour this before any text goes out through a client's app.
+The triage agent's FAQ (`site/src/faq-data.js`) matches all four. Still open from the review: an interactive demo, real proof
+from pilot clients, and a written security summary. The review liked "We build it. We run it. We watch it."; it is no longer
+on any public page (only inside the `/demo-desk` sample), so bring it back only if Jerome wants it.
+
 ### The two demo pages
 - `/demo` is the back-office demo and `/demo-desk` the admin-desk demo, built from the mockups.
   Files: `site/public/demo.*` and `demo-desk.*`, with CSS and JS kept out of the HTML for the security policy.

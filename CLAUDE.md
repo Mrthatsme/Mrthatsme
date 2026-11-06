@@ -40,7 +40,8 @@ system must actually behave this way:
   through the client's own software when it already has messaging built in, like a scheduling app (Jobber,
   Housecall Pro) that texts crews, or a Facebook or Instagram inbox the customer wrote to first. Which of a
   client's tools can do that is confirmed on the assessment call (Jerome, November 6, 2026).
-- Never quotes a price, promises a date, or messages anyone who didn't make contact first.
+- Never quotes a price, promises a date, or messages anyone who didn't make contact first, or anyone who has asked to
+  stop (a STOP reply or any other request). They are never messaged again.
 - Never touches money. We send invoices and chase unpaid ones. We never take, move or
   refund payment, and never run a card.
 - Never pretends to be the client. If asked, it says it is the company's assistant.
