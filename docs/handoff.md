@@ -88,6 +88,30 @@ The triage agent's FAQ (`site/src/faq-data.js`) matches all four. Still open fro
 from pilot clients, and a written security summary. The review liked "We build it. We run it. We watch it."; it is no longer
 on any public page (only inside the `/demo-desk` sample), so bring it back only if Jerome wants it.
 
+### Try the demo with your own words (November 6)
+- **`/demo#try`**: a visitor picks a sample business (Tidewater Plumbing or Larkspur Law), types a message as a customer,
+  and sees five steps: intake, the permission check, the reply in the website chat, the owner's OK (Approve / Edit first),
+  and the line in tomorrow's Daily Brief, plus a "Rules it kept" box when a rule changed anything.
+- **Live drafts** come from `POST /api/demo` (`site/src/demotry.js`), using Claude Haiku 5.5 with structured JSON output at low effort.
+  The never-list is enforced **in code** after the draft, not trusted to the prompt: no price, time promise, phone, link,
+  email or texting in a reply, price questions always Ask Me, "are you a person?" always gets "the company's assistant",
+  and no legal advice from the law firm.
+- **Limits:** the existing bot screening, 500 characters, 10 tries an hour per visitor, and `DEMO_DAILY_CAP = "200"` a day
+  (`wrangler.toml`). Tries are counted in `triage_usage` under `demo:YYYY-MM-DD`, so no migration was needed.
+- **Fallback:** when the live draft is capped, rate-limited, refused or down, the page builds a pre-written example
+  in the browser (`site/public/demo-try.js`) and says so on screen.
+- **Nothing kept:** no message text is stored or logged, and no lead is created. The privacy page says so.
+- **Tests:** `node site/tools/test_demo_rules.mjs` (19 rule cases). The handler was also tested with a mocked database and
+  API (live path, refusal, API error, honeypot, too fast, per-visitor limit, daily cap, missing key), and the page in
+  Chromium at 375px and 1280px on both paths. **Not yet tested against the real API**, because this session had no key:
+  after deploy, send three messages on `/demo#try` (a price question, "are you a real person?", and a law-firm
+  "do I have a case?") and check the green "Drafted live" label shows. If every try says "Pre-written example", check that
+  `ANTHROPIC_API_KEY` is set on the Worker.
+- Links: Home's hero button is now **Try the demo** (`/demo#try`). The demo strip on Home and Services, Pricing, and every
+  Book a call band point there too.
+- Also fixed: the lead-reply instructions (`site/src/triage.js`) said "Florida service businesses"; now "small businesses
+  across the United States".
+
 ### The two demo pages
 - `/demo` is the back-office demo and `/demo-desk` the admin-desk demo, built from the mockups.
   Files: `site/public/demo.*` and `demo-desk.*`, with CSS and JS kept out of the HTML for the security policy.
@@ -147,8 +171,8 @@ Commits, oldest first: `048377f`, `9115f42`, `101774c`, `37df6f5`, `2ac8142`, `a
 2. **Fix open bug 2** (Daily Brief timing) **and bug 9** (business size in the agent's FAQ), then remove the unused files in bug 6
    and the Worker's `/demo-video.mp4` route.
 3. **Set the calculator thresholds** (bug 3) so it can suggest Essential.
-4. **A demo people can try** (from the outside review): a visitor types a made-up request and watches it go through intake,
-   the Ask Me approval, and into the daily brief, all on sample data and clearly labelled. Plan it with Jerome first.
+4. **Check the live demo after deploy** (three messages, above). Optional: the `/demo` header tile "Agents on watch: 8" is
+   machinery a plumber doesn't care about; swap it for something like "Replies sent tonight" if Jerome agrees.
 
 ## Starting a new session
 Open a new session on branch `claude/virtual-service-startup-32flre` and say:
