@@ -1,0 +1,646 @@
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>Minutes Regained Homepage</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: one column, sections in the order a buyer asks their questions — what is this, what do I bring you, what does it look like, what is it allowed to do, what does it cost, who are you. */
+:root{
+  --bg:#f2f5f5; --surface:#ffffff; --surface-2:#e9eeee; --line:#d3dbdb; --line-soft:#e3e9e9;
+  --fg:#101f1e; --fg-dim:#566766; --fg-faint:#7d8f8d;
+  --accent:#0f6f62; --accent-soft:#dcecea; --accent-line:#9fcac2;
+  --good:#2c7a3e; --good-soft:#dfeede;
+  --warn:#8f5e00; --warn-soft:#faeed4;
+  --crit:#a03030; --crit-soft:#f7e0de;
+  --sans:"IBM Plex Sans",ui-sans-serif,system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --r:12px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0d1414; --surface:#141e1d; --surface-2:#1a2524; --line:#2a3938; --line-soft:#223130;
+  --fg:#e3ecea; --fg-dim:#93a7a4; --fg-faint:#748784;
+  --accent:#44bba6; --accent-soft:#11322d; --accent-line:#2a6358;
+  --good:#5fc077; --good-soft:#12301a;
+  --warn:#d9a53c; --warn-soft:#332710;
+  --crit:#e07a72; --crit-soft:#361a19;
+  color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#0d1414; --surface:#141e1d; --surface-2:#1a2524; --line:#2a3938; --line-soft:#223130;
+  --fg:#e3ecea; --fg-dim:#93a7a4; --fg-faint:#748784;
+  --accent:#44bba6; --accent-soft:#11322d; --accent-line:#2a6358;
+  --good:#5fc077; --good-soft:#12301a;
+  --warn:#d9a53c; --warn-soft:#332710;
+  --crit:#e07a72; --crit-soft:#361a19;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--sans);margin:0;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-block:0 0;font-size:15px;line-height:1.55}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--surface)}
+.wrap{max-width:1060px;margin:0 auto}
+h1,h2,h3,h4{margin:0;text-wrap:balance}
+p{margin:0}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+a{color:var(--accent)}
+
+.mockbar{margin-top:14px;padding:9px 12px;border:1px dashed var(--accent-line);border-radius:10px;background:var(--accent-soft);color:var(--fg-dim);font-size:12.5px}
+.mockbar b{color:var(--fg)}
+
+/* header */
+header.site{position:sticky;top:env(safe-area-inset-top,0px);z-index:9;background:var(--surface);border-bottom:1px solid var(--line);
+  margin-left:calc(-1 * max(16px,env(safe-area-inset-left,0px)));margin-right:calc(-1 * max(16px,env(safe-area-inset-right,0px)))}
+.hinner{max-width:1060px;margin:0 auto;display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:11px}
+.brand{font-weight:700;font-size:16px;letter-spacing:-.01em;text-decoration:none;color:var(--fg)}
+.brand span{color:var(--accent)}
+nav.main{display:flex;gap:16px;font-size:13.5px;flex-wrap:wrap}
+nav.main a{color:var(--fg-dim);text-decoration:none}
+nav.main a:hover{color:var(--fg)}
+.hright{margin-left:auto;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.tel{font-family:var(--mono);font-size:13.5px;font-weight:500;color:var(--fg);text-decoration:none;white-space:nowrap}
+.btn{display:inline-block;text-align:center;text-decoration:none;font-weight:600;font-size:14px;padding:9px 15px;border-radius:9px;background:var(--accent);color:#fff;border:1px solid var(--accent);cursor:pointer}
+:root[data-theme="dark"] .btn, html:where(:not([data-theme="light"])) .btn{color:#06201c}
+.btn.ghost{background:transparent;color:var(--fg);border-color:var(--line)}
+.btn.sm{font-size:13px;padding:7px 12px}
+
+section{padding-block:46px;border-top:1px solid var(--line-soft)}
+section:first-of-type{border-top:0}
+.eyebrow{font-size:11.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--accent);font-weight:600;margin-bottom:9px}
+h2.big{font-size:clamp(23px,4.2vw,33px);font-weight:700;letter-spacing:-.018em;line-height:1.18}
+.lede{margin-top:11px;color:var(--fg-dim);max-width:62ch;font-size:16px}
+
+/* hero */
+.hero{padding-block:52px 44px}
+.hero h1{font-size:clamp(32px,6.4vw,54px);font-weight:700;letter-spacing:-.03em;line-height:1.05}
+.hero h1 em{font-style:italic;color:var(--accent)}
+.hero .sub{margin-top:16px;font-size:17px;color:var(--fg-dim);max-width:60ch}
+.trial{margin-top:16px;padding:12px 14px;border-left:3px solid var(--accent);background:var(--accent-soft);border-radius:0 8px 8px 0;font-size:14.5px;max-width:62ch}
+.herobtns{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap}
+.proofline{margin-top:18px;font-size:13px;color:var(--fg-faint)}
+
+/* examples */
+.ex{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin-top:20px}
+.excard{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:11px;min-width:0}
+.ask{font-size:15.5px;font-style:italic;color:var(--fg);border-left:3px solid var(--accent-line);padding-left:11px}
+.phase{font-size:13.5px;color:var(--fg-dim)}
+.phase b{display:block;color:var(--fg);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;margin-bottom:3px}
+.model{margin-top:16px;padding:15px;border:1px solid var(--accent-line);background:var(--accent-soft);border-radius:var(--r);font-size:15px;max-width:76ch}
+
+/* demo strip */
+.demo{margin-top:18px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.demohead{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 14px;border-bottom:1px solid var(--line-soft);flex-wrap:wrap}
+.demohead .t{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--fg-dim);font-weight:600}
+.demohead .s{font-size:12px;color:var(--fg-faint)}
+.feed{list-style:none;margin:0;padding:12px 14px;display:flex;flex-direction:column}
+.feed li{display:grid;grid-template-columns:66px 1fr auto;gap:10px;align-items:baseline;padding:8px 0;border-bottom:1px solid var(--line-soft)}
+.feed li:last-child{border-bottom:0}
+.feed .t{font-family:var(--mono);font-size:11.5px;color:var(--fg-faint)}
+.feed .m b{display:block;font-weight:600;font-size:14px}
+.feed .m span{color:var(--fg-dim);font-size:13px}
+.pill{font-size:10.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;padding:3px 7px;border-radius:5px;white-space:nowrap}
+.pill.done{background:var(--good-soft);color:var(--good)}
+.pill.told{background:var(--surface-2);color:var(--fg-dim)}
+.pill.ask{background:var(--warn-soft);color:var(--warn)}
+.demofoot{padding:12px 14px;border-top:1px solid var(--line-soft);display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap;font-size:13px;color:var(--fg-dim)}
+
+/* control */
+.dial{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px;margin-top:20px}
+.lvl{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px;min-width:0}
+.lvl h4{font-size:15px;font-weight:700}
+.lvl p{margin-top:5px;font-size:13.5px;color:var(--fg-dim)}
+.lvl .egg{margin-top:9px;font-size:12px;color:var(--fg-faint);font-style:italic}
+.lvl.never{border-color:var(--crit);background:var(--crit-soft)}
+.lvl.never h4{color:var(--crit)}
+.never-list{margin-top:18px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px}
+.never-list h3{font-size:16px;font-weight:700;margin-bottom:11px}
+.never-list ul{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.never-list li{display:flex;gap:9px;font-size:14px;align-items:flex-start}
+.never-list li::before{content:"\00d7";color:var(--crit);font-weight:700;flex:none;line-height:1.3}
+
+/* five */
+.five{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin-top:20px}
+.auto{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;min-width:0}
+.auto .n{font-family:var(--mono);font-size:12px;color:var(--accent);font-weight:600}
+.auto h4{font-size:16px;font-weight:700;margin-top:4px}
+.auto p{margin-top:6px;font-size:13.5px;color:var(--fg-dim)}
+.plus{margin-top:14px;padding:14px;border:1px dashed var(--accent-line);border-radius:var(--r);font-size:14px;color:var(--fg-dim)}
+.plus b{color:var(--fg)}
+
+/* audience */
+.aud{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px;margin-top:20px}
+.aud div{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px;min-width:0}
+.aud h4{font-size:14.5px;font-weight:700}
+.aud p{margin-top:5px;font-size:13px;color:var(--fg-dim)}
+
+/* calculator */
+.calc{margin-top:18px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:17px}
+.calc h3{font-size:17px;font-weight:700}
+.calc .csub{color:var(--fg-dim);font-size:13.5px;margin-top:5px;margin-bottom:15px;max-width:62ch}
+.fields{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px}
+.f label{display:block;font-size:12px;font-weight:600;color:var(--fg-dim);margin-bottom:5px}
+.f input{width:100%;font:inherit;font-family:var(--mono);font-size:15px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface-2);color:var(--fg)}
+.f input:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.f .hint{font-size:11.5px;color:var(--fg-faint);margin-top:4px}
+.result{margin-top:15px;padding:14px;border-radius:10px;background:var(--accent-soft);border:1px solid var(--accent-line)}
+.result .r1{font-size:clamp(17px,3vw,21px);font-weight:700;line-height:1.35}
+.result .r1 span{font-family:var(--mono);color:var(--accent)}
+.result .r2{margin-top:7px;font-size:13.5px;color:var(--fg-dim)}
+.basis{margin-top:10px;font-size:11.5px;color:var(--fg-faint);max-width:74ch}
+
+/* pricing */
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin-top:18px;align-items:stretch}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px;display:flex;flex-direction:column;gap:12px;min-width:0}
+.card.feature{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.badge{align-self:flex-start;font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);background:var(--accent-soft);border:1px solid var(--accent-line);padding:3px 8px;border-radius:999px}
+.card h3{font-size:18px;font-weight:700}
+.card .who{color:var(--fg-dim);font-size:13.5px}
+.price{display:flex;align-items:baseline;gap:5px;flex-wrap:wrap}
+.price .n{font-family:var(--mono);font-size:33px;font-weight:600;letter-spacing:-.02em}
+.price .per{color:var(--fg-dim);font-size:13.5px}
+.after{font-size:12.5px;color:var(--accent);font-weight:600}
+ul.inc{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:7px;font-size:13.5px}
+ul.inc li{display:flex;gap:8px;align-items:flex-start}
+ul.inc li::before{content:"";flex:none;width:5px;height:5px;border-radius:50%;background:var(--accent);margin-top:7px}
+.pays{font-size:12.5px;color:var(--fg-dim);border-top:1px solid var(--line-soft);padding-top:11px;margin-top:auto}
+.fine{font-size:11.5px;color:var(--fg-faint)}
+.hold{margin-top:16px;padding:16px;border:1px solid var(--warn);background:var(--warn-soft);border-radius:var(--r)}
+.hold h3{font-size:17px;font-weight:700}
+.hold p{margin-top:7px;font-size:14px;color:var(--fg-dim);max-width:68ch}
+.print{margin-top:14px;font-size:12.5px;color:var(--fg-faint);max-width:80ch}
+
+/* steps */
+.steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px;margin-top:20px}
+.step{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:15px;min-width:0}
+.step .k{font-family:var(--mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--accent);font-weight:600}
+.step h4{font-size:15.5px;font-weight:700;margin-top:6px}
+.step p{margin-top:6px;font-size:13.5px;color:var(--fg-dim)}
+
+/* owner */
+.owner{display:grid;grid-template-columns:200px 1fr;gap:20px;margin-top:20px;align-items:start}
+.photo{aspect-ratio:1;max-width:100%;border-radius:var(--r);background:var(--surface-2);border:1px dashed var(--line);display:flex;align-items:center;justify-content:center;text-align:center;font-size:12px;color:var(--fg-faint);padding:12px}
+.owner .body{min-width:0}
+.owner .body p{margin-top:11px;color:var(--fg-dim);max-width:62ch;font-size:15px}
+.owner .body p:first-child{color:var(--fg);font-size:16.5px;margin-top:0}
+.four{list-style:none;margin:18px 0 0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+.four li{font-size:13.5px;color:var(--fg-dim)}
+.four b{color:var(--fg);display:block}
+.oneperson{margin-top:20px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:17px}
+.oneperson h3{font-size:17px;font-weight:700}
+.oneperson>p{margin-top:7px;color:var(--fg-dim);font-size:14.5px;max-width:66ch}
+.oneperson ul{list-style:none;margin:14px 0 0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.oneperson li{font-size:13.5px;color:var(--fg-dim)}
+.oneperson li b{color:var(--fg);display:block}
+
+/* faq */
+.faq{margin-top:18px;display:flex;flex-direction:column;gap:1px}
+details{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:13px 15px}
+details+details{margin-top:8px}
+summary{cursor:pointer;font-weight:600;font-size:15px;list-style:none}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";float:right;color:var(--accent);font-weight:700}
+details[open] summary::after{content:"\2212"}
+details p{margin-top:9px;color:var(--fg-dim);font-size:14px;max-width:70ch}
+
+/* final */
+.final{background:var(--surface);border:1px solid var(--accent-line);border-radius:var(--r);padding:24px;margin-top:8px}
+.final h2{font-size:clamp(21px,3.6vw,28px);font-weight:700;letter-spacing:-.015em}
+.final p{margin-top:10px;color:var(--fg-dim);max-width:62ch}
+.final ul{list-style:none;margin:16px 0 0;padding:0;display:flex;gap:18px;flex-wrap:wrap;font-size:13.5px;color:var(--fg-dim)}
+.final ul li::before{content:"\2713";color:var(--accent);font-weight:700;margin-right:7px}
+.finalbtns{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap}
+
+footer.site{border-top:1px solid var(--line);margin-top:46px;padding-block:24px 36px;font-size:13px;color:var(--fg-dim)}
+footer.site .frow{display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+footer.site a{color:var(--fg-dim);text-decoration:none}
+footer.site a:hover{color:var(--fg)}
+footer.site .legal{margin-top:12px;font-size:12px;color:var(--fg-faint)}
+.badges{margin-top:12px;display:flex;gap:9px;flex-wrap:wrap}
+.slot{border:1px dashed var(--line);border-radius:8px;padding:6px 10px;font-size:11.5px;color:var(--fg-faint)}
+
+/* admin + tools */
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px;margin-top:20px}
+.panel2{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:17px;min-width:0}
+.panel2 .k{font-family:var(--mono);font-size:11.5px;color:var(--accent);font-weight:600;letter-spacing:.05em;text-transform:uppercase}
+.panel2 h4{font-size:16.5px;font-weight:700;margin-top:5px}
+.panel2 ul{list-style:none;margin:12px 0 0;padding:0;display:flex;flex-direction:column;gap:8px;font-size:13.5px;color:var(--fg-dim)}
+.panel2 ul li{display:flex;gap:9px;align-items:flex-start}
+.panel2 ul li::before{content:"";flex:none;width:5px;height:5px;border-radius:50%;background:var(--accent-line);margin-top:7px}
+.counted{margin-top:16px;padding:15px;border:1px dashed var(--accent-line);border-radius:var(--r);font-size:14px;color:var(--fg-dim);max-width:80ch}
+.counted b{color:var(--fg)}
+.tools{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px;margin-top:20px}
+.tool{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:15px;min-width:0}
+.tool h4{font-size:13px;letter-spacing:.05em;text-transform:uppercase;color:var(--fg-faint);font-weight:600}
+.tool p{margin-top:7px;font-size:14px;color:var(--fg)}
+.anything{margin-top:14px;padding:16px;border:1px solid var(--accent-line);background:var(--accent-soft);border-radius:var(--r);font-size:14.5px;max-width:78ch}
+@media (max-width:900px){
+  .two,.tools{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .ex,.five{grid-template-columns:1fr}
+  .dial,.aud,.steps{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .cards{grid-template-columns:1fr}
+  .fields{grid-template-columns:1fr}
+  .owner{grid-template-columns:1fr}
+  .photo{max-width:200px}
+  .never-list ul,.four,.oneperson ul{grid-template-columns:1fr}
+}
+@media (max-width:620px){ .two,.tools{grid-template-columns:1fr} }
+@media (max-width:460px){
+  .dial,.aud,.steps{grid-template-columns:1fr}
+  .feed li{grid-template-columns:58px 1fr;grid-template-areas:"t m" ". p"}
+  .feed .t{grid-area:t} .feed .m{grid-area:m} .feed .pill{grid-area:p;justify-self:start;margin-top:4px}
+  nav.main{display:none}
+}
+</style>
+
+<header class="site">
+  <div class="hinner">
+    <a class="brand" href="#top">Minutes <span>Regained</span></a>
+    <nav class="main">
+      <a href="#how">How it works</a>
+      <a href="#control">You're in control</a>
+      <a href="#automations">What we run</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#who">Who runs this</a>
+    </nav>
+    <div class="hright">
+      <a class="tel" href="tel:+18778968784">(877) 896-8784</a>
+      <a class="btn sm" href="#book">Book a call</a>
+    </div>
+  </div>
+</header>
+
+<div class="wrap" id="top">
+  <div class="mockbar"><b>Mockup.</b> The full homepage in the new section order, written for a business with ten to fifty people. The calculator works. Nothing else is wired, and no number here is a client result.</div>
+
+  <section class="hero">
+    <p class="eyebrow">Virtual assistant support and automation for small businesses</p>
+    <h1>Every lead answered. <em>Even at dinner.</em></h1>
+    <p class="sub">We map how work actually moves through your business, run the gaps by hand until we both know the pattern, then turn what repeats into automations your team approves. Your people do the work. We handle the office work.</p>
+    <p class="trial">For the first two weeks nothing sends. Everything is drafted and held so you can read exactly what it would have said to your customers, before a single message goes out.</p>
+    <div class="herobtns">
+      <a class="btn" href="#book">Book a free assessment</a>
+      <a class="btn ghost" href="#pricing">See pricing</a>
+    </div>
+    <p class="proofline">Taking our first three clients. No reviews yet, and we're not going to borrow anyone else's.</p>
+  </section>
+
+  <section id="how">
+    <p class="eyebrow">Where it starts</p>
+    <h2 class="big">Bring us the thing that keeps falling through.</h2>
+    <p class="lede">You don't need to know whether it's a people problem or a software problem. Tell us what's slipping. The quotes nobody circles back on. The calls that come in while everyone's on a job. The invoices sitting out there unpaid. The inbox nobody has been to the bottom of since spring.</p>
+    <p class="lede">We'll tell you what it would take to close that gap, and then we close it. Sometimes that's a person doing the work. Usually it ends up being an automation doing it every day, built in your own accounts, with wording you approved.</p>
+
+    <div class="ex">
+      <article class="excard">
+        <p class="ask">"Can you clean up our inbox and make sure customer requests actually get followed up?"</p>
+        <p class="phase"><b>Week one</b>We sort the inbox, flag what needs a decision, and start a running list of every open customer request so nothing sits.</p>
+        <p class="phase"><b>By month two</b>The sorting and the follow-up reminders run on their own, using rules you approved.</p>
+      </article>
+      <article class="excard">
+        <p class="ask">"We send quotes and then forget about them."</p>
+        <p class="phase"><b>Week one</b>We pull every open quote into one list and follow them up by hand, in your words.</p>
+        <p class="phase"><b>By month two</b>Quote Chaser does it on day 2, 5 and 10, and stops the second they reply.</p>
+      </article>
+      <article class="excard">
+        <p class="ask">"People book and then don't show."</p>
+        <p class="phase"><b>Week one</b>We confirm every appointment the day before and tell you which ones look shaky.</p>
+        <p class="phase"><b>By month two</b>Confirmations and reminders go out automatically, and anyone who no-shows gets a follow-up the same day.</p>
+      </article>
+    </div>
+
+    <p class="model"><b>That's the model.</b> A person does it first, so you can watch it done your way before anything runs on its own. Then the parts that repeat become automations, and the hours go back to the things that actually need a human.</p>
+  </section>
+
+  <section id="demo">
+    <p class="eyebrow">What it looks like running</p>
+    <h2 class="big">A Tuesday evening, handled.</h2>
+    <p class="lede">This is one business's back office at 7:12pm. Forty-seven things handled, three waiting on a decision. Everything with a price, a promise or a date on it stops and waits for a human.</p>
+
+    <div class="demo">
+      <div class="demohead">
+        <span class="t">Live operations &middot; example company</span>
+        <span class="s">Sample data. Nothing here is a real customer record.</span>
+      </div>
+      <ul class="feed">
+        <li><span class="t">7:09 PM</span><span class="m"><b>Chat lead logged &mdash; Dana R.</b><span>No hot water. Answered in 40 seconds, in your words.</span></span><span class="pill done">Handled</span></li>
+        <li><span class="t">6:48 PM</span><span class="m"><b>Invoice #1182 sent &mdash; $680</b><span>Job closed at 5:40. Invoice out, chase scheduled for day 14.</span></span><span class="pill told">Told you</span></li>
+        <li><span class="t">6:30 PM</span><span class="m"><b>Review requested &mdash; Alvarez</b><span>Sent the day the job closed. One ask, no second.</span></span><span class="pill done">Handled</span></li>
+        <li><span class="t">5:20 PM</span><span class="m"><b>Tomorrow's run sheet built</b><span>3 jobs, 41 miles, gate code for the second stop.</span></span><span class="pill told">Told you</span></li>
+        <li><span class="t">6:14 AM</span><span class="m"><b>Broken intake form repaired</b><span>A field got renamed overnight. Caught and fixed before the first lead.</span></span><span class="pill told">Told you</span></li>
+        <li><span class="t">waiting</span><span class="m"><b>Quote to Dana R. &mdash; $2,480</b><span>Drafted off your price list. Nothing sends until someone says yes.</span></span><span class="pill ask">Needs your OK</span></li>
+      </ul>
+      <div class="demofoot">
+        <span>Three things need a decision. The other forty-seven already happened.</span>
+        <a class="btn ghost sm" href="#demo">Open the full demo</a>
+      </div>
+    </div>
+  </section>
+
+  <section id="control">
+    <p class="eyebrow">You're in control</p>
+    <h2 class="big">You decide what it's allowed to do.</h2>
+    <p class="lede">Before anything goes live, you set how much it handles on its own. Change any setting whenever you want, or pause everything with one switch.</p>
+
+    <div class="dial">
+      <div class="lvl"><h4>Handle It</h4><p>Does it. No message to you.</p><p class="egg">Logs a new lead in your CRM</p></div>
+      <div class="lvl"><h4>Tell Me</h4><p>Does it, then reports it in your daily brief.</p><p class="egg">Books an open weekday slot</p></div>
+      <div class="lvl"><h4>Ask Me</h4><p>Gets it ready and waits for your OK.</p><p class="egg">Sends a quote to a customer</p></div>
+      <div class="lvl never"><h4>Never</h4><p>Won't do it, even if someone asks.</p><p class="egg">Quotes a price or signs a contract</p></div>
+    </div>
+
+    <div class="never-list">
+      <h3>What it never does, whatever you set</h3>
+      <ul>
+        <li>Send a text message. Replies happen where the customer reached out.</li>
+        <li>Quote a price, promise a date, or message anyone who didn't contact you first.</li>
+        <li>Touch your money. No payments, no refunds, no card ever run. You get told, you charge it.</li>
+        <li>Pretend to be you. If asked, it says it's your company's assistant.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="automations">
+    <p class="eyebrow">The five automations</p>
+    <h2 class="big">Five things, named. Here's what the help turns into.</h2>
+    <p class="lede">These are the jobs we take off you first, because they're the ones every business repeats. Each is built in your own accounts, runs every day, and gets fixed by us if it breaks. You approve the wording before any of it goes live.</p>
+
+    <div class="five">
+      <div class="auto"><p class="n">01</p><h4>Lead Catcher</h4><p>Someone messages your site at 7pm. They get a real answer in minutes, in words you approved, and the lead lands on tomorrow's brief with their name, number and what they want. It never quotes a price and never promises a date.</p></div>
+      <div class="auto"><p class="n">02</p><h4>Quote Chaser</h4><p>You send an estimate and forget it. It doesn't. Follow-ups go out on day 2, day 5 and day 10, and stop the moment the customer replies. You only hear about the replies.</p></div>
+      <div class="auto"><p class="n">03</p><h4>Schedule Keeper</h4><p>Confirmations the day before, reminders the morning of, and a follow-up on anyone who no-shows. Reschedules get handled without a phone call. Emergencies go straight to whoever is on call.</p></div>
+      <div class="auto"><p class="n">04</p><h4>Review Builder</h4><p>The day a job closes out, the customer gets asked for a review. One ask, politely worded, never a second one. The brief shows you who left one.</p></div>
+      <div class="auto"><p class="n">05</p><h4>Invoice &amp; Chase</h4><p>The invoice goes out when the job closes, and the unpaid ones get chased on a schedule so nobody is doing it at 10pm. You see who's paid and who hasn't. We send and we follow up. We never take the money. When something needs collecting, you collect it.</p></div>
+      <div class="auto" style="border-color:var(--accent-line);background:var(--accent-soft)"><p class="n">Every plan</p><h4>The Daily Brief</h4><p>One screen every morning: what got handled, what's waiting on you, and anything that failed. It never counts against your hours.</p></div>
+    </div>
+  </section>
+
+  <section id="admin">
+    <p class="eyebrow">The part that doesn't repeat</p>
+    <h2 class="big">And a person for everything that needs judgment.</h2>
+    <p class="lede">Automations handle the work that happens the same way every time. The hours in your plan are for the rest: the things that need somebody to think, decide, or just get it done once. That half never goes away, and we don't pretend otherwise.</p>
+
+    <div class="two">
+      <div class="panel2">
+        <p class="k">Kept current, every week</p>
+        <h4>The admin that piles up</h4>
+        <ul>
+          <li>Inbox triage, with replies drafted and waiting in your drafts folder</li>
+          <li>Calendar kept straight, business and personal if you want</li>
+          <li>Meetings booked, moved and confirmed</li>
+          <li>Documents and forms routed to whoever needs to sign them</li>
+          <li>CRM kept clean: duplicates merged, half-finished records completed</li>
+          <li>Receipts and expenses filed against the right job</li>
+          <li>Invoices raised and sent, and the unpaid ones chased</li>
+          <li>Supplier and vendor back-and-forth handled</li>
+          <li>Voice notes from the truck turned into job notes and follow-ups</li>
+        </ul>
+      </div>
+      <div class="panel2">
+        <p class="k">Hand us one thing</p>
+        <h4>The job you keep putting off</h4>
+        <ul>
+          <li>A week of jobs rescheduled after a truck goes down</li>
+          <li>A contact list cleaned up and de-duplicated</li>
+          <li>Three hundred emails cleared off a backlog</li>
+          <li>A spreadsheet built, or a report pulled together before a meeting</li>
+          <li>A supplier chased until you have a delivery date</li>
+          <li>Something researched that you need to decide on this week</li>
+          <li>A new hire's accounts, email and calendar set up</li>
+          <li>Last quarter's paperwork sorted before your accountant asks</li>
+        </ul>
+      </div>
+    </div>
+
+    <p class="counted"><b>How the hours are counted.</b> Each task is counted at the time a skilled assistant would take, so booking an appointment is five minutes, not an hour. Your monthly report lists every one. Approved automations never use your hours however often they run, and neither do monitoring, repairs or your daily brief. Unused hours roll over a month.</p>
+    <p class="counted" style="border-style:solid"><b>And the two sides trade places over time.</b> The longer we work together, the more of the left column turns into an automation, and the more of your hours go to the right one. That's the point. You end up with a person for the judgment calls and a system for everything else.</p>
+  </section>
+
+  <section id="who-for">
+    <p class="eyebrow">Who this is for</p>
+    <h2 class="big">It doesn't fall through because nobody cares. It falls through because nobody owns it.</h2>
+    <p class="lede">The quote that sat for two weeks. The customer who called twice and got nobody. The invoice nobody chased because everyone assumed someone had. Your people aren't the problem. There's just no system underneath them, and at your size that stops being survivable.</p>
+
+    <div class="aud">
+      <div><h4>Ten to fifty people</h4><p>Enough work to need systems, not enough to hire someone to run them.</p></div>
+      <div><h4>Growing faster than the process</h4><p>What worked at eight people is breaking at thirty.</p></div>
+      <div><h4>Trades and field services</h4><p>Crews out all day, a small office, a phone that never stops.</p></div>
+      <div><h4>Several crews or locations</h4><p>Work handed between people, which is where it goes missing.</p></div>
+    </div>
+  </section>
+
+  <section id="tools">
+    <p class="eyebrow">Your tools</p>
+    <h2 class="big">We work in what you already run.</h2>
+    <p class="lede">Nothing to switch, nothing to migrate, no new platform to learn. We get added as a user to the tools you already have, the way you'd add an employee, and you remove us the same way.</p>
+
+    <div class="tools">
+      <div class="tool"><h4>Email &amp; calendar</h4><p>Google Workspace, Microsoft 365, Outlook</p></div>
+      <div class="tool"><h4>Jobs &amp; dispatch</h4><p>Jobber, Housecall Pro, ServiceTitan, Workiz, FieldPulse</p></div>
+      <div class="tool"><h4>Invoicing &amp; books</h4><p>QuickBooks, Xero, or whatever you invoice from. We send them and chase them. We never take payment.</p></div>
+      <div class="tool"><h4>Leads &amp; forms</h4><p>Your website forms, website chat, most CRMs</p></div>
+    </div>
+
+    <p class="anything"><b>Running something that isn't on this list?</b> Most business software connects, and we check yours during the free assessment rather than guessing. If it turns out yours doesn't, you'll hear it on that call instead of after you've paid us.</p>
+  </section>
+
+  <section id="pricing">
+    <p class="eyebrow">Pricing</p>
+    <h2 class="big">What is the office work actually costing you?</h2>
+    <p class="lede">Before you look at a price, work out the number it has to beat. Most businesses have never put a figure on this, and at any size above a couple of people it is larger than the plan.</p>
+
+    <div class="calc">
+      <h3>Your hours, in dollars</h3>
+      <p class="csub">Three questions. The last one is where people undercount: an owner's hour is worth what they bill, not what an assistant costs. Use a loaded wage for staff and your own billing rate for yourself.</p>
+      <div class="fields">
+        <div class="f">
+          <label for="hrs">Hours a week on office work</label>
+          <input id="hrs" type="number" min="0" max="80" step="1" value="12" inputmode="numeric">
+          <p class="hint">Per person. Quotes, invoices, callbacks, scheduling, the inbox.</p>
+        </div>
+        <div class="f">
+          <label for="ppl">People doing that work</label>
+          <input id="ppl" type="number" min="1" max="50" step="1" value="3" inputmode="numeric">
+          <p class="hint">Anyone who touches it, you included.</p>
+        </div>
+        <div class="f">
+          <label for="rate">What an hour of their time costs</label>
+          <input id="rate" type="number" min="0" max="1000" step="5" value="45" inputmode="numeric">
+          <p class="hint">Loaded wage for staff. Your billing rate for you.</p>
+        </div>
+      </div>
+      <div class="result">
+        <p class="r1">That office work is costing you about <span id="mo">$7,000</span> a month, or <span id="yr">$84,000</span> a year.</p>
+        <p class="r2" id="vs"></p>
+      </div>
+      <p class="basis">Based on recovering 60% of those hours, which is the range these automations typically take off a team. We confirm the real number on your assessment call, and you keep the written version either way.</p>
+    </div>
+
+    <div class="cards">
+      <article class="card">
+        <h3>Essential</h3>
+        <p class="who">For a small office where one person is carrying all the admin.</p>
+        <div class="price"><span class="n">$450</span><span class="per">/month</span></div>
+        <ul class="inc">
+          <li><b>3 of the 5 core automations</b>, built, run and monitored</li>
+          <li><b>5 hours a month</b> of hands-on admin</li>
+          <li>1 inbox &middot; 100 voice notes a month</li>
+          <li>Software included up to $50/mo</li>
+          <li>Daily brief, monitoring and repairs, which never use your hours</li>
+        </ul>
+        <p class="pays">One job a month that would have slipped away covers this.</p>
+        <a class="btn ghost" href="#book">Book a call</a>
+        <p class="fine">Cancel with 30 days' notice. $4,860/yr upfront saves 10%.</p>
+      </article>
+
+      <article class="card feature">
+        <span class="badge">Most teams start here</span>
+        <h3>Business Support</h3>
+        <p class="who">For a team where the phone and the inbox are beating everyone.</p>
+        <div class="price"><span class="n">$900</span><span class="per">/month</span></div>
+        <ul class="inc">
+          <li><b>All 5 core automations, plus 1 custom</b>, built, run and monitored</li>
+          <li><b>12 hours a month</b> of hands-on admin</li>
+          <li>2 inboxes &middot; 250 voice notes a month</li>
+          <li>Software included up to $100/mo</li>
+          <li>30-minute monthly review call</li>
+        </ul>
+        <p class="pays"><b>Founding client, first three only:</b> $450/mo for your first 90 days, then $900. We'll remind you 14 days before it changes.</p>
+        <a class="btn" href="#book">Book a call</a>
+        <p class="fine">Cancel with 30 days' notice. $9,720/yr upfront saves 10%.</p>
+      </article>
+
+      <article class="card">
+        <h3>Custom Automation</h3>
+        <p class="who">For a business with staff and real volume. Built for your operation, no assistant, no hours.</p>
+        <div class="price"><span class="n">$550</span><span class="per">/month &middot; from</span></div>
+        <p class="after">Drops to $250 once the build is paid off</p>
+        <ul class="inc">
+          <li><b>A process map of your operation</b> before anything gets built</li>
+          <li>Built live on recorded calls, and you keep the recording</li>
+          <li>Documentation and a walkthrough for your team</li>
+          <li>Checked daily, breaks fixed at no charge</li>
+          <li>Quarterly session to find the next thing worth building</li>
+        </ul>
+        <p class="pays">12-month term, because the build lands in month one. Or pay the build upfront and start at the lower rate.</p>
+        <a class="btn ghost" href="#book">Book a call</a>
+        <p class="fine">One gap $550 &middot; One side of the business $1,150 &middot; Whole back office $2,100</p>
+      </article>
+    </div>
+
+    <div class="hold">
+      <h3>Taking our first three clients.</h3>
+      <p>Our service agreement is with our attorney right now, and we're not signing anyone until it's back and right. If something in your week is falling through, book the assessment anyway. You'll leave with a written plan either way, and you'll be first in line when the paperwork clears.</p>
+    </div>
+
+    <p class="print">There's no setup fee. Your first month is non-refundable once we start building, because that's the month the build happens. Leave a retainer early and unused months are refunded at the full monthly rate, so a $4,860 year ended after four months refunds $2,860. Voice notes over your allowance are $10 for each extra 100.</p>
+  </section>
+
+  <section id="start">
+    <p class="eyebrow">How it starts</p>
+    <h2 class="big">Live in about three weeks.</h2>
+    <div class="steps">
+      <div class="step"><p class="k">Step 1 &middot; 30 min</p><h4>Free assessment</h4><p>We look at where your leads come from, what slips, and how long the admin takes now, so later we can show you the time you got back. You keep the written plan either way.</p></div>
+      <div class="step"><p class="k">Step 2 &middot; under 1 hr</p><h4>Approve your words</h4><p>You approve the replies that can go out on their own, and pick what's Handle It, Tell Me, Ask Me and Never.</p></div>
+      <div class="step"><p class="k">Step 3 &middot; 2 weeks</p><h4>Read-only trial</h4><p>Everything is drafted and nothing is sent, so you see exactly what it would have done. It's part of your first month, not an extra charge.</p></div>
+      <div class="step"><p class="k">Step 4 &middot; go live</p><h4>Flip it on</h4><p>We watch it with you, tune the rules, and send your first weekly report with the time you got back.</p></div>
+    </div>
+  </section>
+
+  <section id="who">
+    <p class="eyebrow">Who runs this</p>
+    <h2 class="big">You'll be working with Jerome.</h2>
+    <div class="owner">
+      <div class="photo">Photo goes here. You, regular clothes, looking at the camera. Not a uniform, not a suit, not stock.</div>
+      <div class="body">
+        <p>Minutes Regained is one person, not a call center and not an offshore team. I set up every client myself, and I'm the one you email when something's wrong.</p>
+        <p>I spent 20 years and 6 months in the Navy as an Operations Specialist, which is the job of watching everything happening at once and making sure the right person hears about the right thing at the right time. That's the same job your back office needs, just with quotes and invoices instead of aircraft. I'm also a Lean Six Sigma Master Black Belt, which is a long way of saying I get paid to find the step in your week that shouldn't exist and delete it.</p>
+        <p>I work with small businesses anywhere in the country.</p>
+        <ul class="four">
+          <li><b>I set up your account.</b> Your assessment, your rules and your two-week read-only trial are done with me, not handed to someone else.</li>
+          <li><b>I watch the work.</b> Every automation checks in daily. When one fails, I get alerted and I fix it, usually within one business day, at no charge.</li>
+          <li><b>I do your hands-on admin.</b> The hours in your plan are my work, done with AI tools and checked before anything reaches you or a customer.</li>
+          <li><b>I sign an NDA.</b> Every engagement starts with one, and I'll sign yours instead if you'd rather.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="oneperson">
+      <h3>"You're one guy. What happens if you're not around?"</h3>
+      <p>Fair question, and the answer is built into how this works.</p>
+      <ul>
+        <li><b>Everything runs in your accounts, not mine.</b> If I vanished tomorrow, your automations keep running. They don't live on my server and they don't need me logged in.</li>
+        <li><b>Everything is documented.</b> You get a written map of what was built and why, plus the recording of every build session. Another person could pick it up from those documents. That's the point of them.</li>
+        <li><b>You can cut my access in thirty seconds,</b> from your own admin console, without asking me.</li>
+        <li><b>What would actually stop is new work.</b> Not the running of what's already there. That's the honest version, and it's why the documentation isn't an afterthought.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="faq">
+    <p class="eyebrow">Questions</p>
+    <h2 class="big">What owners usually ask us.</h2>
+    <div class="faq">
+      <details open><summary>What do you actually do?</summary><p>We find the repetitive work eating your week, like missed calls, quote follow-ups, reminders and invoices, then build automations to handle it. We run them daily and fix anything that breaks. Building your first automations is included. No setup fee.</p></details>
+      <details><summary>What happens if an automation breaks?</summary><p>We monitor every automation we build, and we fix breaks at no charge, usually within one business day and often before you notice. Repairs never use your hours.</p></details>
+      <details><summary>If I cancel, do I lose the automations?</summary><p>No. They live in your own accounts and keep running. We just stop monitoring and maintaining them.</p></details>
+      <details><summary>Is my customer data safe?</summary><p>We connect by being added as a user to your tools, not by taking your passwords. We give the system only the access it needs and log every action. Your data stays in your own accounts, and your information is never mixed with another client's. You can revoke our access yourself, instantly, without asking us.</p></details>
+      <details><summary>Will my customers feel like they're talking to a robot?</summary><p>Messages are written in your words, and you approve the wording before anything goes out. If a customer asks who they're talking to, it tells them it's your company's assistant. It never claims to be you.</p></details>
+      <details><summary>Do you handle our money?</summary><p>No. We send your invoices and chase the unpaid ones, and that is where it stops. No access to your bank, no card ever run, no payment taken, sent or refunded. When something needs collecting you get told, and you collect it. The only money we ever handle is our own monthly fee.</p></details>
+      <details><summary>Do I need to buy new software?</summary><p>No. We connect to what you already use, like Gmail, Google Calendar, your website forms and most CRMs, and any tools we add to serve you are included up to your plan's software allowance.</p></details>
+    </div>
+  </section>
+
+  <section id="book" style="border-top:0">
+    <div class="final">
+      <h2>Get your minutes back.</h2>
+      <p>A free 30-minute operations assessment. You'll leave with a clear list of what can be automated and what it's costing you now, whether or not you sign up.</p>
+      <ul>
+        <li>No cost, no pressure</li>
+        <li>A written summary sent after the call</li>
+        <li>An NDA first if you'd rather</li>
+      </ul>
+      <div class="finalbtns">
+        <a class="btn" href="#book">Pick a time on the calendar</a>
+        <a class="btn ghost" href="tel:+18778968784">Call (877) 896-8784</a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site">
+    <div class="frow">
+      <strong style="color:var(--fg)">Minutes Regained&trade;</strong>
+      <span>&middot;</span><span>Always on watch.</span>
+      <span>&middot;</span><span>Veteran-owned.</span>
+    </div>
+    <div class="frow" style="margin-top:9px">
+      <a href="#automations">Services</a><a href="#pricing">Pricing</a><a href="#demo">Demo</a><a href="#book">Contact</a><a href="#privacy">Privacy</a><a href="#terms">Terms</a>
+    </div>
+    <div class="badges">
+      <span class="slot">Google rating &mdash; empty until earned</span>
+      <span class="slot">Zapier Solution Partner &mdash; empty until earned</span>
+      <span class="slot">Clutch profile &mdash; empty until earned</span>
+    </div>
+    <p class="legal">Minutes Regained is operated by Provident Watch LLC &middot; support@minutesregained.com &middot; (877) 896-8784 &middot; Serving small businesses across the United States &middot; &copy; 2026</p>
+  </footer>
+</div>
+
+<script>
+(function(){
+  var hrs=document.getElementById('hrs'),ppl=document.getElementById('ppl'),rate=document.getElementById('rate');
+  var mo=document.getElementById('mo'),yr=document.getElementById('yr'),vs=document.getElementById('vs');
+  function usd(n){return '$'+Math.round(n).toLocaleString('en-US');}
+  function calc(){
+    var h=Math.max(0,Math.min(80,Number(hrs.value)||0));
+    var r=Math.max(0,Math.min(1000,Number(rate.value)||0));
+    var n=Math.max(1,Math.min(50,Number(ppl.value)||1));
+    var recovered=h*n*0.6, monthly=r*h*n*4.333, saved=r*recovered*4.333;
+    mo.textContent=usd(monthly); yr.textContent=usd(monthly*12);
+    if(saved<1){vs.innerHTML='Put your own numbers in and the plans below have something to beat.';return;}
+    var plan=saved>=4000?2100:(saved>=1800?900:550), pct=Math.round(plan/saved*100);
+    vs.innerHTML='Automating that gives back about <b>'+(Math.round(recovered*10)/10)+
+      ' hours a week</b>, worth <b>'+usd(saved)+'</b> a month. The plan that fits costs <b>'+
+      usd(plan)+'</b>, or <b>'+pct+'%</b> of what you get back.';
+  }
+  [hrs,ppl,rate].forEach(function(el){el.addEventListener('input',calc);}); calc();
+})();
+</script>

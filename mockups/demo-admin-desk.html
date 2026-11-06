@@ -1,0 +1,297 @@
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>Tidewater Admin Desk</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: the owner's own desk — inbox and calendar left, what they handed over and where the hours went on the right. */
+:root{
+  --bg:#f2f5f5; --surface:#ffffff; --surface-2:#e9eeee; --line:#d3dbdb; --line-soft:#e3e9e9;
+  --fg:#101f1e; --fg-dim:#566766; --fg-faint:#7d8f8d;
+  --accent:#0f6f62; --accent-soft:#dcecea; --accent-line:#9fcac2;
+  --good:#2c7a3e; --good-soft:#dfeede;
+  --warn:#8f5e00; --warn-soft:#faeed4;
+  --crit:#a03030; --crit-soft:#f7e0de;
+  --sans:"IBM Plex Sans",ui-sans-serif,system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0d1414; --surface:#141e1d; --surface-2:#1a2524; --line:#2a3938; --line-soft:#223130;
+  --fg:#e3ecea; --fg-dim:#93a7a4; --fg-faint:#748784;
+  --accent:#44bba6; --accent-soft:#11322d; --accent-line:#2a6358;
+  --good:#5fc077; --good-soft:#12301a;
+  --warn:#d9a53c; --warn-soft:#332710;
+  --crit:#e07a72; --crit-soft:#361a19;
+  color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#0d1414; --surface:#141e1d; --surface-2:#1a2524; --line:#2a3938; --line-soft:#223130;
+  --fg:#e3ecea; --fg-dim:#93a7a4; --fg-faint:#748784;
+  --accent:#44bba6; --accent-soft:#11322d; --accent-line:#2a6358;
+  --good:#5fc077; --good-soft:#12301a;
+  --warn:#d9a53c; --warn-soft:#332710;
+  --crit:#e07a72; --crit-soft:#361a19;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--sans);margin:0;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-block:0 40px;font-size:14px;line-height:1.5}
+.wrap{max-width:1180px;margin:0 auto}
+h1,h2,h3{margin:0;text-wrap:balance}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+.top{display:flex;flex-wrap:wrap;gap:12px;align-items:baseline;justify-content:space-between;padding-block:22px 14px;border-bottom:1px solid var(--line)}
+.co h1{font-size:19px;font-weight:700;letter-spacing:-.01em}
+.co p{margin:2px 0 0;color:var(--fg-dim);font-size:12.5px}
+.clock{display:flex;align-items:center;gap:9px;font-size:12.5px;color:var(--fg-dim)}
+.pulse{width:7px;height:7px;border-radius:50%;background:var(--good);box-shadow:0 0 0 3px var(--good-soft)}
+.sample{display:flex;gap:9px;align-items:flex-start;margin-top:14px;padding:9px 12px;border:1px dashed var(--accent-line);border-radius:var(--r);background:var(--accent-soft);color:var(--fg-dim);font-size:12.5px}
+.sample b{color:var(--fg);font-weight:600}
+
+.strip{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:16px}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px 13px;min-width:0}
+.tile .k{font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--fg-faint);font-weight:600}
+.tile .v{font-family:var(--mono);font-size:25px;font-weight:600;line-height:1.15;margin-top:5px}
+.tile .s{font-size:11.5px;color:var(--fg-dim);margin-top:2px}
+.tile.flag{border-color:var(--warn);background:var(--warn-soft)}
+.tile.flag .v{color:var(--warn)}
+
+.cols{display:grid;grid-template-columns:1fr 360px;gap:14px;margin-top:14px;align-items:start}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);min-width:0;overflow:hidden}
+.panel+.panel{margin-top:14px}
+.ph{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 13px;border-bottom:1px solid var(--line-soft);flex-wrap:wrap}
+.ph h2{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--fg-dim);font-weight:600}
+.ph .count{font-family:var(--mono);font-size:11.5px;color:var(--fg-faint)}
+
+.mail{list-style:none;margin:0;padding:11px 13px 13px;display:flex;flex-direction:column;gap:1px}
+.mi{display:grid;grid-template-columns:1fr auto;gap:9px;padding:9px 0;border-bottom:1px solid var(--line-soft);min-width:0;align-items:baseline}
+.mi:last-child{border-bottom:0}
+.mi .who{font-weight:600;font-size:13.5px;display:block}
+.mi .subj{color:var(--fg-dim);font-size:12.5px;display:block}
+.mi .act{font-size:12px;color:var(--fg-dim);margin-top:5px;padding:7px 9px;background:var(--surface-2);border-radius:6px;border-left:2px solid var(--accent-line);grid-column:1/3}
+.mi .act b{color:var(--fg)}
+.tag{font-size:10.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;padding:3px 7px;border-radius:5px;white-space:nowrap}
+.tag.filed{background:var(--surface-2);color:var(--fg-dim)}
+.tag.draft{background:var(--good-soft);color:var(--good)}
+.tag.you{background:var(--warn-soft);color:var(--warn)}
+.openbtn{appearance:none;background:none;border:0;font:inherit;text-align:left;cursor:pointer;padding:0;color:inherit;min-width:0}
+.openbtn:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+
+.cal{list-style:none;margin:0;padding:11px 13px 13px;display:flex;flex-direction:column;gap:9px}
+.ci{display:grid;grid-template-columns:74px 1fr auto;gap:10px;align-items:baseline;font-size:13px;min-width:0}
+.ci .t{font-family:var(--mono);font-size:11.5px;color:var(--fg-faint)}
+.ci b{font-weight:600;display:block}
+.ci span.d{color:var(--fg-dim);font-size:12.5px}
+
+.tasks{list-style:none;margin:0;padding:11px 13px 13px;display:flex;flex-direction:column;gap:10px}
+.tk{border:1px solid var(--line);border-radius:8px;padding:11px;display:flex;flex-direction:column;gap:6px}
+.tk.done{border-color:var(--good);background:var(--good-soft)}
+.tk.run{border-color:var(--accent-line);background:var(--accent-soft)}
+.tk .hd{display:flex;justify-content:space-between;gap:9px;align-items:baseline;flex-wrap:wrap}
+.tk .nm{font-weight:600;font-size:13.5px;min-width:0}
+.tk .mt{font-family:var(--mono);font-size:11px;color:var(--fg-faint);white-space:nowrap}
+.tk .de{font-size:12.5px;color:var(--fg-dim)}
+
+.hours{padding:13px}
+.bar{display:flex;height:13px;border-radius:7px;overflow:hidden;margin-bottom:11px;border:1px solid var(--line)}
+.bar i{display:block}
+.bar .rep{background:var(--warn)}
+.bar .one{background:var(--accent)}
+.bar .left{background:var(--surface-2)}
+.key{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;font-size:13px}
+.key li{display:grid;grid-template-columns:11px 1fr auto;gap:9px;align-items:baseline}
+.key i{width:9px;height:9px;border-radius:2px;display:block;margin-top:4px}
+.key .n{min-width:0}
+.key .n b{display:block;font-weight:600}
+.key .n span{color:var(--fg-dim);font-size:12px}
+.key .h{font-family:var(--mono);font-size:12.5px;white-space:nowrap}
+.autonote{margin-top:12px;padding:11px;border:1px solid var(--warn);background:var(--warn-soft);border-radius:8px;font-size:12.5px;color:var(--fg-dim)}
+.autonote b{color:var(--fg);display:block;margin-bottom:3px}
+.rate{margin-top:11px;font-size:11.5px;color:var(--fg-faint)}
+
+.hand{margin-top:14px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:13px}
+.hand h2{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--fg-dim);font-weight:600}
+.hand p{margin:5px 0 11px;color:var(--fg-dim);font-size:12.5px;max-width:64ch}
+.row2{display:flex;gap:8px;flex-wrap:wrap}
+.row2 input{flex:1 1 260px;min-width:0;font:inherit;font-size:14px;padding:9px 11px;border:1px solid var(--line);border-radius:8px;background:var(--surface-2);color:var(--fg)}
+.row2 input:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.btn{appearance:none;font:inherit;font-size:13px;font-weight:600;border-radius:8px;padding:9px 15px;cursor:pointer;border:1px solid var(--accent);background:var(--accent);color:#fff}
+:root[data-theme="dark"] .btn, html:where(:not([data-theme="light"])) .btn{color:#06201c}
+.btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.chips{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px}
+.chip{appearance:none;font:inherit;font-size:12.5px;border:1px solid var(--line);background:var(--surface-2);color:var(--fg-dim);border-radius:999px;padding:5px 11px;cursor:pointer}
+.chip:hover{border-color:var(--accent-line);color:var(--fg)}
+
+.close{margin-top:16px;padding:15px;border:1px solid var(--accent-line);background:var(--accent-soft);border-radius:var(--r)}
+.close h2{font-size:15px;font-weight:700}
+.close p{margin:6px 0 0;font-size:13px;color:var(--fg-dim);max-width:72ch}
+.foot{margin-top:14px;color:var(--fg-faint);font-size:11.5px}
+
+@media (max-width:900px){.cols{grid-template-columns:1fr}.strip{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:430px){.ci{grid-template-columns:64px 1fr}}
+@media (prefers-reduced-motion:no-preference){.tk.new{animation:in .32s ease-out}@keyframes in{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="co">
+      <h1>Tidewater Plumbing &middot; the admin side</h1>
+      <p>Thursday morning, before the owner opens his laptop</p>
+    </div>
+    <div class="clock"><span class="pulse"></span><span class="mono">7:40 AM</span></div>
+  </header>
+
+  <div class="sample"><span>&#9888;</span><div><b>Sample data for an example company.</b> Nothing here is a real customer record, and no number is a client result. This is the hands-on half: the inbox, the calendar, and the jobs an owner hands over.</div></div>
+
+  <section class="strip">
+    <div class="tile"><div class="k">Email overnight</div><div class="v">61</div><div class="s">48 filed, 9 drafted</div></div>
+    <div class="tile flag"><div class="k">Needs you</div><div class="v" id="kYou">4</div><div class="s">nobody else can answer these</div></div>
+    <div class="tile"><div class="k">Calendar</div><div class="v">6</div><div class="s">1 conflict caught, 1 moved</div></div>
+    <div class="tile"><div class="k">Hours used</div><div class="v">7.4</div><div class="s">of 12 &middot; day 14</div></div>
+  </section>
+
+  <div class="cols">
+    <main style="min-width:0">
+      <section class="panel">
+        <div class="ph"><h2>Your inbox, already sorted</h2><span class="count">61 overnight &middot; 4 left for you</span></div>
+        <ul class="mail" id="mail"></ul>
+      </section>
+
+      <section class="panel">
+        <div class="ph"><h2>Today's calendar</h2><span class="count">kept straight overnight</span></div>
+        <ul class="cal">
+          <li class="ci"><span class="t">8:00 AM</span><span><b>Hendricks &mdash; water heater</b><span class="d">Confirmed last night. Customer replied.</span></span><span class="tag filed">Confirmed</span></li>
+          <li class="ci"><span class="t">10:30 AM</span><span><b>Supplier call &mdash; Ferguson</b><span class="d">Moved from 9:15. It overlapped the Hendricks drive.</span></span><span class="tag draft">Moved</span></li>
+          <li class="ci"><span class="t">1:00 PM</span><span><b>Slab leak locate &mdash; Rowan St</b><span class="d">Confirmed. Gate code on the run sheet.</span></span><span class="tag filed">Confirmed</span></li>
+          <li class="ci"><span class="t">3:30 PM</span><span><b>Interview &mdash; apprentice #2</b><span class="d">Booked from the applicant's reply. Resume in your drive.</span></span><span class="tag draft">Booked</span></li>
+          <li class="ci"><span class="t">5:00 PM</span><span><b>Insurance renewal call</b><span class="d">You asked to be reminded. Policy docs attached to the invite.</span></span><span class="tag you">Your call</span></li>
+          <li class="ci"><span class="t">Fri</span><span><b>Permit inspection &mdash; Rowan St</b><span class="d">Booked with the county. Confirmation filed.</span></span><span class="tag filed">Booked</span></li>
+        </ul>
+      </section>
+
+      <section class="hand">
+        <h2>Hand us something</h2>
+        <p>The things that don't repeat. Type it the way you'd say it, or pick one of the usual suspects.</p>
+        <div class="row2">
+          <input id="newTask" type="text" placeholder="Reschedule next week, the van's in the shop" aria-label="What do you want handed over">
+          <button class="btn" id="addTask">Hand it over</button>
+        </div>
+        <div class="chips" id="chips"></div>
+      </section>
+    </main>
+
+    <aside style="min-width:0">
+      <section class="panel">
+        <div class="ph"><h2>You handed us</h2><span class="count" id="tkCount"></span></div>
+        <ul class="tasks" id="tasks"></ul>
+      </section>
+
+      <section class="panel">
+        <div class="ph"><h2>Where your hours went</h2><span class="count">7.4 of 12 &middot; day 14</span></div>
+        <div class="hours">
+          <div class="bar" aria-hidden="true">
+            <i class="rep" style="width:24%"></i><i class="one" style="width:38%"></i><i class="left" style="width:38%"></i>
+          </div>
+          <ul class="key">
+            <li><i class="rep" style="background:var(--warn)"></i><span class="n"><b>Repeating</b><span>Work that happens the same way every time</span></span><span class="h">2.9 hrs</span></li>
+            <li><i class="one" style="background:var(--accent)"></i><span class="n"><b>One-off</b><span>Needed a person to think about it</span></span><span class="h">4.5 hrs</span></li>
+            <li><i class="left" style="background:var(--surface-2);border:1px solid var(--line)"></i><span class="n"><b>Left this month</b><span>Rolls over one month if you don't use it</span></span><span class="h">4.6 hrs</span></li>
+          </ul>
+          <div class="autonote">
+            <b>We're building two of these as automations.</b>
+            Appointment confirmations and the Friday supplier check-in ate 2.9 hours this month and never change. Both are in build now, at no charge. Next month they stop using your hours entirely.
+          </div>
+          <p class="rate">Each task is counted at the time a skilled assistant would take, not wall-clock. Monitoring, repairs and your daily brief never use hours.</p>
+        </div>
+      </section>
+    </aside>
+  </div>
+
+  <section class="close">
+    <h2>The half a machine can't do.</h2>
+    <p>Automations handle what repeats. This is everything else: the inbox nobody got to the bottom of, the calendar that needs judgement, and whatever you hand over on a Tuesday because it has been on your list for a month. The split on the right is the honest part. When something in it starts repeating, we build it and your hours go back to you.</p>
+  </section>
+
+  <p class="foot">Minutes Regained &middot; demo build, example company &middot; no real customer data</p>
+</div>
+
+<script>
+(function(){
+  var mail = [
+    {who:'Ferguson Supply', subj:'Re: Order 88214 — backorder notice', tag:'you',
+     act:'<b>Left for you.</b> The 50-gallon units slip two weeks. Three scheduled jobs depend on them, so this is a decision, not a reply.'},
+    {who:'Dana Rutherford', subj:'Question about the quote you sent', tag:'draft',
+     act:'<b>Drafted, sitting in your Drafts.</b> "Happy to walk through it — the permit and haul-away are included, the only variable is if the shutoff needs replacing." Send it or change it.'},
+    {who:'Clay County Permits', subj:'Inspection scheduled — 118 Rowan St', tag:'filed',
+     act:'<b>Filed to the job.</b> Friday 9am added to your calendar, confirmation saved to the Rowan St folder.'},
+    {who:'Marcus Hendricks', subj:'Invoice 1184 — sorry for the delay', tag:'you',
+     act:'<b>Left for you.</b> He is asking to split it over two payments. Money terms are yours, never ours.'},
+    {who:'Apprentice applicant', subj:'Re: Following up on my application', tag:'draft',
+     act:'<b>Drafted and booked.</b> Thursday 3:30 offered and accepted. Resume saved to your hiring folder.'},
+    {who:'47 others', subj:'Newsletters, receipts, delivery notices, spam', tag:'filed',
+     act:'<b>Filed or binned.</b> Receipts attached to the right jobs. Nothing that needed a human.'}
+  ];
+  var tagName = {filed:'Filed', draft:'Drafted', you:'Needs you'};
+  function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+
+  document.getElementById('mail').innerHTML = mail.map(function(m, i){
+    return '<li class="mi"><button class="openbtn" aria-expanded="false" data-i="' + i + '">' +
+      '<span class="who">' + esc(m.who) + '</span><span class="subj">' + esc(m.subj) + '</span></button>' +
+      '<span class="tag ' + m.tag + '">' + tagName[m.tag] + '</span>' +
+      '<span class="act" hidden>' + m.act + '</span></li>';
+  }).join('');
+
+  document.getElementById('mail').addEventListener('click', function(e){
+    var b = e.target.closest('.openbtn'); if(!b) return;
+    var act = b.parentNode.querySelector('.act');
+    var open = !act.hidden; act.hidden = open; b.setAttribute('aria-expanded', String(!open));
+  });
+
+  var tasks = [
+    {nm:'Clean up the contact list', de:'1,840 records down to 1,512. Duplicates merged, 94 dead numbers flagged.', st:'done', mt:'2.1 hrs'},
+    {nm:'Last quarter’s receipts', de:'Sorted and attached to jobs before your accountant asks for them.', st:'done', mt:'1.4 hrs'},
+    {nm:'New apprentice setup', de:'Email, calendar, phone and job app. Ready for his first day Monday.', st:'run', mt:'in progress'},
+    {nm:'Warranty letter template', de:'Drafted. Waiting on you to confirm the terms before it goes in the folder.', st:'run', mt:'waiting on you'}
+  ];
+  var suggestions = [
+    'Reschedule next week, the van is in the shop',
+    'Chase Ferguson for a real delivery date',
+    'Pull together last month’s job costs',
+    'Clear the inbox back to September'
+  ];
+
+  function renderTasks(){
+    document.getElementById('tasks').innerHTML = tasks.map(function(t){
+      return '<li class="tk ' + t.st + (t.fresh ? ' new' : '') + '"><span class="hd"><span class="nm">' + esc(t.nm) +
+        '</span><span class="mt">' + esc(t.mt) + '</span></span><span class="de">' + esc(t.de) + '</span></li>';
+    }).join('');
+    var open = tasks.filter(function(t){ return t.st !== 'done'; }).length;
+    document.getElementById('tkCount').textContent = open + ' in flight';
+    tasks.forEach(function(t){ t.fresh = false; });
+  }
+
+  function handOver(text){
+    var v = String(text || '').trim(); if(!v) return;
+    if(v.length > 90) v = v.slice(0, 90);
+    tasks.unshift({nm:v, de:'Picked up. We will come back with a time estimate before anything takes real hours.', st:'run', mt:'just now', fresh:true});
+    renderTasks();
+    document.getElementById('newTask').value = '';
+  }
+
+  document.getElementById('chips').innerHTML = suggestions.map(function(s){
+    return '<button class="chip" type="button">' + esc(s) + '</button>';
+  }).join('');
+  document.getElementById('chips').addEventListener('click', function(e){
+    var c = e.target.closest('.chip'); if(c) handOver(c.textContent);
+  });
+  document.getElementById('addTask').addEventListener('click', function(){
+    handOver(document.getElementById('newTask').value);
+  });
+  document.getElementById('newTask').addEventListener('keydown', function(e){
+    if(e.key === 'Enter') handOver(this.value);
+  });
+
+  renderTasks();
+})();
+</script>

@@ -1,0 +1,383 @@
+<meta name="claude:viewport-fit-sides" content="cover">
+<title>Tidewater Back Office</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: a watch-floor console — status strip across the top, operating boards left, the owner's queue right. */
+:root{
+  --bg:#f2f5f5; --surface:#ffffff; --surface-2:#e9eeee; --line:#d3dbdb; --line-soft:#e3e9e9;
+  --fg:#101f1e; --fg-dim:#566766; --fg-faint:#7d8f8d;
+  --accent:#0f6f62; --accent-soft:#dcecea; --accent-line:#9fcac2;
+  --good:#2c7a3e; --good-soft:#dfeede;
+  --warn:#8f5e00; --warn-soft:#faeed4;
+  --crit:#a03030; --crit-soft:#f7e0de;
+  --sans:"IBM Plex Sans",ui-sans-serif,system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0d1414; --surface:#141e1d; --surface-2:#1a2524; --line:#2a3938; --line-soft:#223130;
+  --fg:#e3ecea; --fg-dim:#93a7a4; --fg-faint:#748784;
+  --accent:#44bba6; --accent-soft:#11322d; --accent-line:#2a6358;
+  --good:#5fc077; --good-soft:#12301a;
+  --warn:#d9a53c; --warn-soft:#332710;
+  --crit:#e07a72; --crit-soft:#361a19;
+  color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#0d1414; --surface:#141e1d; --surface-2:#1a2524; --line:#2a3938; --line-soft:#223130;
+  --fg:#e3ecea; --fg-dim:#93a7a4; --fg-faint:#748784;
+  --accent:#44bba6; --accent-soft:#11322d; --accent-line:#2a6358;
+  --good:#5fc077; --good-soft:#12301a;
+  --warn:#d9a53c; --warn-soft:#332710;
+  --crit:#e07a72; --crit-soft:#361a19;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{
+  background:var(--bg); color:var(--fg); font-family:var(--sans); margin:0;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-block:0 40px; font-size:14px; line-height:1.5;
+}
+.wrap{max-width:1180px;margin:0 auto}
+h1,h2,h3{margin:0;text-wrap:balance}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+/* header */
+.top{display:flex;flex-wrap:wrap;gap:12px;align-items:baseline;justify-content:space-between;padding-block:22px 14px;border-bottom:1px solid var(--line)}
+.co{display:flex;flex-direction:column;gap:2px;min-width:0}
+.co h1{font-size:19px;font-weight:700;letter-spacing:-.01em}
+.co p{margin:0;color:var(--fg-dim);font-size:12.5px}
+.clock{display:flex;align-items:center;gap:9px;font-size:12.5px;color:var(--fg-dim)}
+.pulse{width:7px;height:7px;border-radius:50%;background:var(--good);box-shadow:0 0 0 3px var(--good-soft)}
+
+.sample{display:flex;gap:9px;align-items:flex-start;margin-top:14px;padding:9px 12px;border:1px dashed var(--accent-line);border-radius:var(--r);background:var(--accent-soft);color:var(--fg-dim);font-size:12.5px}
+.sample b{color:var(--fg);font-weight:600}
+
+/* status strip */
+.strip{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:16px}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px 13px;min-width:0}
+.tile .k{font-size:10.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--fg-faint);font-weight:600}
+.tile .v{font-family:var(--mono);font-size:25px;font-weight:600;line-height:1.15;margin-top:5px;font-variant-numeric:tabular-nums}
+.tile .s{font-size:11.5px;color:var(--fg-dim);margin-top:2px}
+.tile.flag{border-color:var(--warn);background:var(--warn-soft)}
+.tile.flag .v{color:var(--warn)}
+
+/* grid */
+.cols{display:grid;grid-template-columns:1fr 340px;gap:14px;margin-top:14px;align-items:start}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);min-width:0;overflow:hidden}
+.ph{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 13px;border-bottom:1px solid var(--line-soft)}
+.ph h2{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--fg-dim);font-weight:600}
+.ph .count{font-family:var(--mono);font-size:11.5px;color:var(--fg-faint)}
+
+/* board tabs */
+.tabs{display:flex;gap:4px;padding:10px 13px 0;flex-wrap:wrap}
+.tab{appearance:none;border:1px solid var(--line);background:transparent;color:var(--fg-dim);font:inherit;font-size:12.5px;padding:5px 11px;border-radius:999px;cursor:pointer}
+.tab[aria-selected="true"]{background:var(--accent-soft);border-color:var(--accent-line);color:var(--accent);font-weight:600}
+.tab:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.rows{list-style:none;margin:0;padding:10px 13px 13px;display:flex;flex-direction:column;gap:1px}
+.row{display:grid;grid-template-columns:62px 1fr auto;gap:10px;align-items:baseline;padding:9px 0;border-bottom:1px solid var(--line-soft);min-width:0}
+.row:last-child{border-bottom:0}
+.row .t{font-family:var(--mono);font-size:11.5px;color:var(--fg-faint)}
+.row .m{min-width:0}
+.row .m b{font-weight:600;font-size:13.5px;display:block}
+.row .m span{color:var(--fg-dim);font-size:12.5px}
+.pill{font-size:10.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;padding:3px 7px;border-radius:5px;white-space:nowrap}
+.pill.done{background:var(--good-soft);color:var(--good)}
+.pill.told{background:var(--surface-2);color:var(--fg-dim)}
+.pill.ask{background:var(--warn-soft);color:var(--warn)}
+.pill.never{background:var(--crit-soft);color:var(--crit)}
+
+/* approvals */
+.ask-card{border:1px solid var(--warn);background:var(--warn-soft);border-radius:8px;padding:11px;display:flex;flex-direction:column;gap:8px}
+.ask-list{list-style:none;margin:0;padding:11px 13px 13px;display:flex;flex-direction:column;gap:9px}
+.ask-card .lbl{font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;font-weight:600;color:var(--warn)}
+.ask-card .body{font-size:13px;color:var(--fg)}
+.ask-card .body b{font-weight:600}
+.ask-card .quote{font-family:var(--mono);font-size:12px;background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:7px 8px;color:var(--fg-dim)}
+.acts{display:flex;gap:6px;flex-wrap:wrap}
+.btn{appearance:none;font:inherit;font-size:12.5px;font-weight:600;border-radius:6px;padding:6px 11px;cursor:pointer;border:1px solid var(--line);background:var(--surface);color:var(--fg)}
+.btn.go{background:var(--accent);border-color:var(--accent);color:#fff}
+:root[data-theme="dark"] .btn.go,  html:where(:not([data-theme="light"])) .btn.go{color:#06201c}
+.btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.empty{padding:22px 13px;text-align:center;color:var(--fg-faint);font-size:12.5px}
+
+/* health */
+.health{list-style:none;margin:0;padding:11px 13px 13px;display:flex;flex-direction:column;gap:7px}
+.hrow{display:grid;grid-template-columns:auto 1fr auto;gap:3px 9px;font-size:12.5px;min-width:0;align-items:baseline;padding-bottom:7px;border-bottom:1px solid var(--line-soft)}
+.hrow:last-of-type{border-bottom:0}
+.hrow.gm{background:var(--accent-soft);border:1px solid var(--accent-line);border-radius:7px;padding:9px}
+.hrow.gm .nm{color:var(--accent)}
+.rl{grid-column:2/4;color:var(--fg-dim);font-size:11.5px;min-width:0}
+.dot{width:7px;height:7px;border-radius:50%;flex:none;background:var(--good)}
+.dot.fix{background:var(--warn)}
+.hrow .nm{font-weight:600;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hrow .mt{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--fg-faint);white-space:nowrap}
+.fixnote{font-size:12px;color:var(--fg-dim);background:var(--warn-soft);border:1px solid var(--warn);border-radius:6px;padding:7px 9px;margin-top:3px}
+
+/* triggers */
+.trig{margin-top:14px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:13px}
+.trig h2{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--fg-dim);font-weight:600}
+.trig p{margin:5px 0 11px;color:var(--fg-dim);font-size:12.5px;max-width:62ch}
+.tgrid{display:flex;gap:7px;flex-wrap:wrap}
+.tbtn{appearance:none;font:inherit;font-size:13px;text-align:left;border:1px solid var(--line);background:var(--surface-2);color:var(--fg);border-radius:8px;padding:9px 12px;cursor:pointer}
+.tbtn:hover{border-color:var(--accent-line)}
+.tbtn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.tbtn[disabled]{opacity:.45;cursor:default}
+.tbtn .sm{display:block;font-size:11.5px;color:var(--fg-dim);font-weight:400}
+
+/* legend + close */
+.legend{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px}
+.lg{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:11px}
+.lg h3{font-size:12.5px;font-weight:700}
+.lg p{margin:4px 0 0;font-size:12px;color:var(--fg-dim)}
+.close{margin-top:16px;padding:15px;border:1px solid var(--accent-line);background:var(--accent-soft);border-radius:var(--r)}
+.close h2{font-size:15px;font-weight:700}
+.close p{margin:6px 0 0;font-size:13px;color:var(--fg-dim);max-width:68ch}
+.foot{margin-top:14px;color:var(--fg-faint);font-size:11.5px;padding-bottom:4px}
+
+@media (max-width:900px){
+  .cols{grid-template-columns:1fr}
+  .strip{grid-template-columns:repeat(2,1fr)}
+  .legend{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:430px){
+  .row{grid-template-columns:52px 1fr;grid-template-areas:"t m" ". p"}
+  .row .t{grid-area:t} .row .m{grid-area:m} .row .pill{grid-area:p;justify-self:start;margin-top:4px}
+}
+@media (prefers-reduced-motion:no-preference){
+  .row.new,.ask-card.new{animation:in .32s ease-out}
+  @keyframes in{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="co">
+      <h1>Tidewater Plumbing</h1>
+      <p>Back office, running &middot; 6 trucks, no office manager</p>
+    </div>
+    <div class="clock"><span class="pulse"></span><span class="mono" id="clock">7:12 PM</span> &middot; Tuesday</div>
+  </header>
+
+  <div class="sample"><span>&#9888;</span><div><b>Sample data for an example company.</b> Nothing here is a real customer record, and no number on this page is a client result. This is what a whole back office looks like once it is built and watched.</div></div>
+
+  <section class="strip" aria-label="Today at a glance">
+    <div class="tile"><div class="k">Handled today</div><div class="v" id="kHandled">47</div><div class="s">without asking you</div></div>
+    <div class="tile flag" id="tileAsk"><div class="k">Needs your OK</div><div class="v" id="kAsk">3</div><div class="s">waiting on a decision</div></div>
+    <div class="tile"><div class="k">Agents on watch</div><div class="v" id="kAuto">8</div><div class="s">1 GM, 5 specialists, 2 on ops</div></div>
+    <div class="tile"><div class="k">Office hours back</div><div class="v" id="kHours">14.5</div><div class="s">this week, by the clock</div></div>
+  </section>
+
+  <div class="cols">
+    <main class="panel">
+      <div class="ph"><h2>The board</h2><span class="count" id="boardCount"></span></div>
+      <div class="tabs" role="tablist" aria-label="Back office areas">
+        <button class="tab" role="tab" aria-selected="true" data-lane="all">Everything</button>
+        <button class="tab" role="tab" aria-selected="false" data-lane="intake">Intake</button>
+        <button class="tab" role="tab" aria-selected="false" data-lane="schedule">Schedule</button>
+        <button class="tab" role="tab" aria-selected="false" data-lane="money">Money</button>
+        <button class="tab" role="tab" aria-selected="false" data-lane="after">After the job</button>
+      </div>
+      <ul class="rows" id="rows"></ul>
+    </main>
+
+    <aside style="display:flex;flex-direction:column;gap:14px;min-width:0">
+      <section class="panel">
+        <div class="ph"><h2>Needs your OK</h2><span class="count" id="askCount"></span></div>
+        <ul class="ask-list" id="asks"></ul>
+      </section>
+      <section class="panel">
+        <div class="ph"><h2>The crew</h2><span class="count">1 GM &middot; 5 specialists &middot; 2 ops</span></div>
+        <ul class="health" id="health"></ul>
+      </section>
+    </aside>
+  </div>
+
+  <section class="trig">
+    <h2>Try it</h2>
+    <p>Fire something the way it would really arrive, and watch what gets handled before the owner ever picks up the phone. Anything with money, a price or a promise on it stops and waits for him.</p>
+    <div class="tgrid" id="trigs"></div>
+  </section>
+
+  <section class="legend" aria-label="Permission levels">
+    <div class="lg"><h3>Handle It</h3><p>Does it. No message to you.</p></div>
+    <div class="lg"><h3>Tell Me</h3><p>Does it, then reports it in your brief.</p></div>
+    <div class="lg"><h3>Ask Me</h3><p>Gets it ready and waits for your OK.</p></div>
+    <div class="lg"><h3>Never</h3><p>Won't do it, even if someone asks.</p></div>
+  </section>
+
+  <section class="close">
+    <h2>This is the whole back office, not one automation.</h2>
+    <p>A GM, five specialists across intake, scheduling, quotes, money and aftercare, and two more watching the work itself, mapped to how this business already works and running on automations built in its own accounts. The owner's job on this screen is the three cards on the right. Everything else already happened.</p>
+  </section>
+
+  <p class="foot">Minutes Regained &middot; demo build, example company &middot; no real customer data</p>
+</div>
+
+<script>
+(function(){
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var state = { handled:47, hours:14.5, rows:[], asks:[], fixed:false };
+
+  var seed = [
+    {t:'7:09 PM', lane:'intake', k:'done', b:'Chat lead logged — Dana R.', s:'No hot water, south side. Answered in 40 seconds, in your words.'},
+    {t:'6:48 PM', lane:'money',  k:'told', b:'Invoice #1182 paid — $680', s:'Alvarez, backflow test. Marked paid, receipt filed.'},
+    {t:'6:30 PM', lane:'after',  k:'done', b:'Review requested — Alvarez', s:'Sent the day the job closed. One ask, no second.'},
+    {t:'5:55 PM', lane:'after',  k:'done', b:'14 job photos filed', s:'Foldered by address and date, on the job record.'},
+    {t:'5:20 PM', lane:'schedule',k:'told',b:'Tomorrow’s run sheet built', s:'3 jobs, 41 miles, gate code for the second stop.'},
+    {t:'4:38 PM', lane:'intake', k:'done', b:'Out-of-area enquiry declined', s:'Two counties out. Polite decline drafted and sent, no time spent.'},
+    {t:'3:15 PM', lane:'schedule',k:'done',b:'Confirmation sent — Weds 2pm', s:'Slab leak locate, Wednesday. Customer confirmed.'},
+    {t:'11:02 AM',lane:'money',  k:'told', b:'Deposit logged — $500', s:'Water heater swap, scheduled Thursday.'},
+    {t:'6:14 AM', lane:'schedule',k:'told',b:'Broken intake form repaired', s:'Their website renamed a field overnight. Caught and fixed before the first lead.'}
+  ];
+  state.rows = seed.slice();
+
+  var seedAsks = [
+    {lbl:'Quote, waiting on you', body:'<b>Dana R.</b> wants a water heater replaced. Drafted off your price list.', quote:'50 gal gas, haul-away, permit — $2,480. Tuesday or Thursday.'},
+    {lbl:'Reschedule, waiting on you', body:'Rain forecast for <b>Thursday’s</b> slab leak locate.', quote:'"Storm’s coming through Thursday. Can we move you to Friday, same time?"'},
+    {lbl:'Past-due reminder, waiting on you', body:'<b>Hendricks</b> — invoice #1184, 34 days out.', quote:'$1,240. Reminder drafted. We never run the card; you charge it.'}
+  ];
+  state.asks = seedAsks.slice();
+
+  var crew = [
+    {n:'The GM', role:'Routes the work, holds your rules, writes your brief. Checks every specialist’s output against what was asked before it counts as done. Decides nothing on its own.', m:'now', gm:true},
+    {n:'Intake', role:'Answers and qualifies every new enquiry, day or night', m:'40s ago'},
+    {n:'Schedule', role:'Confirmations, reminders, reschedules, no-shows, the run sheet', m:'8m ago'},
+    {n:'Quotes', role:'Drafts estimates off your price list and chases the ones you sent', m:'12m ago'},
+    {n:'Billing', role:'Invoice status, reminders, deposits. Never runs a card', m:'1h ago'},
+    {n:'Aftercare', role:'Reviews, photos, callback windows, service reminders', m:'42m ago'},
+    {n:'The Watch', role:'Re-runs every automation against what it was supposed to do, and calls it the moment one drifts', m:'06:14', fix:true},
+    {n:'The Fixer', role:'Takes the break off the Watch, runs the known repair, and escalates only what it cannot mend', m:'06:16', fix:true}
+  ];
+
+  var triggers = [
+    {id:'lead', label:'A lead lands at 9pm', sm:'website chat', run:function(){
+      add({lane:'intake',k:'done',b:'Chat answered — Marcus T.', s:'Burst pipe under the kitchen sink. Replied in 38 seconds.'});
+      add({lane:'intake',k:'done',b:'Lead logged in the CRM', s:'Name, number, address, what he needs. Top of tomorrow’s brief.'});
+      add({lane:'intake',k:'told',b:'Flagged as emergency', s:'Outside hours and urgent, so it went straight to your on-call phone.'});
+      ask({lbl:'Booking, waiting on you',body:'<b>Marcus T.</b> asked for the first slot tomorrow.',quote:'8am Wednesday is open. Confirm and he gets the confirmation.'});
+    }},
+    {id:'done', label:'A job gets marked complete', sm:'from the truck', run:function(){
+      add({lane:'after',k:'done',b:'Review requested — Mason job', s:'Went out 6 minutes after the job closed.'});
+      add({lane:'after',k:'done',b:'9 photos filed to the job', s:'Named and dated, in the customer’s folder.'});
+      add({lane:'money',k:'told',b:'Invoice #1189 drafted — $2,480', s:'Line items pulled from the job. Waiting on your look.'});
+      add({lane:'after',k:'told',b:'Callback window set', s:'Flag at 30 and 90 days while it’s under warranty.'});
+    }},
+    {id:'quote', label:'An estimate gets accepted', sm:'customer replies yes', run:function(){
+      add({lane:'intake',k:'done',b:'Quote Chaser stood down', s:'Dana R. replied. Day 5 and day 10 follow-ups cancelled.'});
+      add({lane:'schedule',k:'told',b:'Job placed — Thursday 10am', s:'Two hours blocked, 22 minutes of drive time either side.'});
+      add({lane:'money',k:'told',b:'Deposit request drafted — $500', s:'We never run a card. You get told, you charge it.'});
+    }},
+    {id:'late', label:'An invoice hits 30 days', sm:'nobody chased it', run:function(){
+      add({lane:'money',k:'told',b:'Invoice #1184 crossed 30 days', s:'Hendricks, $1,240. Moved to the top of the money board.'});
+      ask({lbl:'Past-due reminder, waiting on you',body:'Second notice for <b>Hendricks</b>, drafted in your wording.',quote:'"Just circling back on invoice #1184 from last month — happy to take it over the phone."'});
+    }},
+    {id:'break', label:'Something quietly breaks', sm:'the part nobody sees', run:function(){
+      add({lane:'schedule',k:'told',b:'Booking confirmations stopped firing', s:'Calendar app changed its permissions at 03:40. Caught on the next check.'});
+      add({lane:'schedule',k:'told',b:'Handed to the Fixer', s:'The Watch opened a repair task. Known remedy: re-authorise, then replay what was missed.'});
+      add({lane:'schedule',k:'done',b:'Reconnected and backfilled', s:'Fixed at 06:02. The two missed confirmations went out. No charge, and nobody had to notice.'});
+      state.fixed = true;
+    }}
+  ];
+
+  function nowLabel(){
+    var d = new Date(), h = d.getHours(), m = d.getMinutes();
+    var ap = h >= 12 ? 'PM' : 'AM'; h = h % 12; if(h === 0) h = 12;
+    return h + ':' + (m < 10 ? '0' + m : m) + ' ' + ap;
+  }
+  function add(o){ o.t = nowLabel(); o.fresh = true; state.rows.unshift(o); state.handled++; state.hours = Math.round((state.hours + 0.2) * 10) / 10; }
+  function ask(o){ o.fresh = true; state.asks.unshift(o); }
+
+  var laneName = {intake:'Intake', schedule:'Schedule', money:'Money', after:'After the job'};
+  var pillName = {done:'Handled', told:'Told you', ask:'Asked you', never:'Blocked'};
+  var lane = 'all';
+
+  function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;'); }
+
+  function renderRows(){
+    var list = state.rows.filter(function(r){ return lane === 'all' || r.lane === lane; });
+    var el = document.getElementById('rows');
+    el.innerHTML = list.slice(0, 14).map(function(r){
+      return '<li class="row' + (r.fresh ? ' new' : '') + '">' +
+        '<span class="t">' + esc(r.t) + '</span>' +
+        '<span class="m"><b>' + esc(r.b) + '</b><span>' + esc(r.s) + ' &middot; ' + laneName[r.lane] + '</span></span>' +
+        '<span class="pill ' + r.k + '">' + pillName[r.k] + '</span></li>';
+    }).join('');
+    document.getElementById('boardCount').textContent = list.length + ' today';
+    state.rows.forEach(function(r){ r.fresh = false; });
+  }
+
+  function renderAsks(){
+    var el = document.getElementById('asks');
+    if(!state.asks.length){
+      el.innerHTML = '<li class="empty">Nothing waiting on you.<br>Everything else ran on the rules you set.</li>';
+    } else {
+      el.innerHTML = state.asks.map(function(a, i){
+        return '<li class="ask-card' + (a.fresh ? ' new' : '') + '">' +
+          '<span class="lbl">' + esc(a.lbl) + '</span>' +
+          '<span class="body">' + a.body + '</span>' +
+          '<span class="quote">' + esc(a.quote) + '</span>' +
+          '<span class="acts"><button class="btn go" data-ok="' + i + '">Approve</button>' +
+          '<button class="btn" data-no="' + i + '">Hold</button></span></li>';
+      }).join('');
+    }
+    document.getElementById('askCount').textContent = state.asks.length ? state.asks.length + ' waiting' : 'clear';
+    document.getElementById('kAsk').textContent = state.asks.length;
+    document.getElementById('tileAsk').classList.toggle('flag', state.asks.length > 0);
+    state.asks.forEach(function(a){ a.fresh = false; });
+  }
+
+  function renderHealth(){
+    var el = document.getElementById('health');
+    el.innerHTML = crew.map(function(h){
+      return '<li class="hrow' + (h.gm ? ' gm' : '') + '"><span class="dot' + (h.fix ? ' fix' : '') + '"></span>' +
+        '<span class="nm">' + esc(h.n) + '</span><span class="mt">' + esc(h.m) + '</span>' +
+        '<span class="rl">' + esc(h.role) + '</span></li>';
+    }).join('') + '<li class="fixnote">The Watch caught a renamed form field at 06:14. The Fixer re-mapped it by 06:16, before the first lead of the day, at no charge. Nobody had to notice.' +
+      (state.fixed ? ' Calendar permissions repaired at 06:02 the same way.' : '') + '</li>';
+  }
+
+  function renderTiles(){
+    document.getElementById('kHandled').textContent = state.handled;
+    document.getElementById('kHours').textContent = state.hours.toFixed(1);
+  }
+
+  document.getElementById('trigs').innerHTML = triggers.map(function(t){
+    return '<button class="tbtn" data-run="' + t.id + '">' + esc(t.label) + '<span class="sm">' + esc(t.sm) + '</span></button>';
+  }).join('');
+
+  document.getElementById('trigs').addEventListener('click', function(e){
+    var b = e.target.closest('[data-run]'); if(!b) return;
+    var t = triggers.filter(function(x){ return x.id === b.getAttribute('data-run'); })[0]; if(!t) return;
+    b.disabled = true;
+    t.run();
+    lane = 'all';
+    Array.prototype.forEach.call(document.querySelectorAll('.tab'), function(x){ x.setAttribute('aria-selected', x.dataset.lane === 'all'); });
+    renderRows(); renderAsks(); renderHealth(); renderTiles();
+    setTimeout(function(){ b.disabled = false; }, reduce ? 200 : 900);
+  });
+
+  document.querySelector('.tabs').addEventListener('click', function(e){
+    var b = e.target.closest('.tab'); if(!b) return;
+    lane = b.dataset.lane;
+    Array.prototype.forEach.call(document.querySelectorAll('.tab'), function(x){ x.setAttribute('aria-selected', x === b); });
+    renderRows();
+  });
+
+  document.getElementById('asks').addEventListener('click', function(e){
+    var ok = e.target.closest('[data-ok]'), no = e.target.closest('[data-no]');
+    if(!ok && !no) return;
+    var i = parseInt((ok || no).getAttribute(ok ? 'data-ok' : 'data-no'), 10);
+    var a = state.asks[i]; if(!a) return;
+    state.asks.splice(i, 1);
+    if(ok){ add({lane:'intake', k:'done', b:'Approved and sent', s:a.lbl.replace(/,.*$/, '') + ' — went out in your words, seconds after you said yes.'}); }
+    else { add({lane:'intake', k:'told', b:'Held for you', s:a.lbl.replace(/,.*$/, '') + ' — parked. Nothing sent, nothing lost.'}); }
+    renderRows(); renderAsks(); renderTiles();
+  });
+
+  document.getElementById('clock').textContent = nowLabel();
+  renderRows(); renderAsks(); renderHealth(); renderTiles();
+})();
+</script>
