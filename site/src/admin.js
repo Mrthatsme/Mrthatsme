@@ -32,12 +32,13 @@ export function escapeHtml(s) {
 export function renderAdminPage({ leads, contracts, clients, payments, hoursPanel = "", hoursCss = "" }) {
   const table = (title, rows, cols) => `
     <h2>${title} (${rows.length})</h2>
-    <table>
+    ${rows.length ? "" : `<p class="empty">None yet.</p>`}
+    <table class="crm"${rows.length ? "" : " hidden"}>
       <thead><tr>${cols.map((c) => `<th>${escapeHtml(c)}</th>`).join("")}</tr></thead>
       <tbody>
         ${rows
           .map(
-            (r) => `<tr>${cols.map((c) => `<td>${escapeHtml(r[c] ?? "")}</td>`).join("")}</tr>`
+            (r) => `<tr>${cols.map((c) => `<td data-label="${escapeHtml(c)}">${escapeHtml(r[c] ?? "")}</td>`).join("")}</tr>`
           )
           .join("")}
       </tbody>
@@ -51,6 +52,16 @@ export function renderAdminPage({ leads, contracts, clients, payments, hoursPane
   table{width:100%;border-collapse:collapse;font-size:.85rem;background:#fff}
   th,td{border:1px solid #ddd;padding:.4rem .5rem;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:220px}
   th{background:#f4f4ea}
+  .empty{color:#666;font-size:.9rem}
+  /* Phones: each row becomes a stacked card, every value labelled by its column. */
+  @media (max-width:700px){
+    table.crm thead{position:absolute;left:-9999px}
+    table.crm,table.crm tbody,table.crm tr,table.crm td{display:block;width:auto}
+    table.crm tr{border:1px solid #ddd;margin-bottom:10px;background:#fff}
+    table.crm td{border:0;border-bottom:1px solid #eee;white-space:normal;overflow-wrap:anywhere;max-width:none;display:grid;grid-template-columns:7.5rem 1fr;gap:8px}
+    table.crm td:last-child{border-bottom:0}
+    table.crm td::before{content:attr(data-label);font-weight:600;color:#555;font-size:.78rem}
+  }
 ${hoursCss}
 </style>
 <meta name="viewport" content="width=device-width, initial-scale=1">
