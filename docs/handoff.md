@@ -188,9 +188,14 @@ phones" on Services; "hours are a person's time" on Pricing; the "what happens i
    **Done November 6:** Pricing now has "How your hours are counted" (example task times, labelled) and "What a
    monthly report looks like" (a labelled sample for an example plumbing company). Wording matches the agreement's
    clause 6 and the hours FAQ: counted at the time a skilled assistant would take, every task on the monthly report,
-   one-month rollover. The agreement itself was not changed. Open question for Jerome: does building the custom
-   automation that comes with Business Support use hours? The agreement says hours cover "new builds", which
-   could be read either way. The sample leaves builds out so it doesn't take a side.
+   one-month rollover. The agreement itself was not changed.
+   **Decided November 6 (Jerome): the Business Support custom build uses the client's hours.** The GM tracks the
+   back-and-forth with the client and the time spent building, and works out the total when it's finished. Where the
+   build runs past the plan's hours, the extra is billed at $75 an hour. Because the agreement (clause 6) and the
+   site only allow extra hours approved in writing *in advance*, the GM must warn the client and get that OK when a
+   build is heading past their remaining hours, not bill afterwards. Pricing now says this. Still to do: build the
+   GM's build-time tracking and the "heading past your hours" warning, and have the attorney confirm clause 6
+   covers the included custom build.
 
 **Decisions for Jerome:**
 4. **Founder photo and a short intro on Home** (P-04). The standing decision is no photo for now; the review asks for one twice.
