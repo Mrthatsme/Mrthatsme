@@ -55,7 +55,7 @@ export const FAQ = [
   ["Is software included?",
    "Yes. The tools we use to serve you are included in your plan, up to an allowance. We never bill you for software above it: if a tool you'd need costs more, we tell you first and you decide. Your own existing subscriptions, like your email or accounting software, stay yours."],
   ["Can I cancel?",
-   "Monthly plans: cancel any time with 30 days' notice. Retainers are paid upfront for 12 months at 10% off. Leave early and we refund the rest of the year, keeping only the 10% discount on the months you used. The first month covers setup and isn't refundable once setup begins."],
+   "Essential and Business Support: cancel any time with 30 days' notice. A 12-month Retainer is paid upfront at 10% off; leave early and we refund the rest of the year, keeping only the 10% discount on the months you used. Custom Automation has a 12-month term, because the build happens in the first month, and is monthly after that. On every plan, the first month covers the build and isn't refundable once building begins."],
   ["Who does the work?",
    "Both, and here's the split. Automations do the routine work you've approved, every day, and never use your hours. A person, the owner of Minutes Regained, sets up your account, does the hands-on admin your hours pay for, fixes anything that breaks, and answers your emails. Nothing important goes out without the approval level you set."],
 ];
