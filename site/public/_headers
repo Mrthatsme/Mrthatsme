@@ -5,9 +5,10 @@ https://minutesregained.jescott22.workers.dev/*
 # Cloudflare Pages security headers.
 # Applied automatically on deploy -- no dashboard configuration needed.
 #
-# CSP note: the page has NO inline script except one JSON-LD block, which is
-# allowed by exact hash below. If you edit the JSON-LD in index.html the hash
-# must be recomputed or structured data will be blocked (the page still works).
+# CSP note: pages have NO inline script except their JSON-LD blocks, each
+# allowed by exact hash below. After editing any JSON-LD, run
+# `python3 site/tools/check_site.py --fix` to rewrite the hashes, or the
+# browser blocks that block (the page still works).
 # connect-src lists 'self' (for our own /api/* Worker routes -- checkout,
 # agreement, lead capture) plus the two legacy form providers in the deploy
 # README. If you use a different provider, add its origin there or the form
@@ -16,7 +17,7 @@ https://minutesregained.jescott22.workers.dev/*
 # cloudflareinsights.com entries allow Cloudflare Web Analytics (auto-injected).
 
 /*
-  Content-Security-Policy: default-src 'none'; script-src 'self' 'sha256-CWi/ddYcElr/hSpAf65RntKteeL+tt1RUJnyZSUjP4M=' https://static.cloudflareinsights.com; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; media-src 'self'; connect-src 'self' https://formspree.io https://api.web3forms.com https://cloudflareinsights.com; form-action 'self'; base-uri 'none'; frame-ancestors 'none'; object-src 'none'; upgrade-insecure-requests
+  Content-Security-Policy: default-src 'none'; script-src 'self' 'sha256-6UoRgTg1Me472rngbu9t6VDkuqGsWY5CikQ1xHcPYF8=' 'sha256-b5QoKuB+3xuZKM8VvWH8XFWt1GBig6+cmCGKRTCy2fI=' 'sha256-yJMtMuidg5bXWokKYzGjW50IMqGia1rWubUo+k8BQ5c=' 'sha256-nt2xI/2VVkAwt8xtcdGnj5gi1ej1L4257hTQSPPgolw=' 'sha256-X4hEZwoq9txt6wFZVPiIFNPcy9VhgE/e9bGG3Y6ZS6U=' 'sha256-hA8Z45k6OtB7JJO64Z83vynVaZg8lpcvZdhxgQJXhLQ=' https://static.cloudflareinsights.com; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; media-src 'self'; connect-src 'self' https://formspree.io https://api.web3forms.com https://cloudflareinsights.com; form-action 'self'; base-uri 'none'; frame-ancestors 'none'; object-src 'none'; upgrade-insecure-requests
   Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
   X-Content-Type-Options: nosniff
   X-Frame-Options: DENY
