@@ -13,3 +13,12 @@ CREATE TABLE IF NOT EXISTS hours_approvals (
   minutes INTEGER NOT NULL, note TEXT NOT NULL, created_at TEXT NOT NULL);
 CREATE TABLE IF NOT EXISTS hours_notices (
   key TEXT PRIMARY KEY, agent_id TEXT NOT NULL, created_at TEXT NOT NULL);
+
+-- The GM (src/gm.js): questions agents couldn't answer, and answers the owner approved.
+CREATE TABLE IF NOT EXISTS gm_gaps (
+  id INTEGER PRIMARY KEY AUTOINCREMENT, agent_id TEXT NOT NULL, question TEXT NOT NULL, asked_by TEXT NOT NULL,
+  times INTEGER NOT NULL DEFAULT 1, status TEXT NOT NULL DEFAULT 'open', first_at TEXT NOT NULL, last_at TEXT NOT NULL);
+CREATE INDEX IF NOT EXISTS idx_gm_gaps ON gm_gaps (agent_id, status);
+CREATE TABLE IF NOT EXISTS gm_answers (
+  id INTEGER PRIMARY KEY AUTOINCREMENT, agent_id TEXT NOT NULL, question TEXT NOT NULL, answer TEXT NOT NULL,
+  approved_note TEXT, created_at TEXT NOT NULL);

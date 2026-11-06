@@ -5,7 +5,7 @@
 
 import { sendNotificationEmail } from "./email.js";
 import { voiceUsageLine } from "./usage.js";
-import { hoursLines } from "./hours.js";
+import { fillGaps } from "./gm.js";
 
 const MODEL = "claude-haiku-5-5";
 const MAX_THREAD_CHARS = 4000;
@@ -132,6 +132,7 @@ const DRAFT_TOOL = {
       holding: { type: "string", description: "For urgent hand-offs: a short holding reply that commits to nothing, for the owner to send." },
       emergency: { type: "boolean", description: "True only when the email describes one of this business's listed emergencies." },
       emergency_brief: { type: "string", description: "For emergencies: name, address, callback number and problem, from the email only, [GAP] where missing." },
+      gaps: { type: "array", items: { type: "string" }, description: "Each thing the customer asked that the approved answers don't cover, as one short question (e.g. \"Do you service Chesapeake?\"). Not prices or dates: those always stay [GAP]. Empty if none." },
     },
     required: ["action", "reason"],
   },
@@ -144,21 +145,34 @@ export async function draftForClient(env, agent, { from, subject, body }) {
     return { action: "handoff", reason: "Daily drafting limit reached; this one needs you." };
   }
   const profile = JSON.parse(agent.profile || "{}");
-  const res = await fetch("https://api.anthropic.com/v1/messages", {
-    method: "POST",
-    headers: { "x-api-key": env.ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01", "content-type": "application/json" },
-    body: JSON.stringify({
-      model: MODEL,
-      max_tokens: MAX_OUTPUT_TOKENS,
-      system: systemPrompt(profile),
-      messages: [{ role: "user", content: `From: ${from}\nSubject: ${subject}\n\n${String(body || "").slice(0, MAX_THREAD_CHARS)}` }],
-      tools: [DRAFT_TOOL],
-      tool_choice: { type: "tool", name: "inbox_decision" },
-    }),
-  });
-  if (!res.ok) throw new Error(`Anthropic API error (${res.status})`);
-  const data = await res.json();
-  const out = (data.content || []).find((b) => b.type === "tool_use")?.input || { action: "handoff", reason: "No decision returned." };
+  const ask = async (gmFacts) => {
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "x-api-key": env.ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01", "content-type": "application/json" },
+      body: JSON.stringify({
+        model: MODEL,
+        max_tokens: MAX_OUTPUT_TOKENS,
+        system: systemPrompt(profile) + (gmFacts.length
+          ? `\n\nMORE APPROVED ANSWERS, from the GM (use them like the ones above):\n${gmFacts.map((f) => `- ${f}`).join("\n")}` : ""),
+        messages: [{ role: "user", content: `From: ${from}\nSubject: ${subject}\n\n${String(body || "").slice(0, MAX_THREAD_CHARS)}` }],
+        tools: [DRAFT_TOOL],
+        tool_choice: { type: "tool", name: "inbox_decision" },
+      }),
+    });
+    if (!res.ok) throw new Error(`Anthropic API error (${res.status})`);
+    const data = await res.json();
+    return (data.content || []).find((b) => b.type === "tool_use")?.input || { action: "handoff", reason: "No decision returned." };
+  };
+  let out = await ask([]);
+  // Didn't know something? Ask the GM. If it has answers, redraft once with
+  // them; anything it can't answer is recorded as a gap for the owner-operator.
+  if (out.action !== "ignore" && Array.isArray(out.gaps) && out.gaps.length) {
+    const facts = await fillGaps(env, agent, out.gaps, "Intake").catch((err) => { console.error("GM ask failed", err); return []; });
+    if (facts.length && (await useBudget(env, agent))) {
+      const again = await ask(facts).catch((err) => { console.error("redraft failed", err); return null; });
+      if (again) { again.gmAnswered = facts.length; out = again; }
+    }
+  }
   if (out.action === "draft" && !out.draft) out.action = "handoff";
   if (out.emergency && !profile.emergencyTypes) out.emergency = false;
   if (out.emergency) out.urgent = true;
@@ -328,8 +342,6 @@ export async function clientInboxLines(env, sinceIso, now = new Date()) {
     needs.forEach((e) => lines.push(`  [${a.label}] ${e.summary}`));
     const usage = await voiceUsageLine(env, a).catch(() => null);
     if (usage) lines.push(usage);
-    const hours = await hoursLines(env, a).catch(() => []);
-    lines.push(...hours);
   }
   return { lines, problems };
 }

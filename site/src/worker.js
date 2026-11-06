@@ -20,7 +20,9 @@ import { createConnectInvite, connectLanding, connectStart, connectCallback, pol
 import { intakePage, handleIntake, voicePage, handleVoice, createClientLinks } from "./clientpages.js";
 import { billVoiceOverages } from "./usage.js";
 import { createBuild, updateEstimate, logTime, recordApproval, finishBuild, monthlyStatement, extraHoursReport, dashboardHours } from "./hours.js";
-import { renderHoursPanel, HOURS_CSS } from "./adminhours.js";
+import { renderHoursPanel, HOURS_CSS, GM_CSS } from "./adminhours.js";
+import { askGM, saveAnswer, dismissGap, dashboardGaps } from "./gm.js";
+import { renderGmPanel } from "./admingm.js";
 import { agreementPage, startPage, signupsOpen, SIGNUPS_CLOSED_MESSAGE } from "./agreementpage.js";
 
 const JSON_HEADERS = { "Content-Type": "application/json; charset=utf-8" };
@@ -112,6 +114,11 @@ export default {
           }
         }
         if (path === "/api/agent/checkin") return json({ ok: true });
+        // The client's inbox script asks the GM for something it doesn't know.
+        if (path === "/api/agent/gm") {
+          const out = await askGM(env, agent, { from: "inbox script", skill: body.skill || "answer", query: body.query || "" });
+          return json(out, out.error ? 400 : 200);
+        }
         return json({ error: "not found" }, 404);
       }
       if (path === "/api/ops/summary" && request.method === "GET") {
@@ -165,6 +172,15 @@ export default {
         }
         if (path === "/api/admin/hours-approval" && request.method === "POST") {
           const out = await recordApproval(env, (await readJson(request)) || {});
+          return json(out, out.error ? 400 : 200);
+        }
+        // The GM: save an answer the owner approved, or dismiss a question that needs none.
+        if (path === "/api/admin/gm-answer" && request.method === "POST") {
+          const out = await saveAnswer(env, (await readJson(request)) || {});
+          return json(out, out.error ? 400 : 200);
+        }
+        if (path === "/api/admin/gm-dismiss" && request.method === "POST") {
+          const out = await dismissGap(env, (await readJson(request)) || {});
           return json(out, out.error ? 400 : 200);
         }
         if (path === "/api/admin/client-agent-status" && request.method === "POST") {
@@ -605,7 +621,8 @@ async function handleAdmin(path, env) {
     // The Hours panel's one script runs under a fresh nonce; nothing else on the page may run script.
     const nonce = btoa(String.fromCharCode(...crypto.getRandomValues(new Uint8Array(16))));
     const hours = await dashboardHours(env).catch((err) => { console.error("hours panel failed", err); return []; });
-    return new Response(renderAdminPage({ leads, contracts, clients, payments, hoursPanel: renderHoursPanel(hours, nonce), hoursCss: HOURS_CSS }), {
+    const gaps = await dashboardGaps(env).catch((err) => { console.error("GM panel failed", err); return []; });
+    return new Response(renderAdminPage({ leads, contracts, clients, payments, hoursPanel: renderGmPanel(gaps, nonce) + renderHoursPanel(hours, nonce), hoursCss: HOURS_CSS + GM_CSS }), {
       headers: {
         "Content-Type": "text/html; charset=utf-8",
         "Cache-Control": "no-store",

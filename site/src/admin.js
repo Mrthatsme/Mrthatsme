@@ -68,7 +68,7 @@ ${hoursCss}
 <meta name="robots" content="noindex"></head>
 <body>
   <h1>Minutes Regained — internal CRM</h1>
-  <p>Hours, leads, contracts, clients, and payments. Not linked from the public site.</p>
+  <p>The GM, hours, leads, contracts, clients and payments. Not linked from the public site.</p>
   ${hoursPanel}
   ${table("Leads", leads, ["id", "name", "business", "contact", "status", "triage_status", "triage_note", "created_at"])}
   ${table("Contracts", contracts, ["id", "plan_label", "price_cents", "founding_offer", "business_name", "signer_name", "status", "created_at"])}

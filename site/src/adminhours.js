@@ -215,3 +215,7 @@ export const HOURS_CSS = `
   .msg.bad{background:#fde2c8;border-left-color:#8a3b00}
   @media (max-width:600px){ body{margin:1rem !important} .hgrid,.forms{grid-template-columns:1fr} }
 `;
+export const GM_CSS = `
+  .gmform{margin-top:8px} .gq{margin:0 0 6px;font-size:.88rem}
+  .gmform .dismiss{margin-left:8px;font-size:.8rem;background:none;border:0;color:#555;text-decoration:underline;cursor:pointer}
+`;

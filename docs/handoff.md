@@ -246,6 +246,23 @@ All calls are admin-only (`/api/admin/...`, Basic auth). Times are counted minut
   (script only by per-request nonce, fetch only to this site) and `no-store`. Tested end to end in a browser
   against the Worker running on SQLite, at 375px and desktop.
 
+## The GM (built November 6)
+
+`site/src/gm.js`, tested by `node site/tools/test_gm.mjs`. Jerome kept the name "The GM".
+
+- **Skills other agents pull from:** `answer` (the client's approved answers plus answers the GM learned),
+  `business_hours`, `service_area`, `on_call_now`, `client_rules`, `hours_status`. Any agent calls `askGM()`;
+  the client's inbox script calls `POST /api/agent/gm {skill, query}` with its own key.
+- **The drafting agent asks the GM when stuck.** Its decision now lists `gaps` (questions the approved answers
+  don't cover). The GM checks its skills; if it knows any, the drafter redrafts once with them (one extra model
+  call, counted against the client's daily cap). What the GM doesn't know is recorded as a gap.
+- **The GM learns.** Open gaps show on the dashboard ("The GM: questions the agents couldn't answer"), most-asked
+  first. Save an answer once and every agent gets it from then on. Answers with prices or money figures are refused.
+  Matching is plain word overlap, no model call, so it costs nothing and can't make things up.
+- **Oversight in the brief:** a "THE GM" section per client with open questions, hours used and builds heading
+  past hours (hours lines moved here from CLIENT INBOXES).
+- Not yet: the GM doesn't watch the other background agents' output quality or re-route work between them.
+
 ## Next steps
 0. **The Home headline line about phones** (item 1 above). It's the review's one critical finding and a ten-minute fix.
 1. **Settle the founding client offer** (Jerome's numbers). Then update every place that names it: the Business Support card on `/pricing`,
