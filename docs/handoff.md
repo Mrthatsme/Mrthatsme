@@ -171,8 +171,8 @@ Commits, oldest first: `048377f`, `9115f42`, `101774c`, `37df6f5`, `2ac8142`, `a
 2. **Fix open bug 2** (Daily Brief timing) **and bug 9** (business size in the agent's FAQ), then remove the unused files in bug 6
    and the Worker's `/demo-video.mp4` route.
 3. **Set the calculator thresholds** (bug 3) so it can suggest Essential.
-4. **Check the live demo after deploy** (three messages, above). Optional: the `/demo` header tile "Agents on watch: 8" is
-   machinery a plumber doesn't care about; swap it for something like "Replies sent tonight" if Jerome agrees.
+4. **Check the live demo after deploy** (three messages, above).
+   (Done November 6: the `/demo` tile "Agents on watch: 8" is now "Replies sent tonight", which ticks up when a lead fires.)
 
 ## Starting a new session
 Open a new session on branch `claude/virtual-service-startup-32flre` and say:

@@ -1,6 +1,6 @@
 (function(){
   var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var state = { handled:47, hours:14.5, rows:[], asks:[], fixed:false };
+  var state = { handled:47, hours:14.5, replies:12, rows:[], asks:[], fixed:false };
 
   var seed = [
     {t:'7:09 PM', lane:'intake', k:'done', b:'Chat lead logged — Dana R.', s:'No hot water, south side. Answered in 40 seconds, in your words.'},
@@ -35,7 +35,7 @@
 
   var triggers = [
     {id:'lead', label:'A lead lands at 9pm', sm:'website chat', run:function(){
-      add({lane:'intake',k:'done',b:'Chat answered — Marcus T.', s:'Burst pipe under the kitchen sink. Replied in 38 seconds.'});
+      add({lane:'intake',k:'done',b:'Chat answered — Marcus T.', s:'Burst pipe under the kitchen sink. Replied in 38 seconds.'}); state.replies++;
       add({lane:'intake',k:'done',b:'Lead logged in the CRM', s:'Name, number, address, what he needs. Top of tomorrow’s brief.'});
       add({lane:'intake',k:'told',b:'Flagged as emergency', s:'Outside hours and urgent, so it went straight to your on-call phone.'});
       ask({lbl:'Booking, waiting on you',body:'<b>Marcus T.</b> asked for the first slot tomorrow.',quote:'8am Wednesday is open. Confirm and he gets the confirmation.'});
@@ -123,6 +123,7 @@
   function renderTiles(){
     document.getElementById('kHandled').textContent = state.handled;
     document.getElementById('kHours').textContent = state.hours.toFixed(1);
+    document.getElementById('kReplies').textContent = state.replies;
   }
 
   document.getElementById('trigs').innerHTML = triggers.map(function(t){
