@@ -248,7 +248,6 @@ footer.site .legal{margin-top:12px;font-size:12px;color:var(--fg-faint)}
   .dial,.aud,.steps{grid-template-columns:1fr}
   .feed li{grid-template-columns:58px 1fr;grid-template-areas:"t m" ". p"}
   .feed .t{grid-area:t} .feed .m{grid-area:m} .feed .pill{grid-area:p;justify-self:start;margin-top:4px}
-  nav.main{display:none}
 }
 
 /* brand mark in the header */
@@ -320,3 +319,62 @@ section{scroll-margin-top:72px}
 .faq-meta{margin-top:6px;font-size:12px;color:var(--fg-faint)}
 .faq-item[hidden]{display:none}
 .faq-none{margin-top:12px}
+
+/* main menu: Home, Services, Pricing, Industries, About. On a phone it drops to its own row under the logo. */
+nav.main a[aria-current="page"]{color:var(--fg);font-weight:600}
+@media (max-width:760px){
+  nav.main{order:3;width:100%;justify-content:space-between;gap:8px;border-top:1px solid var(--line-soft);padding-top:8px;font-size:14px}
+  .hinner{row-gap:8px;padding-block:9px}
+}
+@media (max-width:760px){
+  .brand{font-size:14.5px;gap:6px}
+  .hright{gap:9px}
+  header.site .tel{font-size:12.5px}
+  header.site .btn.sm{font-size:12.5px;padding:6px 10px}
+}
+/* narrowest phones: logo mark only, so the number and Book a call stay on the first row */
+@media (max-width:379px){ .bname{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap} }
+
+/* inner-page heroes */
+.hero.page{padding-block:40px 36px}
+.hero.page h1{font-size:clamp(28px,5.2vw,44px)}
+.hero.page .demo{margin-top:26px}
+
+/* homepage strip of the five names */
+.names{list-style:none;margin:18px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:9px}
+.names a{display:inline-block;padding:8px 13px;border:1px solid var(--line);border-radius:999px;background:var(--surface);color:var(--fg);text-decoration:none;font-weight:600;font-size:14px}
+.names a:hover{border-color:var(--accent)}
+.names .brief a{background:var(--accent-soft);border-color:var(--accent-line)}
+.more{margin-top:14px;font-size:14.5px;color:var(--fg-dim);max-width:70ch}
+.auto{scroll-margin-top:90px}
+
+/* demo strip links */
+.demolinks{display:flex;gap:8px;flex-wrap:wrap}
+
+/* pricing comparison: plans as columns so it fits a phone */
+.subhead{font-family:var(--display);font-size:19px;font-weight:700;margin-top:30px}
+.table-scroll{margin-top:12px;overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:var(--r)}
+table.compare{width:100%;border-collapse:collapse;font-size:13.5px}
+table.compare th,table.compare td{padding:9px 12px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line-soft)}
+table.compare tbody tr:last-child th,table.compare tbody tr:last-child td{border-bottom:0}
+table.compare thead th{font-family:var(--display);font-size:14.5px;background:var(--surface-2)}
+table.compare tbody th{font-weight:600;color:var(--fg-dim);width:30%}
+table.compare td{font-family:var(--mono);font-size:12.5px}
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+@media (max-width:520px){ table.compare{font-size:12.5px} table.compare th,table.compare td{padding:8px 7px} table.compare td{font-size:11.5px} }
+
+/* industries index */
+.trades{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:13px;margin-top:20px}
+.trade{display:flex;flex-direction:column;gap:9px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px;color:var(--fg);text-decoration:none;min-width:0}
+a.trade:hover{border-color:var(--accent)}
+.trade h3{font-family:var(--display);font-size:18px;font-weight:700}
+.trade p{font-size:14px;color:var(--fg-dim)}
+.trade .go{margin-top:auto;font-weight:600;color:var(--accent);font-size:14px}
+.trade.other{background:var(--surface-2);border-style:dashed}
+@media (max-width:900px){ .trades{grid-template-columns:1fr} }
+
+/* industry pages: status label on each card, and the daily-brief sample */
+.auto .n.live{color:var(--good)}
+.brief-feed li{grid-template-columns:50px 1fr auto}
+@media (max-width:460px){ .brief-feed li{grid-template-columns:44px 1fr} }
+.pill.ask{border-left:0;padding-left:7px;font-style:normal;font-size:10.5px}

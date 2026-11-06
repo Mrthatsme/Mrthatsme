@@ -2,6 +2,15 @@
   "use strict";
   var $ = function(id){ return document.getElementById(id); };
 
+  /* The site used to be one long page. Old links like /#pricing go to the page that now holds that section. */
+  (function(){
+    if(location.pathname !== "/" || !location.hash) return;
+    var moved = { "#pricing": "/pricing", "#control": "/services#control", "#admin": "/services#admin",
+      "#tools": "/services#tools", "#demo": "/services#demo", "#faq": "/services#faq", "#who": "/about" };
+    var to = moved[location.hash];
+    if(to) location.replace(to);
+  })();
+
   /* ------------------------------------------------------------------
      FORM ENDPOINT — only used by the bug-report widget below. The
      "Request assessment" form posts to our own /api/leads (the CRM)
