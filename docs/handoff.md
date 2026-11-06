@@ -91,14 +91,30 @@ Commits, oldest first: `048377f`, `9115f42`, `101774c`, `37df6f5`, `2ac8142`, `a
 ---
 
 ## Next 3 steps
-1. **Settle the founding client offer.** Then update every place that names it: homepage card, `/pricing`, `/start`,
+1. **Split the site into 5 main pages** (Jerome, November 6). The homepage is too long for someone scanning for a service,
+   and separate pages can each target their own search terms. This overrides the single long homepage in `docs/build-spec.md`;
+   note the decision in `CLAUDE.md` under "Since this package". Proposed map, to confirm with Jerome before building:
+
+   | Page | What goes on it (from today's homepage) | Search terms it targets |
+   | --- | --- | --- |
+   | **Home** `/` | Hero, "Bring us the thing" with the three examples, a short strip of the five automation names, a pricing teaser ("from $450"), how it starts, Book a call | virtual assistant for small business, back office help |
+   | **Services** `/services` | The five automations in full, "a person for everything that needs judgment", the permission dial and never-list, the tools row, the demo strip with links to `/demo` and `/demo-desk` | lead follow-up automation, quote follow-up, appointment reminders, invoice follow-up |
+   | **Pricing** `/pricing` | Calculator, the three plan cards, comparison table, hold notice, fine print, link to `/agreement` | virtual assistant pricing, small business automation cost |
+   | **Industries** `/for/contractors` and `/for/law-firms`, plus an index page | Trade-specific examples, redesigned to match | virtual assistant for contractors / plumbers / HVAC / law firms |
+   | **About** `/about` (last in the menu) | Jerome's bio, the one-person question, the NDA line, the contact form | veteran-owned virtual assistant, who runs Minutes Regained |
+
+   - **Menu on every page:** Home · Services · Pricing · Industries · About, plus the phone link and Book a call.
+   - **FAQs:** spread the existing FAQs to the page they answer (pricing questions on `/pricing`, data and password questions on `/services`, and so on).
+     Give each page its own FAQPage data. Keep every answer in the HTML.
+   - **SEO basics:** each page gets a unique title, description and H1. Update `sitemap.xml`. Link the pages to each other.
+   - **Keep everything already built:** the sample-data labels, the empty proof slots, and the checks in the build spec's checklist.
+2. **Settle the founding client offer** (Jerome's numbers). Then update every place that names it: homepage card, `/pricing`, `/start`,
    `site/src/plans.js`, and the agreement version.
-2. **Fix open bugs 1 and 2** (texting wording on `/for/contractors`, Daily Brief timing). They are copy contradictions a prospect could notice.
-3. **Bring the industry pages (`/for/contractors`, `/for/law-firms`) and `/pricing` in line with the new homepage design**,
-   then remove the unused files in bug 6.
+3. **Fix open bugs 1 and 2**: the texting wording on `/for/contractors`, and the Daily Brief timing. Then remove the unused files in bug 6.
 
 ## Starting a new session
-Open a new session on this branch and say: "Read CLAUDE.md and docs/handoff.md, then start on next step 1."
+Open a new session on branch `claude/virtual-service-startup-32flre` and say:
+"Read CLAUDE.md and docs/handoff.md. Show me the plan for next step 1 (the 5-page split) before changing anything."
 Everything needed is in those two files; the Shared Drive holds the internal documents.
 
 When the reviewed agreement comes back: apply the changes in `site/src/contract.js` (bump the version) and get it countersigned.
