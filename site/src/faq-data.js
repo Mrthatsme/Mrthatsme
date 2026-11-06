@@ -45,13 +45,13 @@ export const FAQ = [
   ["Is there a contract?",
    "Yes, a short service agreement you sign online. Monthly plans need 30 days' notice to cancel; a 12-month Retainer, paid upfront for the year, saves 10%. Pricing is published rather than quoted on a call, there's no setup fee, and software we use to serve you is included up to your plan's allowance."],
   ["What do you actually do?",
-   "We build and run five core automations: Lead Catcher (website chat and lead replies), Quote Chaser (follow-ups on open quotes), Booking & Reminders, Job Wrap-Up (review requests and invoice heads-ups) and your Daily Brief. On top of that we keep your inbox, follow-ups and calendar current. We fix anything that breaks. No setup fee."],
+   "We build and run five core automations: Lead Catcher (website chat and lead replies), Quote Chaser (follow-ups on open quotes), Schedule Keeper (confirmations, reminders and no-shows), Review Builder (one review request when a job closes) and Invoice & Chase (invoices sent and unpaid ones followed up; we never take the money), plus your Daily Brief. On top of that we keep your inbox, follow-ups and calendar current. We fix anything that breaks. No setup fee."],
   ["What happens if an automation breaks?",
    "We monitor every automation we build, and we fix breaks at no charge, usually within one business day and often before you notice. Repairs never use your hours."],
   ["If I cancel, do I lose the automations?",
    "No. They live in your own accounts and keep running. We just stop monitoring and maintaining them."],
   ["How many hours do I get?",
-   "Every plan includes 10, 22 or 40 hours of a person's time: building new automations, and one-off admin you hand us, like rescheduling a week of jobs or cleaning up your contact list. Automations you've approved never use your hours, however often they run, and neither do monitoring, repairs or your daily brief. Each hands-on task is counted at the time a skilled assistant would take (for example, 5 minutes to schedule an appointment), and your monthly report lists every one. Unused hours roll over one month. We never bill extra hours without asking first."],
+   "Essential includes 5 hours a month and Business Support 12 hours of a person's time: building new automations, and one-off admin you hand us, like rescheduling a week of jobs or cleaning up your contact list. Automations you've approved never use your hours, however often they run, and neither do monitoring, repairs or your daily brief. Each hands-on task is counted at the time a skilled assistant would take (for example, 5 minutes to schedule an appointment), and your monthly report lists every one. Unused hours roll over one month. We never bill extra hours without asking first."],
   ["Is software included?",
    "Yes. The tools we use to serve you are included in your plan, up to an allowance. We never bill you for software above it: if a tool you'd need costs more, we tell you first and you decide. Your own existing subscriptions, like your email or accounting software, stay yours."],
   ["Can I cancel?",
@@ -60,14 +60,14 @@ export const FAQ = [
    "Both, and here's the split. Automations do the routine work you've approved, every day, and never use your hours. A person, the owner of Minutes Regained, sets up your account, does the hands-on admin your hours pay for, fixes anything that breaks, and answers your emails. Nothing important goes out without the approval level you set."],
 ];
 
-export const PRICING_SUMMARY = `Simple monthly pricing. Software included. No setup fee. Every plan includes automations built and monitored, the daily brief, and hands-on admin (email, scheduling, follow-ups, invoice reminders). Monitoring, repairs and the daily brief never use the client's hours.
-Essential: $450/month ($4,860/year on a 12-month Retainer, paid upfront; works out to $405/month) -- up to 3 automations, 10 hours/month (roll over 1 month, max 3), extra hours $50/hr only with approval, software included up to $50/month, 1 inbox, 100 voice notes/month.
-Business Support: $900/month ($9,720/year on a 12-month Retainer, paid upfront; works out to $810/month) -- up to 6 automations, 22 hours/month (roll over 1 month, max 5), extra hours $45/hr only with approval, software up to $100/month, 2 inboxes, 250 voice notes/month, 30-minute monthly review call.
-Operations+: $1,500/month ($16,200/year on a 12-month Retainer, paid upfront; works out to $1,350/month) -- up to 12 automations, 40 hours/month (roll over 1 month, max 10), extra hours $40/hr only with approval, software up to $150/month, 4 inboxes, 500 voice notes/month, 60-minute monthly review call.
-Voice notes over the monthly allowance: $10 per extra 100, added to the next invoice.
-Billing: pay monthly (billed each month on the sign-up date) and cancel with 30 days' notice, or save 10% with a 12-month Retainer paid upfront for the year, renewing yearly with a 30-day email notice; leave a Retainer early and the rest of the year is refunded, keeping only the 10% discount on months used. The founding offer is monthly only. The first month covers setup and isn't refundable once setup begins.
-Founding Client offer (first 3 clients only): Business Support (22 hours) at $450/month for the first 90 days, then $900/month. The founding offer is monthly billing only.
-What we automate: website chat and social replies, instant lead replies, quote follow-ups, appointment reminders, review requests, invoice reminders, daily brief.`;
+export const PRICING_SUMMARY = `No setup fee. Software included up to each plan's allowance. Every plan includes automations built, run and monitored, the Daily Brief, and repairs at no charge. Approved automations, monitoring, repairs and the Daily Brief never use a client's hours.
+Essential: $450/month ($4,860/year on a 12-month Retainer, paid upfront, 10% off) -- 3 of the 5 core automations, 5 hours/month of hands-on admin (unused hours roll over 1 month), extra hours $50/hr only with approval, software up to $50/mo, 1 inbox, 100 voice notes/mo. Cancel with 30 days' notice.
+Business Support: $900/month ($9,720/year on a 12-month Retainer, paid upfront, 10% off) -- all 5 core automations plus 1 custom, 12 hours/month (unused hours roll over 1 month), extra hours $45/hr only with approval, software up to $100/mo, 2 inboxes, 250 voice notes/mo, 30-minute monthly review call. Cancel with 30 days' notice.
+Custom Automation: from $550/month, dropping to $250 once the build is paid off. No assistant hours. A process map first, built live on recorded calls, documentation and a walkthrough, checked daily with breaks fixed free, and a quarterly session. Scopes: one gap $550 then $250; one side of the business $1,150 then $450; whole back office $2,100 then $750. 12-month term, then monthly; or pay the build upfront ($2,500 / $6,000 / $12,000) and start at the lower rate.
+Voice notes over the allowance: $10 for each extra 100.
+Founding Client offer (first 3 clients only): Business Support at $450/month for the first 90 days, then $900/month, monthly billing only.
+The five core automations: Lead Catcher, Quote Chaser, Schedule Keeper, Review Builder, Invoice & Chase, plus the Daily Brief with every plan.
+Sign-ups are not open yet: the service agreement is with the attorney, and no one is signed or charged until it is back.`;
 
 export function faqAsText() {
   return FAQ.map(([q, a]) => `Q: ${q}\nA: ${a}`).join("\n\n");

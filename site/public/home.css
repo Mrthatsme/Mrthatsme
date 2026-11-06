@@ -418,3 +418,9 @@ form.sign { display: grid; gap: 0.9rem; }
 .plan details.detail[open] summary::after { content: "\2013"; }
 .plan details.detail ul { margin: 0.25rem 0 0.5rem; padding-left: 1.1rem; display: grid; gap: 0.3rem; opacity: 0.8; }
 .plan details.detail a { font-size: 0.84rem; opacity: 0.8; text-underline-offset: 0.2em; }
+
+/* pricing: founding line, custom drop line, hold notice */
+.plan__founding{font-size:.9rem;margin:.75rem 0 0;opacity:.9}
+.plan__drop{font-size:.9rem;margin:.25rem 0 0;opacity:.85}
+.hold-note{margin-top:1.75rem;border:1px solid color-mix(in srgb,currentColor 25%,transparent);border-left:3px solid var(--signal);border-radius:10px;padding:1rem 1.15rem;max-width:62ch}
+.hold-note p{margin:0}.hold-note p+p{margin-top:.5rem}

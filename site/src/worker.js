@@ -18,6 +18,7 @@ import { createClientAgent, authenticateClientAgent, draftForClient, logClientAg
 import { createConnectInvite, connectLanding, connectStart, connectCallback, pollConnectedInboxes } from "./connect.js";
 import { intakePage, handleIntake, voicePage, handleVoice, createClientLinks } from "./clientpages.js";
 import { billVoiceOverages } from "./usage.js";
+import { agreementPage, startPage, signupsOpen, SIGNUPS_CLOSED_MESSAGE } from "./agreementpage.js";
 
 const JSON_HEADERS = { "Content-Type": "application/json; charset=utf-8" };
 
@@ -45,6 +46,12 @@ export default {
     try {
       if (path === "/demo-video.mp4" && (request.method === "GET" || request.method === "HEAD")) {
         return await serveVideo(request, env, url);
+      }
+      if ((path === "/agreement" || path === "/agreement/") && (request.method === "GET" || request.method === "HEAD")) {
+        return agreementPage(env, url);
+      }
+      if ((path === "/start" || path === "/start.html" || path === "/start/") && (request.method === "GET" || request.method === "HEAD")) {
+        return await startPage(env, request, url);
       }
       if (path === "/api/contract-text" && request.method === "GET") {
         return handleContractText(url);
@@ -308,6 +315,7 @@ async function handleCreateLead(request, env, ctx) {
 }
 
 async function handleAgree(request, env) {
+  if (!signupsOpen(env)) return json({ error: "signups_closed", message: SIGNUPS_CLOSED_MESSAGE }, 403);
   const body = await readJson(request);
   if (body === undefined) return json({ error: "invalid_json" }, 400);
   const { planId, founding, signerName, signerEmail, businessName, leadId } = body || {};
@@ -374,6 +382,8 @@ async function handleAgree(request, env) {
 }
 
 async function handleCheckout(request, env, url) {
+  // No payment until there is a countersigned agreement to pay against.
+  if (!signupsOpen(env)) return json({ error: "signups_closed", message: SIGNUPS_CLOSED_MESSAGE }, 403);
   const body = await readJson(request);
   if (body === undefined) return json({ error: "invalid_json" }, 400);
   const { contractId } = body || {};

@@ -4,7 +4,7 @@
 .step-num{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:50%;background:var(--accent);color:var(--accent-ink);font:800 15px/1 var(--display)}
 .hid{display:none}
 
-.plan-pick{display:grid;gap:12px;margin:20px 0;grid-template-columns:repeat(3,1fr)}
+.plan-pick{display:grid;gap:12px;margin:20px 0;grid-template-columns:repeat(2,1fr)}
 @media (max-width:700px){.plan-pick{grid-template-columns:1fr}}
 .plan-opt{position:relative;display:grid;gap:4px;border:2px solid var(--line);border-radius:10px;padding:16px;cursor:pointer;background:var(--surface)}
 .plan-opt input{position:absolute;top:14px;right:14px}
@@ -37,3 +37,8 @@
 .terms-error{border:1px solid #C2452F;border-left:3px solid #C2452F;border-radius:8px;padding:14px 16px;display:grid;gap:10px;justify-items:start}
 #to-step3:disabled{opacity:.45;cursor:not-allowed}
 .founding-row:has(#agree-check:disabled){opacity:.6}
+
+/* hold notice while sign-ups are closed */
+.hold{border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:10px;padding:16px 18px;margin:24px 0 0;display:grid;gap:10px;background:var(--surface)}
+.hold p{margin:0}
+.ag-link{margin:16px 0 -8px}

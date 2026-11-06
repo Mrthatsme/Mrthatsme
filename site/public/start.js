@@ -2,7 +2,10 @@
   "use strict";
   var $ = function (id) { return document.getElementById(id); };
 
-  var PLAN_LABELS = { essential: "Essential", business_support: "Business Support", operations_plus: "Operations+" };
+  var PLAN_LABELS = { essential: "Essential", business_support: "Business Support" };
+  // Sign-ups stay closed until the attorney-reviewed agreement is back; the
+  // server removes the sign and pay steps and refuses them if called anyway.
+  var signupsOpen = document.body.getAttribute("data-signups") === "open";
 
   var state = { contractId: null };
 
@@ -67,6 +70,7 @@
   var gate = { loaded: false, read: false };
   function refreshGate() {
     var box = $("contract-box"), chk = $("agree-check");
+    if (!chk) return;
     var ready = gate.loaded && gate.read;
     chk.disabled = !ready;
     if (!ready) chk.checked = false;
@@ -81,7 +85,7 @@
     refreshGate();
   }
   $("contract-box").addEventListener("scroll", markRead, { passive: true });
-  $("agree-check").addEventListener("change", refreshGate);
+  if ($("agree-check")) $("agree-check").addEventListener("change", refreshGate);
   window.addEventListener("resize", function () { if (gate.loaded) markRead(); });
   function termsFailed() {
     gate.loaded = false; gate.read = false;
@@ -91,40 +95,61 @@
   }
 
   // ---------- step 1 -> 2 ----------
+  // The server puts the chosen plan's agreement into the page before it
+  // loads, so the panel is never empty. Picking another plan fetches that
+  // plan's text, with a time limit and a link to the plain page if it fails.
+  function agreementQuery(plan, founding, billing) {
+    var p = new URLSearchParams({ plan: plan, billing: billing });
+    if (founding) p.set("founding", "1");
+    return p.toString();
+  }
+  function setAgreementLinks(q) {
+    ["agreement-link", "terms-error-link"].forEach(function (id) { if ($(id)) $(id).setAttribute("href", "/agreement?" + q); });
+  }
   function loadAgreement() {
     var plan = selectedPlan();
     var founding = $("founding-check").checked && plan === "business_support";
+    var billing = selectedBilling();
+    var key = plan + "|" + billing + "|" + (founding ? 1 : 0);
+    var box = $("contract-box");
+    var serverText = box.getAttribute("data-key") === key;
+    setAgreementLinks(agreementQuery(plan, founding, billing));
     gate.loaded = false; gate.read = false; refreshGate();
     $("terms-error").classList.add("hid");
-    $("contract-box").classList.remove("hid");
-    $("contract-box").setAttribute("aria-busy", "true");
-    $("contract-box").textContent = "Loading the agreement…";
+    box.classList.remove("hid");
+    state.plan = plan; state.founding = founding; state.billing = billing;
     showStep("step-contract");
 
-    var billing = selectedBilling();
-    var params = new URLSearchParams({ plan: plan, founding: founding ? "1" : "0", billing: billing });
-    fetch("/api/contract-text?" + params.toString())
+    if (serverText) {
+      // Already in the page from the server: nothing to wait for.
+      box.setAttribute("aria-busy", "false");
+      gate.loaded = true;
+      markRead();
+      return;
+    }
+    box.setAttribute("aria-busy", "true");
+    box.textContent = "Loading the agreement for this plan…";
+    var ctrl = window.AbortController ? new AbortController() : null;
+    var timer = setTimeout(function () { if (ctrl) ctrl.abort(); }, 10000);
+    fetch("/api/contract-text?" + new URLSearchParams({ plan: plan, founding: founding ? "1" : "0", billing: billing }).toString(), ctrl ? { signal: ctrl.signal } : {})
       .then(function (r) { return r.json(); })
       .then(function (d) {
+        clearTimeout(timer);
         if (d.error || !d.text || d.text.length < 400) { termsFailed(); return; }
-        $("contract-box").textContent = d.text;
-        $("contract-box").setAttribute("aria-busy", "false");
-        $("contract-box").scrollTop = 0;
+        box.textContent = d.text;
+        box.setAttribute("data-key", key);
+        box.setAttribute("aria-busy", "false");
+        box.scrollTop = 0;
         gate.loaded = true;
         markRead();
-        state.plan = plan;
-        state.founding = founding;
-        state.billing = billing;
-        state.planLabel = d.plan.label;
-        state.priceCents = d.plan.priceCents;
       })
-      .catch(termsFailed);
+      .catch(function () { clearTimeout(timer); termsFailed(); });
   }
   $("to-step2").addEventListener("click", loadAgreement);
   $("terms-retry").addEventListener("click", loadAgreement);
 
   // ---------- step 2: agree ----------
-  $("agree-form").addEventListener("submit", function (ev) {
+  if (signupsOpen && $("agree-form")) $("agree-form").addEventListener("submit", function (ev) {
     ev.preventDefault();
     var errEl = $("agree-err");
     errEl.textContent = "";
@@ -180,7 +205,7 @@
   });
 
   // ---------- step 3: stripe handoff ----------
-  $("to-stripe").addEventListener("click", function () {
+  if (signupsOpen && $("to-stripe")) $("to-stripe").addEventListener("click", function () {
     var btn = $("to-stripe");
     var errEl = $("pay-err");
     errEl.textContent = "";

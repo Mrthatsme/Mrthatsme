@@ -3,7 +3,9 @@
 // CONTRACT_VERSION bumps whenever the wording changes — old agreements keep
 // the version + hash they actually signed.
 
-export const CONTRACT_VERSION = "2026-11-02.1";
+import { CORE_AUTOMATIONS } from "./plans.js";
+
+export const CONTRACT_VERSION = "2026-11-06.1";
 
 const usd = (cents) => `$${(cents / 100).toLocaleString("en-US", { maximumFractionDigits: 0 })}`;
 
@@ -38,8 +40,8 @@ card on file via Stripe. Month to month.`;
    may cancel with thirty (30) days' written notice. There is no long-term
    commitment.`;
   const included = [
-    `Up to ${plan.automations} automations built, run and monitored`,
-    `${plan.hours} support hours per month for new builds and hands-on admin (${plan.rollover.toLowerCase()})`,
+    `${plan.coreLine}, built, run and monitored. The core automations are ${CORE_AUTOMATIONS.slice(0, -1).join(", ")} and ${CORE_AUTOMATIONS[CORE_AUTOMATIONS.length - 1]}`,
+    `${plan.hours} hours per month of hands-on admin and new builds (${plan.rollover.toLowerCase()})`,
     `Additional hours only with Client's prior written approval, at $${plan.extraHourly}/hour`,
     `Software used to serve Client included, up to $${plan.softwareAllowance}/month`,
     `${plan.inboxes} inbox${plan.inboxes === 1 ? "" : "es"} managed`,
@@ -75,10 +77,11 @@ ${included}
    store any banking credential or payment login belonging to Client, will
    never have the ability to transfer Client's funds, and will never charge,
    collect, hold, or move money on behalf of Client or Client's customers.
-   Where Client's plan includes invoice reminders or paid/unpaid tracking,
-   Minutes Regained only sends reminders and reads payment status in
-   Client's own tools. Every charge, invoice, and payment is issued and
-   collected by Client directly, through Client's own systems.
+   Where Client's plan includes Invoice & Chase, Minutes Regained sends
+   invoices from Client's own invoicing tool, for amounts Client has set,
+   follows up on unpaid ones and reads payment status there. It never
+   takes, moves or refunds a payment and never runs a card. Every payment
+   is collected by Client directly, through Client's own systems.
 
 4. Access and revocation. Client grants access through the user, team-
    member or delegated-access features of the platforms Client already uses
@@ -107,8 +110,8 @@ ${included}
 6. Fees and refunds. ${priceLine} This fee is the only payment
    Minutes Regained collects under this agreement, apart from additional
    hours Client has approved in writing in advance at the rate above.
-   Minutes Regained never bills, on Client's behalf, any amount owed to
-   Client by Client's own customers. Software Minutes Regained uses to serve
+   Minutes Regained never charges or collects, on Client's behalf, any
+   amount owed to Client by Client's own customers. Software Minutes Regained uses to serve
    Client is included up to the monthly allowance above; Client's own
    existing subscriptions (such as email or accounting software) remain
    Client's, and no software cost above the allowance is billed to Client.

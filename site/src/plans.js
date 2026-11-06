@@ -5,6 +5,11 @@
 
 export const RETAINER_DISCOUNT = 0.1;
 
+// The five core automations, by name. Keep in step with the homepage.
+export const CORE_AUTOMATIONS = ["Lead Catcher", "Quote Chaser", "Schedule Keeper", "Review Builder", "Invoice & Chase"];
+
+// Operations+ is retired (November 6, 2026). Custom Automation is scoped on a
+// call and is not sold through /start.
 export const PLANS = {
   essential: {
     label: "Essential",
@@ -12,7 +17,7 @@ export const PLANS = {
     retainerCents: 40500,
     envKey: "STRIPE_PRICE_ESSENTIAL",
     retainerEnvKey: "STRIPE_PRICE_ESSENTIAL_RETAINER",
-    automations: 3, hours: 10, rollover: "Unused hours roll over 1 month, up to 3",
+    automations: 3, coreLine: "3 of the 5 core automations", hours: 5, rollover: "Unused hours roll over 1 month",
     extraHourly: 50, softwareAllowance: 50, inboxes: 1, reviewCall: null, voiceNotes: 100,
   },
   business_support: {
@@ -21,21 +26,12 @@ export const PLANS = {
     retainerCents: 81000,
     envKey: "STRIPE_PRICE_BUSINESS_SUPPORT",
     retainerEnvKey: "STRIPE_PRICE_BUSINESS_SUPPORT_RETAINER",
-    automations: 6, hours: 22, rollover: "Unused hours roll over 1 month, up to 5",
+    automations: 6, coreLine: "All 5 core automations, plus 1 custom automation", hours: 12, rollover: "Unused hours roll over 1 month",
     extraHourly: 45, softwareAllowance: 100, inboxes: 2, reviewCall: "30-minute monthly review call", voiceNotes: 250,
-  },
-  operations_plus: {
-    label: "Operations+",
-    priceCents: 150000,
-    retainerCents: 135000,
-    envKey: "STRIPE_PRICE_OPERATIONS_PLUS",
-    retainerEnvKey: "STRIPE_PRICE_OPERATIONS_PLUS_RETAINER",
-    automations: 12, hours: 40, rollover: "Unused hours roll over 1 month, up to 10",
-    extraHourly: 40, softwareAllowance: 150, inboxes: 4, reviewCall: "60-minute monthly review call", voiceNotes: 500,
   },
 };
 
-// Founding-client offer: Business Support (22 hours) at $450/mo for the first
+// Founding-client offer: Business Support (12 hours) at $450/mo for the first
 // 90 days, then the standard Business Support price for the billing option
 // chosen. Its own Stripe Price; we remind the client 14 days before it ends.
 export const FOUNDING_OFFER = {

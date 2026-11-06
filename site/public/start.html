@@ -16,7 +16,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@112,700;112,800;100,500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <link rel="stylesheet" href="/site.css?v=20261022">
-<link rel="stylesheet" href="/start.css?v=20261014b">
+<link rel="stylesheet" href="/start.css?v=20261106a">
 </head>
 <body>
   <header class="top">
@@ -29,10 +29,12 @@
   <main class="wrap start-wrap">
     <div class="sec-head">
       <p class="eyebrow">Set up your plan</p>
-      <h1>Three steps: pick a plan, agree to the terms, pay securely.</h1>
-      <p class="automate-mini">Website chat and social replies &middot; Instant lead replies &middot; Quote follow-ups &middot; Appointment reminders &middot; Review requests &middot; Invoice reminders &middot; Daily brief</p>
-      <p class="lede">Your card is handled entirely by Stripe — Minutes Regained never sees or stores it. This sets up your own monthly service fee only; we never collect payment from, or on behalf of, your customers.</p>
+      <h1 id="start-title">Three steps: pick a plan, agree to the terms, pay securely.</h1>
+      <p class="automate-mini">Lead Catcher &middot; Quote Chaser &middot; Schedule Keeper &middot; Review Builder &middot; Invoice &amp; Chase &middot; The Daily Brief</p>
+      <p class="lede" id="start-lede">Your card is handled entirely by Stripe — Minutes Regained never sees or stores it. This sets up your own monthly service fee only; we never collect payment from, or on behalf of, your customers.</p>
     </div>
+
+    <div id="start-hold" hidden></div>
 
     <!-- STEP 1: plan -->
     <section class="start-step" id="step-plan" data-step="1">
@@ -42,19 +44,13 @@
           <input type="radio" name="plan" value="essential">
           <span class="tier">Essential</span>
           <span class="price" data-monthly="$450" data-retainer="$4,860">$450<small>/mo</small></span>
-          <span class="plan-meta">Up to 3 automations &middot; 10 hrs/mo &middot; software up to $50/mo</span>
+          <span class="plan-meta">3 of the 5 core automations &middot; 5 hrs/mo &middot; software up to $50/mo</span>
         </label>
         <label class="plan-opt">
           <input type="radio" name="plan" value="business_support" checked>
           <span class="tier">Business Support</span>
           <span class="price" data-monthly="$900" data-retainer="$9,720">$900<small>/mo</small></span>
-          <span class="plan-meta">Up to 6 automations &middot; 22 hrs/mo &middot; software up to $100/mo</span>
-        </label>
-        <label class="plan-opt">
-          <input type="radio" name="plan" value="operations_plus">
-          <span class="tier">Operations+</span>
-          <span class="price" data-monthly="$1,500" data-retainer="$16,200">$1,500<small>/mo</small></span>
-          <span class="plan-meta">Up to 12 automations &middot; 40 hrs/mo &middot; software up to $150/mo</span>
+          <span class="plan-meta">All 5 core automations, plus 1 custom &middot; 12 hrs/mo &middot; software up to $100/mo</span>
         </label>
       </div>
       <fieldset class="billing-pick">
@@ -65,17 +61,18 @@
       <p class="no-setup">No setup fee. Software included up to your plan's allowance.</p>
       <label class="founding-row hid" id="founding-row">
         <input type="checkbox" id="founding-check">
-        <span>Apply the <b>Founding Client offer</b>: Business Support (22 hours) at $450/mo for your first 90 days, then $900/mo. Monthly billing only. We'll remind you 14 days before the price changes. <span id="founding-remaining"></span></span>
+        <span>Apply the <b>Founding Client offer</b>: Business Support (12 hours) at $450/mo for your first 90 days, then $900/mo. Monthly billing only. We'll remind you 14 days before the price changes. <span id="founding-remaining"></span></span>
       </label>
       <button class="btn btn-primary" id="to-step2" type="button">Continue</button>
     </section>
 
     <!-- STEP 2: contract -->
     <section class="start-step hid" id="step-contract" data-step="2">
-      <h2 class="step-title"><span class="step-num">2</span> Review and agree to the service agreement</h2>
-      <pre class="contract-box" id="contract-box" tabindex="0" aria-busy="true">Loading the agreement…</pre>
+      <h2 class="step-title" id="step2-title"><span class="step-num">2</span> Review and agree to the service agreement</h2>
+      <p class="note ag-link">Also readable on its own page: <a id="agreement-link" href="/agreement">minutesregained.com/agreement</a></p>
+      <pre class="contract-box" id="contract-box" tabindex="0" aria-busy="true">The agreement is at minutesregained.com/agreement.</pre>
       <div class="terms-error hid" id="terms-error">
-        <p><b>The agreement didn't load.</b> Don't continue: you'd be agreeing to terms you haven't read. Try again, or email support@minutesregained.com and we'll send it to you directly.</p>
+        <p><b>The agreement for this plan didn't load here.</b> Don't continue: you'd be agreeing to terms you haven't read. <a id="terms-error-link" href="/agreement">Read it on its own page</a>, try again, or email support@minutesregained.com and we'll send it to you directly.</p>
         <button class="btn btn-ghost btn-sm" type="button" id="terms-retry">Try again</button>
       </div>
       <form id="agree-form" class="sign">
@@ -107,6 +104,6 @@
     <p class="note">Questions? <a href="mailto:support@minutesregained.com">support@minutesregained.com</a> &middot; <a href="/privacy">Privacy</a></p>
   </main>
 
-  <script src="/start.js?v=20261018"></script>
+  <script src="/start.js?v=20261106a"></script>
 </body>
 </html>

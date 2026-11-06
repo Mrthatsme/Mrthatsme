@@ -153,17 +153,22 @@
       strip: [['Day 0', 'You send the quote', true], ['Day 2', 'Came through OK?'], ['Day 5', 'Want a call?'], ['Day 10', 'Last check-in']],
       quote: 'Hi {name}, following up on your quote for {job}. Happy to walk through it with you. Would you like {owner} to give you a call?',
       trigger: 'You mark a quote as sent', stops: 'The customer replies, accepts, declines or books', you: 'Every reply, especially anything about price or scope' },
-    { name: 'Booking & Reminders', status: ['setup', 'Built during onboarding · reminders wait for your OK'], short: 'Confirmations, reminders and no-show follow-up',
-      sum: 'Online booking within the rules you set, email confirmations, a day-before reminder, rescheduling from your real open times, and a follow-up if no one was home. Reminders wait for your OK until you approve them to go on their own.',
-      strip: [['Booked', 'Confirmation email'], ['Day before', 'Reminder email'], ['After', 'No-show follow-up']],
+    { name: 'Schedule Keeper', status: ['setup', 'Built during onboarding · reminders wait for your OK'], short: 'Confirmations, reminders and no-show follow-up',
+      sum: 'Confirmations the day before, reminders the morning of, and a follow-up on anyone who no-shows. Reschedules get handled from your real open times without a phone call. Emergencies go straight to whoever is on call.',
+      strip: [['Booked', 'Confirmation'], ['Day before', 'Reminder'], ['Morning of', 'Reminder'], ['After', 'No-show follow-up']],
       quote: 'Reminder: {your business} is scheduled for tomorrow, {day}, arriving {window}. Need to change it? Pick a new time here: {reschedule link}',
       trigger: 'An appointment is created or changed on your calendar', stops: 'The appointment happens or is cancelled', you: 'A reschedule with no open slot, a cancellation, any job-day question' },
-    { name: 'Job Wrap-Up', status: ['setup', 'Built during onboarding'], short: 'Review requests and invoice heads-ups',
-      sum: 'When a job is marked done, every customer gets the same review request by email. If an invoice still needs charging, you get told. We never touch the money.',
-      strip: [['Job done', 'You mark it complete', true], ['Next morning', 'Review request'], ['Day 5', 'One reminder'], ['If due', 'Invoice reminder, your link']],
+    { name: 'Review Builder', status: ['setup', 'Built during onboarding'], short: 'One review request when a job closes',
+      sum: 'The day a job closes out, the customer gets asked for a review. One ask, politely worded, never a second one. The brief shows you who left one.',
+      strip: [['Job done', 'You mark it complete', true], ['Same day', 'One review request'], ['Next brief', 'Who left one']],
       quote: "Thanks for choosing {your business}, {name}. If you have a minute, a quick review helps a small business like ours a lot: {review link}. And if anything wasn't right, just reply to this email.",
-      trigger: 'A job is marked complete', stops: 'A review is left, a reply comes in, or after one reminder', you: 'Every reply, and a note when an invoice needs charging' },
-    { name: 'Daily Brief', status: ['live', 'Ready now'], short: 'One evening summary with only your decisions',
+      trigger: 'A job is marked complete', stops: 'After the one ask', you: 'Every reply, and anything that sounds like a complaint' },
+    { name: 'Invoice & Chase', status: ['setup', 'Built during onboarding'], short: 'Invoices sent, unpaid ones followed up',
+      sum: "The invoice goes out from your own invoicing tool when the job closes, and the unpaid ones get chased on a schedule so nobody is doing it at 10pm. You see who's paid and who hasn't. We send and we follow up. We never take the money. When something needs collecting, you collect it.",
+      strip: [['Job closes', 'Invoice sent', true], ['Your schedule', 'Reminders on unpaid ones'], ['Every brief', "Who's paid, who hasn't"]],
+      quote: 'Hi {name}, a quick reminder that invoice {number} from {your business} for {amount} is still open. You can pay it here: {your payment link}. Reply to this email with any questions.',
+      trigger: 'A job closes in your job or invoicing tool', stops: 'The invoice is paid, or a reply comes in', you: 'Every reply, any dispute, and anything that needs collecting' },
+    { name: 'The Daily Brief', extra: true, status: ['live', 'Ready now · included with every plan'], short: 'One summary with only your decisions',
       sum: 'Your inbox sorted, replies drafted, voice notes from the truck turned into job notes, and one brief that lists what got handled and the few things that need you.',
       strip: [['All day', 'Inbox sorted, replies drafted'], ['As you go', 'Voice notes to job notes'], ['6:00 PM', 'Your brief lands', true]],
       quote: 'NEEDS YOU: Missed call at 2:14, call back. NEEDS YOU: Quote ready for the Johnson job. DONE: Website chat answered, lead saved. DONE: Day-5 follow-up sent on 2 open quotes. Automations: 5 of 5 running.',
@@ -174,7 +179,7 @@
     var b = document.createElement('button');
     b.type = 'button'; b.className = 'tab'; b.setAttribute('role', 'tab'); b.id = 'tab' + i;
     b.setAttribute('aria-controls', 'panel');
-    b.innerHTML = '<span class="tab__n">0' + (i + 1) + '</span><span><b></b><span></span><em></em></span>';
+    b.innerHTML = '<span class="tab__n">' + (a.extra ? '+' : '0' + (i + 1)) + '</span><span><b></b><span></span><em></em></span>';
     b.querySelector('b').textContent = a.name;
     b.querySelector('span span').textContent = a.short;
     b.querySelector('em').textContent = a.status[0] === 'live' ? 'Ready now' : 'Built during onboarding';
@@ -195,7 +200,7 @@
     panel.setAttribute('aria-labelledby', 'tab' + i);
     panel.innerHTML = '';
     var head = el('div'); head.style.display = 'grid'; head.style.gap = '0.6rem'; head.style.justifyItems = 'start';
-    head.appendChild(el('p', 'eyebrow', 'Automation ' + (i + 1) + ' of 5'));
+    head.appendChild(el('p', 'eyebrow', a.extra ? 'Included with every plan' : 'Automation ' + (i + 1) + ' of 5'));
     head.appendChild(el('h3', 'display', a.name));
     head.appendChild(el('span', 'chip-status ' + a.status[0], a.status[1]));
     head.appendChild(el('p', 'panel__sum', a.sum));
