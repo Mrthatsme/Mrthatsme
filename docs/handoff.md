@@ -109,7 +109,7 @@ Commits, oldest first: `048377f`, `9115f42`, `101774c`, `37df6f5`, `2ac8142`, `a
 2. **Daily Brief timing.** Services says "one screen every morning"; the industry pages' Daily Brief cards say "one summary of the day"
    (the "6:00 PM" label was taken off their sample briefs). The Worker sends the internal brief at 8 AM and 8 PM. Pick one wording.
 3. **Calculator never suggests Essential.** Its plan thresholds are in `site/public/landing.js` (`CALC.plans`). They need setting.
-4. **Demo strip count.** It says "three waiting on a decision" but shows one waiting item (sample data).
+4. ~~Demo strip count~~: now says one waiting on a decision, which matches what it shows.
 5. ~~Industry pages in the old design~~: rebuilt in the split.
 6. **Unused files:** `site/public/home.js`, `site/public/home.css` (only the old industry pages used it) and the old demo's `demo-video.mp4` and `demo-poster.jpg` are no longer used by any page.
    The Worker still has a `/demo-video.mp4` route.
@@ -128,6 +128,9 @@ Commits, oldest first: `048377f`, `9115f42`, `101774c`, `37df6f5`, `2ac8142`, `a
 
 ## Key decisions
 - Sign-ups stay read-only until the service agreement is countersigned.
+- **Keep the demo, and keep it easy to find** (Jerome, November 6): "if I can't see what I'm paying for, why do it."
+  Home has a See it running button in the hero and the demo strip after "Bring us the thing". Pricing and every
+  Book a call band link to `/demo`. Don't remove or bury the demos in future edits.
 - Operations+ retired. Automations renamed (above). Plan hours and extra-hour rate set as above.
 - The site names the owner, Jerome, with no photo. No location line, and nothing beyond the bio copy.
 - The pitch leads with "you don't hand us your passwords, and there's nothing to install".
@@ -138,12 +141,14 @@ Commits, oldest first: `048377f`, `9115f42`, `101774c`, `37df6f5`, `2ac8142`, `a
 
 ---
 
-## Next 3 steps
+## Next steps
 1. **Settle the founding client offer** (Jerome's numbers). Then update every place that names it: the Business Support card on `/pricing`,
    `/start`, `site/src/plans.js`, and the agreement version.
 2. **Fix open bug 2** (Daily Brief timing) **and bug 9** (business size in the agent's FAQ), then remove the unused files in bug 6
    and the Worker's `/demo-video.mp4` route.
-3. **Set the calculator thresholds** (bug 3) so it can suggest Essential, and fix the demo strip count (bug 4).
+3. **Set the calculator thresholds** (bug 3) so it can suggest Essential.
+4. **A demo people can try** (from the outside review): a visitor types a made-up request and watches it go through intake,
+   the Ask Me approval, and into the daily brief, all on sample data and clearly labelled. Plan it with Jerome first.
 
 ## Starting a new session
 Open a new session on branch `claude/virtual-service-startup-32flre` and say:
