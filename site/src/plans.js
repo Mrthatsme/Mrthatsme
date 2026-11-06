@@ -17,8 +17,8 @@ export const PLANS = {
     retainerCents: 40500,
     envKey: "STRIPE_PRICE_ESSENTIAL",
     retainerEnvKey: "STRIPE_PRICE_ESSENTIAL_RETAINER",
-    automations: 3, coreLine: "3 of the 5 core automations", hours: 5, rollover: "Unused hours roll over 1 month",
-    extraHourly: 50, softwareAllowance: 50, inboxes: 1, reviewCall: null, voiceNotes: 100,
+    automations: 3, coreLine: "3 of the 5 core automations", hours: 4, rollover: "Unused hours roll over 1 month",
+    extraHourly: 75, softwareAllowance: 50, inboxes: 1, reviewCall: null, voiceNotes: 100,
   },
   business_support: {
     label: "Business Support",
@@ -26,12 +26,12 @@ export const PLANS = {
     retainerCents: 81000,
     envKey: "STRIPE_PRICE_BUSINESS_SUPPORT",
     retainerEnvKey: "STRIPE_PRICE_BUSINESS_SUPPORT_RETAINER",
-    automations: 6, coreLine: "All 5 core automations, plus 1 custom automation", hours: 12, rollover: "Unused hours roll over 1 month",
-    extraHourly: 45, softwareAllowance: 100, inboxes: 2, reviewCall: "30-minute monthly review call", voiceNotes: 250,
+    automations: 6, coreLine: "All 5 core automations, plus 1 custom automation", hours: 8, rollover: "Unused hours roll over 1 month",
+    extraHourly: 75, softwareAllowance: 100, inboxes: 2, reviewCall: "30-minute monthly review call", voiceNotes: 250,
   },
 };
 
-// Founding-client offer: Business Support (12 hours) at $450/mo for the first
+// Founding-client offer: Business Support (8 hours) at $450/mo for the first
 // 90 days, then the standard Business Support price for the billing option
 // chosen. Its own Stripe Price; we remind the client 14 days before it ends.
 export const FOUNDING_OFFER = {

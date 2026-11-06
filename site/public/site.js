@@ -121,7 +121,7 @@
     ["If I cancel, do I lose the automations?",
      "No. They live in your own accounts and keep running. We just stop monitoring and maintaining them."],
     ["How many hours do I get?",
-     "Essential includes 5 hours a month and Business Support 12 hours of a person's time: building new automations, and one-off admin you hand us, like rescheduling a week of jobs or cleaning up your contact list. Automations you've approved never use your hours, however often they run, and neither do monitoring, repairs or your daily brief. Each hands-on task is counted at the time a skilled assistant would take (for example, 5 minutes to schedule an appointment), and your monthly report lists every one. Unused hours roll over one month. We never bill extra hours without asking first."],
+     "Essential includes 4 hours a month and Business Support 8 hours of a person's time: building new automations, and one-off admin you hand us, like rescheduling a week of jobs or cleaning up your contact list. Automations you've approved never use your hours, however often they run, and neither do monitoring, repairs or your daily brief. Each hands-on task is counted at the time a skilled assistant would take (for example, 5 minutes to schedule an appointment), and your monthly report lists every one. Unused hours roll over one month. Extra hours are $75 an hour on either plan, and we never bill them without asking first."],
     ["Is software included?",
      "Yes. The tools we use to serve you are included in your plan, up to an allowance. We never bill you for software above it: if a tool you'd need costs more, we tell you first and you decide. Your own existing subscriptions, like your email or accounting software, stay yours."],
     ["Can I cancel?",

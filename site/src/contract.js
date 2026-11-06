@@ -5,7 +5,7 @@
 
 import { CORE_AUTOMATIONS } from "./plans.js";
 
-export const CONTRACT_VERSION = "2026-11-06.1";
+export const CONTRACT_VERSION = "2026-11-06.2";
 
 const usd = (cents) => `$${(cents / 100).toLocaleString("en-US", { maximumFractionDigits: 0 })}`;
 
