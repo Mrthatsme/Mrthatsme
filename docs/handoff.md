@@ -180,9 +180,17 @@ phones" on Services; "hours are a person's time" on Pricing; the "what happens i
    can call back." **Done November 6:** Jerome approved that wording and it now sits under the Home headline.
 2. **N-08: frame the free assessment while the agreement is out.** The hold notice is honest, but the call to action
    could say what the call is now: "Book the free assessment and apply for one of the three founding-client spots."
+   **Done November 6:** every page's closing block says the call is how you apply for a founding spot while the
+   agreement is out, and the Pricing hold box is now "Three founding-client spots, open now" with its own button.
 3. **N-03: show how hours are counted.** A short table of common tasks and the time each counts as (scheduling an
    appointment = 5 minutes, and so on), plus a sample monthly statement, both labelled as examples. Check that the
    agreement uses the same words as the Pricing page.
+   **Done November 6:** Pricing now has "How your hours are counted" (example task times, labelled) and "What a
+   monthly report looks like" (a labelled sample for an example plumbing company). Wording matches the agreement's
+   clause 6 and the hours FAQ: counted at the time a skilled assistant would take, every task on the monthly report,
+   one-month rollover. The agreement itself was not changed. Open question for Jerome: does building the custom
+   automation that comes with Business Support use hours? The agreement says hours cover "new builds", which
+   could be read either way. The sample leaves builds out so it doesn't take a side.
 
 **Decisions for Jerome:**
 4. **Founder photo and a short intro on Home** (P-04). The standing decision is no photo for now; the review asks for one twice.
