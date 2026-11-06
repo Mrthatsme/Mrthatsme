@@ -5,6 +5,7 @@
 
 import { sendNotificationEmail } from "./email.js";
 import { voiceUsageLine } from "./usage.js";
+import { hoursLines } from "./hours.js";
 
 const MODEL = "claude-haiku-5-5";
 const MAX_THREAD_CHARS = 4000;
@@ -300,7 +301,7 @@ async function routeEmergency(env, profile, { from, subject, out }) {
 // Owner-operator brief: one block per client, tagged by name.
 export async function clientInboxLines(env, sinceIso, now = new Date()) {
   await ensureClientAgentTables(env);
-  const { results: agents } = await env.DB.prepare(`SELECT id, label, last_seen, profile FROM client_agents WHERE status = 'active' ORDER BY label`).all();
+  const { results: agents } = await env.DB.prepare(`SELECT id, label, last_seen, profile, created_at FROM client_agents WHERE status = 'active' ORDER BY label`).all();
   if (!agents || !agents.length) return { lines: [], problems: 0 };
   const lines = ["CLIENT INBOXES"];
   let problems = 0;
@@ -327,6 +328,8 @@ export async function clientInboxLines(env, sinceIso, now = new Date()) {
     needs.forEach((e) => lines.push(`  [${a.label}] ${e.summary}`));
     const usage = await voiceUsageLine(env, a).catch(() => null);
     if (usage) lines.push(usage);
+    const hours = await hoursLines(env, a).catch(() => []);
+    lines.push(...hours);
   }
   return { lines, problems };
 }

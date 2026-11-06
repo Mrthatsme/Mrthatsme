@@ -193,9 +193,9 @@ phones" on Services; "hours are a person's time" on Pricing; the "what happens i
    back-and-forth with the client and the time spent building, and works out the total when it's finished. Where the
    build runs past the plan's hours, the extra is billed at $75 an hour. Because the agreement (clause 6) and the
    site only allow extra hours approved in writing *in advance*, the GM must warn the client and get that OK when a
-   build is heading past their remaining hours, not bill afterwards. Pricing now says this. Still to do: build the
-   GM's build-time tracking and the "heading past your hours" warning, and have the attorney confirm clause 6
-   covers the included custom build.
+   build is heading past their remaining hours, not bill afterwards. Pricing now says this. **Built November 6** in
+   `site/src/hours.js` (see "The GM's hours ledger" below). Still to do: have the attorney confirm clause 6 covers
+   the included custom build.
 
 **Decisions for Jerome:**
 4. **Founder photo and a short intro on Home** (P-04). The standing decision is no photo for now; the review asks for one twice.
@@ -217,6 +217,30 @@ phones" on Services; "hours are a person's time" on Pricing; the "what happens i
 11. **Security checks before any paid client** (N-09): access limits, encryption, retention and deletion, audit log,
     vendor permissions, revoking access. For law firms, check confidentiality rules before connecting anything.
 12. **The agreement** (N-08, P0): finish it with the attorney. That unblocks everything on `/start`.
+
+## The GM's hours ledger (built November 6)
+
+`site/src/hours.js`, tested by `node site/tools/test_hours.mjs` (runs the real code on SQLite, no network).
+All calls are admin-only (`/api/admin/...`, Basic auth). Times are counted minutes, as the agreement says.
+
+| Call | What it does |
+| --- | --- |
+| `POST /api/admin/builds` `{agentId, name, estimateMinutes, includedCustom}` | Opens a build. `includedCustom: true` marks the one custom automation that comes with Business Support (only one per client). Warns at once if the estimate won't fit. |
+| `POST /api/admin/builds` `{buildId, estimateMinutes}` | Revises the estimate and re-checks. |
+| `POST /api/admin/hours` `{agentId, minutes, task, kind, buildId?, workDate?}` | Logs time. `kind`: conversation, research, build, testing, admin. Refused with 409 `needs_client_ok` if it would go past the client's hours plus approved extra. |
+| `POST /api/admin/hours-approval` `{agentId, minutes, note, month?}` | Records the client's written OK for extra time. `note` must say where it came from. |
+| `POST /api/admin/builds/done` `{buildId}` | Closes the build; totals every minute logged to it and how much was extra. |
+| `GET /api/admin/hours?agentId=&month=` | The monthly report: every entry, plan vs extra, rollover. |
+
+- **Warnings go to the client** (owner email from client-links, else their connected inbox) **with a copy to Jerome.**
+  If the client has no email on file, only Jerome gets it, marked "client has NOT been told".
+  Each warning is sent once per build, month and limit, so a new approval that still falls short warns again.
+- **Rollover:** unused plan hours carry one month and are used first. Months are UTC, like voice notes.
+- **The brief** shows hours used and each open build under the client's name, flagged "HEADING PAST HOURS".
+- **On the 1st**, Jerome gets "Extra hours to bill" for last month. **Nothing is charged automatically.** Stripe
+  billing of extra hours is a later step, once Stripe and the agreement are done.
+- Time can only be logged in the current month, so past statements can't change.
+- Not built: a screen for logging time. It's API calls for now (curl, or a small form on the admin dashboard later).
 
 ## Next steps
 0. **The Home headline line about phones** (item 1 above). It's the review's one critical finding and a ten-minute fix.

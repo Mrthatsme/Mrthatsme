@@ -19,6 +19,7 @@ import { createClientAgent, authenticateClientAgent, draftForClient, logClientAg
 import { createConnectInvite, connectLanding, connectStart, connectCallback, pollConnectedInboxes } from "./connect.js";
 import { intakePage, handleIntake, voicePage, handleVoice, createClientLinks } from "./clientpages.js";
 import { billVoiceOverages } from "./usage.js";
+import { createBuild, updateEstimate, logTime, recordApproval, finishBuild, monthlyStatement, extraHoursReport } from "./hours.js";
 import { agreementPage, startPage, signupsOpen, SIGNUPS_CLOSED_MESSAGE } from "./agreementpage.js";
 
 const JSON_HEADERS = { "Content-Type": "application/json; charset=utf-8" };
@@ -143,6 +144,28 @@ export default {
         if (path === "/api/admin/bill-voice-overages" && request.method === "POST") {
           return json({ report: await billVoiceOverages(env) });
         }
+        // The GM's hours ledger (hours.js): builds, time, the client's written OK, the monthly report.
+        if (path === "/api/admin/builds" && request.method === "POST") {
+          const body = (await readJson(request)) || {};
+          const out = body.buildId ? await updateEstimate(env, body) : await createBuild(env, body);
+          return json(out, out.error ? 400 : 200);
+        }
+        if (path === "/api/admin/builds/done" && request.method === "POST") {
+          const out = await finishBuild(env, (await readJson(request)) || {});
+          return json(out, out.error ? 400 : 200);
+        }
+        if (path === "/api/admin/hours" && request.method === "POST") {
+          const out = await logTime(env, (await readJson(request)) || {});
+          return json(out, out.error === "needs_client_ok" ? 409 : out.error ? 400 : 200);
+        }
+        if (path === "/api/admin/hours" && request.method === "GET") {
+          const out = await monthlyStatement(env, { agentId: url.searchParams.get("agentId"), month: url.searchParams.get("month") });
+          return json(out, out.error ? 400 : 200);
+        }
+        if (path === "/api/admin/hours-approval" && request.method === "POST") {
+          const out = await recordApproval(env, (await readJson(request)) || {});
+          return json(out, out.error ? 400 : 200);
+        }
         if (path === "/api/admin/client-agent-status" && request.method === "POST") {
           const body = (await readJson(request)) || {};
           if (!body.id || !["active", "retired"].includes(body.status)) return json({ error: "invalid", allowed: ["active", "retired"] }, 400);
@@ -185,6 +208,8 @@ export default {
       ctx.waitUntil(sendRenewalNotices(env).catch((err) => console.error("renewal notices failed", err)));
       // On the 1st, bill last month's voice notes over each plan's allowance (once per client).
       if (at.getUTCDate() === 1) ctx.waitUntil(billVoiceOverages(env, at).catch((err) => console.error("voice overage billing failed", err)));
+      // On the 1st, list last month's approved extra hours for billing (nothing is charged automatically).
+      if (at.getUTCDate() === 1) ctx.waitUntil(extraHoursReport(env, at).catch((err) => console.error("extra hours report failed", err)));
     }
   },
 };
