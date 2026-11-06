@@ -424,3 +424,8 @@ form.sign { display: grid; gap: 0.9rem; }
 .plan__drop{font-size:.9rem;margin:.25rem 0 0;opacity:.85}
 .hold-note{margin-top:1.75rem;border:1px solid color-mix(in srgb,currentColor 25%,transparent);border-left:3px solid var(--signal);border-radius:10px;padding:1rem 1.15rem;max-width:62ch}
 .hold-note p{margin:0}.hold-note p+p{margin-top:.5rem}
+
+/* phone number in the header, tappable on a phone */
+.top .tel { font: 500 0.92rem/1 var(--f-mono); color: var(--ink); text-decoration: none; white-space: nowrap; margin-left: auto; }
+.top nav + .tel { margin-left: 0; }
+@media (max-width: 520px) { .top .wrap { gap: 0.6rem; flex-wrap: wrap; } .top .tel { font-size: 0.82rem; } }
