@@ -33,16 +33,47 @@ They are in the Shared Drive, folder 03 Operations & Automations.
   **The Daily Brief** with every plan.
 - Online agreement version **2026-11-06.2** (`site/src/contract.js`; plan data in `site/src/plans.js`).
 
-### Homepage
-- Rebuilt from `mockups/homepage.html` in the brand colours and fonts (`site/public/index.html`, `landing.css`, `landing.js`).
-- Sections follow the order in `docs/build-spec.md`.
+### The design (first built as one long homepage, now split across five pages; see below)
+- Rebuilt from `mockups/homepage.html` in the brand colours and fonts (`landing.css`; the calculator is `landing.js`).
 - **FAQ and automation names are in the server HTML.**
-  - The FAQ is 11 `<details class="faq-item">` blocks with the full answer text.
-  - The search box filters them with `el.hidden` and only appears when script runs.
+  - The 11 FAQs are `<details class="faq-item">` blocks with the full answer text, now spread across Home, Services and Pricing.
+  - The search box (Services only) filters them with `el.hidden` and only appears when script runs.
   - FAQPage JSON-LD is built from the same content.
 - **Proof slots stay empty until earned:** review strip, hidden testimonial block, hidden result lines and footer badge slots.
 - **Phone `(877) 896-8784`** is a tappable link in the header of every public page.
 - **Tested:** every public page at 375px and 1280px with no sideways scroll.
+
+### The five-page split (November 6)
+- The long homepage is now five pages, with the menu **Home · Services · Pricing · Industries · About** plus the phone link
+  and Book a call on every one. Section copy was moved, not rewritten.
+  - **Home** `/`: hero, Bring us the thing, a strip of the five automation names linking to `/services`, Who this is for
+    (linking to the industry pages), a "Plans from $450" teaser, How it starts, one FAQ, Book a call.
+  - **Services** `/services`: the five automations in full (each has an anchor, e.g. `/services#quote-chaser`), a person
+    for everything that needs judgment, the permission dial and never-list, your tools, the demo strip linking to both demos,
+    six FAQs with the search box.
+  - **Pricing** `/pricing`: calculator, the three cards, hold notice, a side-by-side table (plans as columns so it fits a
+    phone), Custom Automation scopes, fine print with the `/agreement` link, four FAQs.
+  - **Industries** `/for/` is a new index. `/for/contractors` and `/for/law-firms` are rebuilt in the new design and are
+    now **indexed** (they were `noindex`). Their message forms are gone and the founding offer is no longer repeated there.
+  - **About** `/about`: Jerome's bio, the one-person question, the NDA line, and the only message form on the site.
+- Each page has its own title, description, H1, canonical and FAQPage JSON-LD. `sitemap.xml` lists all of them plus the demos.
+- On a phone the menu sits on its own row under the logo (the old header hid it below 460px). Under 380px the wordmark is
+  visually hidden so the number and Book a call stay on the first row.
+- Old one-page links such as `/#pricing`, `/#faq` and `/#who` are sent to the new page by `site.js`.
+- `404.html` and `privacy.html` (old design) have the new menu. `/start` "Back to pricing" goes to `/pricing`.
+- **CSP:** the JSON-LD hash in `_headers` never matched, so browsers were blocking the homepage's structured data.
+  All six JSON-LD blocks are now allowed by hash.
+- **`site/tools/check_site.py`** checks menus, phone links, one H1, unique titles and descriptions, FAQ JSON-LD against the
+  visible questions, the five names in the HTML, sitemap entries and CSP hashes. `--fix` rewrites the hashes.
+  Run it before every push that touches a page.
+- Tested in Chromium at 360, 375, 390, 414, 768, 1024 and 1280px: no sideways scroll, no broken internal links,
+  calculator and FAQ search working, old anchors redirecting.
+
+### Texting, settled (was bug 1)
+- Jerome, November 6: nothing is ever texted from a number of ours. A text only goes out through the client's own software
+  when it already has messaging built in (Jobber or Housecall Pro texting crews, or a Facebook or Instagram inbox the
+  customer wrote to first). Recorded in `CLAUDE.md`. The Services never-list, `/for/contractors`, `/for/law-firms` and the
+  triage agent's FAQ (`site/src/faq-data.js`) all say this now.
 
 ### The two demo pages
 - `/demo` is the back-office demo and `/demo-desk` the admin-desk demo, built from the mockups.
@@ -61,13 +92,13 @@ Commits, oldest first: `048377f`, `9115f42`, `101774c`, `37df6f5`, `2ac8142`, `a
 ---
 
 ## Open bugs and loose ends
-1. **Texting.** `/for/contractors` says crews can get their schedule "by text through your own scheduling app".
-   The never-list says the system never sends a text message. Decide which is true and fix the page.
-2. **Daily Brief timing.** The homepage says "one screen every morning"; older pages say evening or 6:00 PM. Pick one wording.
+1. ~~Texting~~: settled, see above.
+2. **Daily Brief timing.** Services says "one screen every morning"; the industry pages' Daily Brief cards say "one summary of the day"
+   (the "6:00 PM" label was taken off their sample briefs). The Worker sends the internal brief at 8 AM and 8 PM. Pick one wording.
 3. **Calculator never suggests Essential.** Its plan thresholds are in `site/public/landing.js` (`CALC.plans`). They need setting.
 4. **Demo strip count.** It says "three waiting on a decision" but shows one waiting item (sample data).
-5. **Industry pages are in the old design** (`/for/contractors`, `/for/law-firms`). On a phone their header button wraps to a second row.
-6. **Unused files:** `site/public/home.js` and the old demo's `demo-video.mp4` and `demo-poster.jpg` are no longer used by any page.
+5. ~~Industry pages in the old design~~: rebuilt in the split.
+6. **Unused files:** `site/public/home.js`, `site/public/home.css` (only the old industry pages used it) and the old demo's `demo-video.mp4` and `demo-poster.jpg` are no longer used by any page.
    The Worker still has a `/demo-video.mp4` route.
 7. **Where the site doesn't use the spec's exact copy:**
    - Calculator basis line: no "typical" result claimed.
@@ -75,6 +106,10 @@ Commits, oldest first: `048377f`, `9115f42`, `101774c`, `37df6f5`, `2ac8142`, `a
    - Demo label: adds "or a client result".
    - Additions: four extra FAQs, the no-passwords line in the tools section, the message form beside the closing call to action.
 8. **Payments are in Stripe test mode.** Nothing to do until sign-ups open.
+9. **The triage agent's FAQ says "roughly one to twenty-five people"** (`site/src/faq-data.js`, "How big does my business need to be?").
+   The site says ten to fifty. Pick one and make them match.
+10. **Old-design utility pages:** `/access`, `/client` and `/start` still use `site.css` with a short header (phone + Book a call),
+    and `/demo` and `/demo-desk` keep their own site bar. They don't carry the five-page menu. Fine for now; restyle when convenient.
 
 ---
 
@@ -91,30 +126,15 @@ Commits, oldest first: `048377f`, `9115f42`, `101774c`, `37df6f5`, `2ac8142`, `a
 ---
 
 ## Next 3 steps
-1. **Split the site into 5 main pages** (Jerome, November 6). The homepage is too long for someone scanning for a service,
-   and separate pages can each target their own search terms. This overrides the single long homepage in `docs/build-spec.md`;
-   note the decision in `CLAUDE.md` under "Since this package". Proposed map, to confirm with Jerome before building:
-
-   | Page | What goes on it (from today's homepage) | Search terms it targets |
-   | --- | --- | --- |
-   | **Home** `/` | Hero, "Bring us the thing" with the three examples, a short strip of the five automation names, a pricing teaser ("from $450"), how it starts, Book a call | virtual assistant for small business, back office help |
-   | **Services** `/services` | The five automations in full, "a person for everything that needs judgment", the permission dial and never-list, the tools row, the demo strip with links to `/demo` and `/demo-desk` | lead follow-up automation, quote follow-up, appointment reminders, invoice follow-up |
-   | **Pricing** `/pricing` | Calculator, the three plan cards, comparison table, hold notice, fine print, link to `/agreement` | virtual assistant pricing, small business automation cost |
-   | **Industries** `/for/contractors` and `/for/law-firms`, plus an index page | Trade-specific examples, redesigned to match | virtual assistant for contractors / plumbers / HVAC / law firms |
-   | **About** `/about` (last in the menu) | Jerome's bio, the one-person question, the NDA line, the contact form | veteran-owned virtual assistant, who runs Minutes Regained |
-
-   - **Menu on every page:** Home · Services · Pricing · Industries · About, plus the phone link and Book a call.
-   - **FAQs:** spread the existing FAQs to the page they answer (pricing questions on `/pricing`, data and password questions on `/services`, and so on).
-     Give each page its own FAQPage data. Keep every answer in the HTML.
-   - **SEO basics:** each page gets a unique title, description and H1. Update `sitemap.xml`. Link the pages to each other.
-   - **Keep everything already built:** the sample-data labels, the empty proof slots, and the checks in the build spec's checklist.
-2. **Settle the founding client offer** (Jerome's numbers). Then update every place that names it: homepage card, `/pricing`, `/start`,
-   `site/src/plans.js`, and the agreement version.
-3. **Fix open bugs 1 and 2**: the texting wording on `/for/contractors`, and the Daily Brief timing. Then remove the unused files in bug 6.
+1. **Settle the founding client offer** (Jerome's numbers). Then update every place that names it: the Business Support card on `/pricing`,
+   `/start`, `site/src/plans.js`, and the agreement version.
+2. **Fix open bug 2** (Daily Brief timing) **and bug 9** (business size in the agent's FAQ), then remove the unused files in bug 6
+   and the Worker's `/demo-video.mp4` route.
+3. **Set the calculator thresholds** (bug 3) so it can suggest Essential, and fix the demo strip count (bug 4).
 
 ## Starting a new session
 Open a new session on branch `claude/virtual-service-startup-32flre` and say:
-"Read CLAUDE.md and docs/handoff.md. Show me the plan for next step 1 (the 5-page split) before changing anything."
+"Read CLAUDE.md and docs/handoff.md. Show me the plan for next step 1 before changing anything."
 Everything needed is in those two files; the Shared Drive holds the internal documents.
 
 When the reviewed agreement comes back: apply the changes in `site/src/contract.js` (bump the version) and get it countersigned.

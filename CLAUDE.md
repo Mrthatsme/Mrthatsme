@@ -36,7 +36,10 @@ added as a user. Anything else is "we check it on the assessment call."
 
 **The never-list is product truth, not marketing.** It appears on the homepage and the
 system must actually behave this way:
-- Never sends a text message. Replies happen where the customer reached out.
+- Never sends a text from a number of ours. Replies happen where the customer reached out. A text only goes out
+  through the client's own software when it already has messaging built in, like a scheduling app (Jobber,
+  Housecall Pro) that texts crews, or a Facebook or Instagram inbox the customer wrote to first. Which of a
+  client's tools can do that is confirmed on the assessment call (Jerome, November 6, 2026).
 - Never quotes a price, promises a date, or messages anyone who didn't make contact first.
 - Never touches money. We send invoices and chase unpaid ones. We never take, move or
   refund payment, and never run a card.
@@ -93,5 +96,11 @@ Decisions made after the package, which override `docs/build-spec.md` where they
 - Retainer refund example: a $4,860 year ended after four months refunds **$3,060**, which matches the agreement.
   The spec's $2,860 is wrong.
 - The owner is named on the site with no photo for now.
+- **The site is five main pages, not one long homepage** (Jerome, November 6): Home `/`, Services `/services`,
+  Pricing `/pricing`, Industries `/for/` (with `/for/contractors` and `/for/law-firms`) and About `/about`, in that
+  menu order on every page. This overrides the single-page section order in `docs/build-spec.md`; the sections
+  and their copy are the same, just spread across pages. Each FAQ lives on the one page it answers, with that
+  page's own FAQPage JSON-LD. The message form is on About only; every other page ends with Book a call.
+  Run `python3 site/tools/check_site.py` before pushing (add `--fix` to update the CSP hashes for JSON-LD).
 
 Current state, open bugs and next steps: `docs/handoff.md`.
