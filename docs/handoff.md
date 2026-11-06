@@ -283,13 +283,14 @@ inbox connect link, 14 days). Links show once on screen. `POST /api/admin/setup-
   unanswered overnight, not that a person is awake. Continuity plan for when Jerome is unavailable is in the
   operations list (Shared Drive).
 
-## Live test with Jerome's own Gmail (blocked November 6)
+## Live test with Jerome's own Gmail (started November 6)
 
-The admin login stored for this environment was refused twice by `/api/admin/*`. The username must be exactly
-`admin`, and `ADMIN_PASSWORD` must be set on the Worker in Cloudflare (with it unset, every admin call is refused).
-Once it works: create "QA Test Co" (Business Support, owner email = Jerome's Gmail, kept out of this public repo),
-send Jerome its form link, and run the quote request, a GM question, an hours warning and the brief end to end.
-
+The admin password was reset in Cloudflare and works. "QA Test Co" is set up on the live site (agent
+`ca_417411d713e1`, Business Support, form `/f/qa-test-co`, owner email = Jerome's Gmail, kept out of this repo).
+A test build "Warranty reminder emails (test build)" (10 hr estimate on an 8 hr plan) was opened to send the
+hours warning. Jerome is running the customer side: quote request, an unanswerable question, an emergency.
+Still to check together: what landed in his inbox, the GM question on the dashboard, and the 8 PM brief.
+Retire the test client afterwards with `POST /api/admin/client-agent-status {id, status: "retired"}`.
 ## Next steps
 0. **The Home headline line about phones** (item 1 above). It's the review's one critical finding and a ten-minute fix.
 1. **Settle the founding client offer** (Jerome's numbers). Then update every place that names it: the Business Support card on `/pricing`,
@@ -301,7 +302,7 @@ send Jerome its form link, and run the quote request, a GM question, an hours wa
 
 ## Starting a new session
 Open a new session on branch `claude/virtual-service-startup-32flre` and say:
-"Read CLAUDE.md and docs/handoff.md. Fix the admin login first, then run the live test with my Gmail. Show me the plan before changing anything."
+"Read CLAUDE.md and docs/handoff.md. Let's go over the live test results, then build the GM's watch. Show me the plan before changing anything."
 Everything needed is in those two files; the Shared Drive holds the internal documents.
 
 When the reviewed agreement comes back: apply the changes in `site/src/contract.js` (bump the version) and get it countersigned.
