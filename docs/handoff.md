@@ -44,13 +44,18 @@ They are in the Shared Drive, folder 03 Operations & Automations.
 - **Phone `(877) 896-8784`** is a tappable link in the header of every public page.
 - **Tested:** every public page at 375px and 1280px with no sideways scroll.
 
-Commits, oldest first: `048377f`, `9115f42`, `101774c`, `37df6f5`, `2ac8142`, `acb2fc4`, `0a394d6`.
+### The two demo pages
+- `/demo` is the back-office demo and `/demo-desk` the admin-desk demo, built from the mockups.
+  Files: `site/public/demo.*` and `demo-desk.*`, with CSS and JS kept out of the HTML for the security policy.
+- Both carry the sample-data label, the site bar with the phone number and Book a call, and links to each other.
+  The homepage's "Open the full demo" opens `/demo`.
+- The admin desk's hours panel uses the new 8-hour Business Support plan (5.2 of 8 used).
+
+Commits, oldest first: `048377f`, `9115f42`, `101774c`, `37df6f5`, `2ac8142`, `acb2fc4`, `0a394d6`, then the package and demo commits.
 
 ---
 
 ## In progress
-- **The two new demo pages** (`mockups/demo-back-office.html`, `mockups/demo-admin-desk.html`) are not built.
-  "Open the full demo" still opens the old `/demo`, and the two demos don't link to each other yet.
 - **Founding client offer.** Still published as Business Support at $450 for the first 90 days. It is under review.
 
 ---
@@ -62,7 +67,8 @@ Commits, oldest first: `048377f`, `9115f42`, `101774c`, `37df6f5`, `2ac8142`, `a
 3. **Calculator never suggests Essential.** Its plan thresholds are in `site/public/landing.js` (`CALC.plans`). They need setting.
 4. **Demo strip count.** It says "three waiting on a decision" but shows one waiting item (sample data).
 5. **Industry pages are in the old design** (`/for/contractors`, `/for/law-firms`). On a phone their header button wraps to a second row.
-6. **`site/public/home.js` is no longer used by any page.**
+6. **Unused files:** `site/public/home.js` and the old demo's `demo-video.mp4` and `demo-poster.jpg` are no longer used by any page.
+   The Worker still has a `/demo-video.mp4` route.
 7. **Where the site doesn't use the spec's exact copy:**
    - Calculator basis line: no "typical" result claimed.
    - Retainer refund example: $3,060, which matches the agreement.
@@ -87,8 +93,13 @@ Commits, oldest first: `048377f`, `9115f42`, `101774c`, `37df6f5`, `2ac8142`, `a
 ## Next 3 steps
 1. **Settle the founding client offer.** Then update every place that names it: homepage card, `/pricing`, `/start`,
    `site/src/plans.js`, and the agreement version.
-2. **Build the two demo pages** from the mockups. Point "Open the full demo" at them, link them to each other, and keep the sample-data labels.
-3. **Fix open bugs 1 and 2.** They are copy contradictions a prospect could notice.
+2. **Fix open bugs 1 and 2** (texting wording on `/for/contractors`, Daily Brief timing). They are copy contradictions a prospect could notice.
+3. **Bring the industry pages (`/for/contractors`, `/for/law-firms`) and `/pricing` in line with the new homepage design**,
+   then remove the unused files in bug 6.
+
+## Starting a new session
+Open a new session on this branch and say: "Read CLAUDE.md and docs/handoff.md, then start on next step 1."
+Everything needed is in those two files; the Shared Drive holds the internal documents.
 
 When the reviewed agreement comes back: apply the changes in `site/src/contract.js` (bump the version) and get it countersigned.
 Then set `SIGNUPS_OPEN = "true"` in the Worker's variables and switch Stripe to live keys.

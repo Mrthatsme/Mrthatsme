@@ -3,77 +3,90 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="description" content="Interactive demo: trigger a new lead, a booking, an accepted estimate or a finished job and watch what Minutes Regained handles before the owner picks up the phone.">
+<title>Back office demo — Minutes Regained</title>
+<meta name="description" content="Sample data for an example company: a whole back office running on automations, with everything that has a price, a promise or a date on it waiting for the owner.">
 <meta name="robots" content="index,follow">
 <link rel="canonical" href="https://minutesregained.com/demo">
-<meta property="og:title" content="Command Center demo | Minutes Regained">
-<meta property="og:description" content="See the back office of a service business run itself. Sample data, interactive.">
 <meta property="og:image" content="https://minutesregained.com/og-image.png">
 <link rel="icon" href="/mark.svg" type="image/svg+xml">
-<title>Command Center Demo | Minutes Regained</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="icon" href="/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="/favicon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
 <link rel="stylesheet" href="/demo.css?v=20261106a">
 </head>
 <body>
+<div class="sitebar"><div class="in">
+  <a class="brand" href="/">Minutes <span>Regained</span></a>
+  <nav aria-label="Demos"><a href="/demo" aria-current="page">The back office</a><a href="/demo-desk">The admin desk</a></nav>
+  <div class="right"><a class="tel" href="tel:+18778968784">(877) 896-8784</a><a class="book" href="https://calendar.app.google/mL2TQQSCAgLAURZC6" target="_blank" rel="noopener">Book a call</a></div>
+</div></div>
+
 <div class="wrap">
-
-  <a class="top-link" href="/">&larr; minutesregained.com</a>
-
-  <div class="demo-bar">
-    <span class="chip">Demo workspace</span>
-    <p>Sample data for an example company, Tidewater Plumbing. Nothing here is a real customer record.</p>
-  </div>
-
-  <header>
-    <p class="demo-top"><a href="/">Minutes Regained</a> &middot; <a class="tel" href="tel:+18778968784">(877) 896-8784</a></p>
-    <h1>Command Center</h1>
-    <p class="lede">The back office of a service business, running itself. Trigger an event below and watch what gets handled before the owner ever picks up the phone.</p>
+  <header class="top">
+    <div class="co">
+      <h1>Tidewater Plumbing</h1>
+      <p>Back office, running &middot; 6 trucks, no office manager</p>
+    </div>
+    <div class="clock"><span class="pulse"></span><span class="mono" id="clock">7:12 PM</span> &middot; Tuesday</div>
   </header>
 
+  <div class="sample"><span>&#9888;</span><div><b>Sample data for an example company.</b> Nothing here is a real customer record, and no number on this page is a client result. This is what a whole back office looks like once it is built and watched.</div></div>
 
-  <section>
-    <h2>Live operations</h2>
-    <div class="metrics" id="metrics"></div>
+  <section class="strip" aria-label="Today at a glance">
+    <div class="tile"><div class="k">Handled today</div><div class="v" id="kHandled">47</div><div class="s">without asking you</div></div>
+    <div class="tile flag" id="tileAsk"><div class="k">Needs your OK</div><div class="v" id="kAsk">3</div><div class="s">waiting on a decision</div></div>
+    <div class="tile"><div class="k">Agents on watch</div><div class="v" id="kAuto">8</div><div class="s">1 GM, 5 specialists, 2 on ops</div></div>
+    <div class="tile"><div class="k">Office hours back</div><div class="v" id="kHours">14.5</div><div class="s">this week, by the clock</div></div>
   </section>
 
   <div class="cols">
-    <div class="col">
-      <section>
-        <h2>Customer pipeline</h2>
-        <div class="panel">
-          <div class="pipe" id="pipe"></div>
-          <p class="note mt14">Stages advance on their own as work completes. Click a stage to see what moved it.</p>
-        </div>
+    <main class="panel">
+      <div class="ph"><h2>The board</h2><span class="count" id="boardCount"></span></div>
+      <div class="tabs" role="tablist" aria-label="Back office areas">
+        <button class="tab" role="tab" aria-selected="true" data-lane="all">Everything</button>
+        <button class="tab" role="tab" aria-selected="false" data-lane="intake">Intake</button>
+        <button class="tab" role="tab" aria-selected="false" data-lane="schedule">Schedule</button>
+        <button class="tab" role="tab" aria-selected="false" data-lane="money">Money</button>
+        <button class="tab" role="tab" aria-selected="false" data-lane="after">After the job</button>
+      </div>
+      <ul class="rows" id="rows"></ul>
+    </main>
+
+    <aside class="side">
+      <section class="panel">
+        <div class="ph"><h2>Needs your OK</h2><span class="count" id="askCount"></span></div>
+        <ul class="ask-list" id="asks"></ul>
       </section>
-    </div>
-    <div class="col">
-      <section>
-        <h2>Recent automation activity</h2>
-        <div class="panel">
-          <div class="activity" id="activity"></div>
-        </div>
+      <section class="panel">
+        <div class="ph"><h2>The crew</h2><span class="count">1 GM &middot; 5 specialists &middot; 2 ops</span></div>
+        <ul class="health" id="health"></ul>
       </section>
-    </div>
+    </aside>
   </div>
 
-  <section id="detail-host" hidden></section>
-
-  <section>
-    <h2>Try it yourself</h2>
-    <p class="note mb14">Pick an event the way it would actually arrive &mdash; a website chat at 7pm, a booking, an accepted estimate, a finished job.</p>
-    <div class="triggers" id="triggers"></div>
-    <div class="runner mt20" id="runner"></div>
+  <section class="trig">
+    <h2>Try it</h2>
+    <p>Fire something the way it would really arrive, and watch what gets handled before the owner ever picks up the phone. Anything with money, a price or a promise on it stops and waits for him.</p>
+    <div class="tgrid" id="trigs"></div>
   </section>
 
-  <footer>
-    <div class="mark">You shouldn't be the automation.</div>
-    <div class="line">Minutes Regained handles repetitive back-office work so owners and their teams spend their time on the work that actually requires them.</div>
-    <a class="cta" href="https://calendar.app.google/mL2TQQSCAgLAURZC6" target="_blank" rel="noopener">Book a free operations assessment</a>
-    <div class="line">Minutes Regained is operated by Provident Watch LLC &middot; support@minutesregained.com &middot; <a href="/privacy">Privacy</a></div>
-  </footer>
+  <section class="legend" aria-label="Permission levels">
+    <div class="lg"><h3>Handle It</h3><p>Does it. No message to you.</p></div>
+    <div class="lg"><h3>Tell Me</h3><p>Does it, then reports it in your brief.</p></div>
+    <div class="lg"><h3>Ask Me</h3><p>Gets it ready and waits for your OK.</p></div>
+    <div class="lg"><h3>Never</h3><p>Won't do it, even if someone asks.</p></div>
+  </section>
 
+  <section class="close">
+    <h2>This is the whole back office, not one automation.</h2>
+    <p>A GM, five specialists across intake, scheduling, quotes, money and aftercare, and two more watching the work itself, mapped to how this business already works and running on automations built in its own accounts. The owner's job on this screen is the three cards on the right. Everything else already happened.</p>
+  </section>
+
+  <p class="other">This is the automation side. <a href="/demo-desk">See the admin desk</a>: the inbox, the calendar and the jobs an owner hands over.</p>
+  <p class="foot">Minutes Regained &middot; demo build, example company &middot; no real customer data</p>
 </div>
-
-<script src="/demo.js?v=20261027e"></script>
+<script src="/demo.js?v=20261106a" defer></script>
 </body>
 </html>
