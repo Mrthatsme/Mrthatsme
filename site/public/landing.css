@@ -310,3 +310,13 @@ footer.site .frow.links{margin-top:9px}
 /* in-page links land below the sticky header */
 section{scroll-margin-top:72px}
 @media (max-width:620px){section{scroll-margin-top:112px}}
+
+/* FAQ search: filters the questions already on the page */
+.faq-search{margin-top:16px;max-width:560px}
+.faq-search label{display:block;font-size:12.5px;font-weight:600;color:var(--fg-dim);margin-bottom:5px}
+.faq-row{display:flex;gap:8px}
+.faq-row input{flex:1;min-width:0;font:400 16px/1.4 var(--sans);padding:9px 12px;border:1px solid var(--line);border-radius:9px;background:var(--surface);color:var(--fg)}
+.faq-row input:focus{border-color:var(--accent);outline:none;box-shadow:0 0 0 3px var(--accent-soft)}
+.faq-meta{margin-top:6px;font-size:12px;color:var(--fg-faint)}
+.faq-item[hidden]{display:none}
+.faq-none{margin-top:12px}
