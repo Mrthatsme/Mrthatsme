@@ -1,6 +1,6 @@
 # Handoff — minutesregained.com
 
-Last updated: November 6, 2026. Branch: `claude/virtual-service-startup-32flre`.
+Last updated: November 6, 2026 (end of the five-page split and demo session). Branch: `claude/virtual-service-startup-32flre`.
 The site is a Cloudflare Worker in `site/`. A push to this branch deploys in about a minute.
 
 **This repo is public.** Keep business-internal material out of it: margins, labour costs, legal and
@@ -103,10 +103,11 @@ on any public page (only inside the `/demo-desk` sample), so bring it back only 
 - **Nothing kept:** no message text is stored or logged, and no lead is created. The privacy page says so.
 - **Tests:** `node site/tools/test_demo_rules.mjs` (19 rule cases). The handler was also tested with a mocked database and
   API (live path, refusal, API error, honeypot, too fast, per-visitor limit, daily cap, missing key), and the page in
-  Chromium at 375px and 1280px on both paths. **Not yet tested against the real API**, because this session had no key:
-  after deploy, send three messages on `/demo#try` (a price question, "are you a real person?", and a law-firm
-  "do I have a case?") and check the green "Drafted live" label shows. If every try says "Pre-written example", check that
-  `ANTHROPIC_API_KEY` is set on the Worker.
+  Chromium at 375px and 1280px on both paths. **Checked live on November 6:** a price question (Ask Me, no figure), "are you a real person?" (the company's
+  assistant) and a law-firm "do I have a case?" (Never, no advice) all came back drafted live. If tries ever start
+  saying "Pre-written example", check `ANTHROPIC_API_KEY` on the Worker and the daily cap.
+- The `/demo` tile "Agents on watch: 8" is now "Replies sent tonight", which ticks up when a lead fires. "The crew"
+  panel with the agent names stays (Jerome, November 6).
 - Links: Home's hero button is now **Try the demo** (`/demo#try`). The demo strip on Home and Services, Pricing, and every
   Book a call band point there too.
 - Also fixed: the lead-reply instructions (`site/src/triage.js`) said "Florida service businesses"; now "small businesses
@@ -165,14 +166,53 @@ Commits, oldest first: `048377f`, `9115f42`, `101774c`, `37df6f5`, `2ac8142`, `a
 
 ---
 
+## Second outside review (November 6): things to think about
+A fuller "Report of Findings" scored the live site 7.4/10. Its summary: stop adding features and prove the existing ones.
+Nothing below has been built yet. Sorted by what it needs:
+
+**Already handled:** five-page split and shorter Home (N-05); the try-it demo (P-06, N-07 partly); "we don't answer
+phones" on Services; "hours are a person's time" on Pricing; the "what happens if I'm not around" answer on About.
+
+**Fix first (copy, small):**
+1. **N-01, rated critical: the Home headline vs. phones.** "Every lead answered. Even at dinner." reads as if calls get
+   answered. Keep the headline, but add one plain line right under it, for example: "Website chat, forms and email
+   answered in minutes, in your words. We don't answer your phone: missed calls go to the top of your brief so you
+   can call back." Jerome to approve the wording.
+2. **N-08: frame the free assessment while the agreement is out.** The hold notice is honest, but the call to action
+   could say what the call is now: "Book the free assessment and apply for one of the three founding-client spots."
+3. **N-03: show how hours are counted.** A short table of common tasks and the time each counts as (scheduling an
+   appointment = 5 minutes, and so on), plus a sample monthly statement, both labelled as examples. Check that the
+   agreement uses the same words as the Pricing page.
+
+**Decisions for Jerome:**
+4. **Founder photo and a short intro on Home** (P-04). The standing decision is no photo for now; the review asks for one twice.
+5. **Lead with one industry** (N-10). The review suggests home services first, with law firms and others later.
+   The site already leans that way; decide whether the law-firm page stays in the menu during the pilot.
+6. **A trust line** (P-05): "Your business. Your accounts. Your approval." And a method line (P-02), either the
+   review's "Learn it. Handle it. Automate it. Monitor it." or the old "We build it. We run it. We watch it." Pick one, not both.
+7. **What a month looks like on each plan** (N-04): an example of the work Essential and Business Support cover
+   in a month, labelled as an example, with no savings or revenue promised.
+8. **A recorded walkthrough** of the demo (P-06, N-07), saying what works today, what depends on the client's software,
+   and what is illustrative.
+
+**Operations, not website (outside this repo, Shared Drive):**
+9. **Three pilot clients** (N-02). Before go-live, record the admin hours spent, leads handled, quotes followed up,
+   and missed or wrong items. After: the same numbers. Publish only verified results, with written permission.
+   That's what fills the empty proof slots.
+10. **A continuity plan** (N-06): support hours, how a critical failure is escalated, backup procedures, maximum
+    number of clients, and how clients are told. Then put the client-facing parts on the site.
+11. **Security checks before any paid client** (N-09): access limits, encryption, retention and deletion, audit log,
+    vendor permissions, revoking access. For law firms, check confidentiality rules before connecting anything.
+12. **The agreement** (N-08, P0): finish it with the attorney. That unblocks everything on `/start`.
+
 ## Next steps
+0. **The Home headline line about phones** (item 1 above). It's the review's one critical finding and a ten-minute fix.
 1. **Settle the founding client offer** (Jerome's numbers). Then update every place that names it: the Business Support card on `/pricing`,
    `/start`, `site/src/plans.js`, and the agreement version.
 2. **Fix open bug 2** (Daily Brief timing) **and bug 9** (business size in the agent's FAQ), then remove the unused files in bug 6
    and the Worker's `/demo-video.mp4` route.
 3. **Set the calculator thresholds** (bug 3) so it can suggest Essential.
-4. **Check the live demo after deploy** (three messages, above).
-   (Done November 6: the `/demo` tile "Agents on watch: 8" is now "Replies sent tonight", which ticks up when a lead fires.)
+4. Work through the review list above: items 2 and 3 next, then Jerome's decisions (4 to 8).
 
 ## Starting a new session
 Open a new session on branch `claude/virtual-service-startup-32flre` and say:
