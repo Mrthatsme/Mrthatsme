@@ -289,7 +289,13 @@ The admin password was reset in Cloudflare and works. "QA Test Co" is set up on 
 `ca_417411d713e1`, Business Support, form `/f/qa-test-co`, owner email = Jerome's Gmail, kept out of this repo).
 A test build "Warranty reminder emails (test build)" (10 hr estimate on an 8 hr plan) was opened to send the
 hours warning. Jerome is running the customer side: quote request, an unanswerable question, an emergency.
-Still to check together: what landed in his inbox, the GM question on the dashboard, and the 8 PM brief.
+Results so far: the hours warning email arrived; test 1 (quote request) sent both emails, the customer
+acknowledgement and the owner's copy with an unsent suggested reply (Jerome to confirm it has no price or promised day).
+**Open:** test 2, "Do you service Chesapeake?", had not appeared as a GM question on the dashboard when we stopped.
+Likely cause to check first: the service area ("Norfolk and Virginia Beach") is in the drafter's prompt, so the model
+may have answered or handed off without listing a gap. If so, the drafter's prompt should tell it to list any
+question about a place, service or policy not covered word for word. Also confirm the request was received
+(owner email "New request from your social link"). Test 3 (emergency) and the 8 PM brief still to check.
 Retire the test client afterwards with `POST /api/admin/client-agent-status {id, status: "retired"}`.
 ## Next steps
 0. **The Home headline line about phones** (item 1 above). It's the review's one critical finding and a ten-minute fix.
