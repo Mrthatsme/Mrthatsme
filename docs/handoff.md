@@ -262,6 +262,27 @@ All calls are admin-only (`/api/admin/...`, Basic auth). Times are counted minut
 - **Oversight in the brief:** a "THE GM" section per client with open questions, hours used and builds heading
   past hours (hours lines moved here from CLIENT INBOXES).
 - Not yet: the GM doesn't watch the other background agents' output quality or re-route work between them.
+  The demo's GM description was corrected on November 6 to say only what's built.
+
+## 24/7: how it works and what's missing (talked through November 6)
+
+- **Always on today:** the Worker answers forms, chat and the demo the moment they arrive; connected inboxes are
+  checked every 10 minutes; emergencies route to the client's on-call person straight away; briefs at 8 AM and 8 PM.
+- **The gap:** problems are only reported in the brief, so something that breaks at 9 PM waits until 8 AM.
+- **Next build (Monday candidate): the GM's watch.** Run the GM's checks on the 10-minute cron (agent quiet, inbox
+  disconnected, urgent item not opened, build heading past hours) and email Jerome at once, once per problem.
+- **Then a dead-man's switch:** the Worker records each cron run; an outside uptime monitor checks a health URL
+  and alerts if the runs stop, because nothing inside the Worker can report its own silence.
+- **The person half stays human:** judgement work is done in Jerome's hours. 24/7 means nothing is lost or left
+  unanswered overnight, not that a person is awake. Continuity plan for when Jerome is unavailable is in the
+  operations list (Shared Drive).
+
+## Live test with Jerome's own Gmail (blocked November 6)
+
+The admin login stored for this environment was refused twice by `/api/admin/*`. The username must be exactly
+`admin`, and `ADMIN_PASSWORD` must be set on the Worker in Cloudflare (with it unset, every admin call is refused).
+Once it works: create "QA Test Co" (Business Support, owner email = Jerome's Gmail, kept out of this public repo),
+send Jerome its form link, and run the quote request, a GM question, an hours warning and the brief end to end.
 
 ## Next steps
 0. **The Home headline line about phones** (item 1 above). It's the review's one critical finding and a ten-minute fix.
@@ -274,7 +295,7 @@ All calls are admin-only (`/api/admin/...`, Basic auth). Times are counted minut
 
 ## Starting a new session
 Open a new session on branch `claude/virtual-service-startup-32flre` and say:
-"Read CLAUDE.md and docs/handoff.md. Show me the plan for next step 1 before changing anything."
+"Read CLAUDE.md and docs/handoff.md. Fix the admin login first, then run the live test with my Gmail. Show me the plan before changing anything."
 Everything needed is in those two files; the Shared Drive holds the internal documents.
 
 When the reviewed agreement comes back: apply the changes in `site/src/contract.js` (bump the version) and get it countersigned.

@@ -23,7 +23,7 @@
   state.asks = seedAsks.slice();
 
   var crew = [
-    {n:'The GM', role:'Routes the work, holds your rules, writes your brief. Checks every specialist’s output against what was asked before it counts as done. Decides nothing on its own.', m:'now', gm:true},
+    {n:'The GM', role:'Holds your rules and approved answers, and writes your brief. When another agent doesn’t know something, it asks the GM; anything the GM can’t answer comes to you once, then every agent knows it. Decides nothing on its own.', m:'now', gm:true},
     {n:'Intake', role:'Answers and qualifies every new enquiry, day or night', m:'40s ago'},
     {n:'Schedule', role:'Confirmations, reminders, reschedules, no-shows, the run sheet', m:'8m ago'},
     {n:'Quotes', role:'Drafts estimates off your price list and chases the ones you sent', m:'12m ago'},
