@@ -74,6 +74,7 @@ h2.big{font-size:clamp(23px,4.2vw,33px);font-weight:700;letter-spacing:-.018em;l
 .hero{padding-block:52px 44px}
 .hero h1{font-size:clamp(32px,6.4vw,54px);font-weight:700;letter-spacing:-.03em;line-height:1.05}
 .hero h1 em{font-style:italic;color:var(--accent)}
+.hero .answers{margin-top:14px;font-size:18px;font-weight:600;color:var(--fg);max-width:60ch}
 .hero .sub{margin-top:16px;font-size:17px;color:var(--fg-dim);max-width:60ch}
 .trial{margin-top:16px;padding:12px 14px;border-left:3px solid var(--accent);background:var(--accent-soft);border-radius:0 8px 8px 0;font-size:14.5px;max-width:62ch}
 .herobtns{display:flex;gap:10px;margin-top:22px;flex-wrap:wrap}

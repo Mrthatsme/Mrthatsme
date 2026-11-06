@@ -177,7 +177,7 @@ phones" on Services; "hours are a person's time" on Pricing; the "what happens i
 1. **N-01, rated critical: the Home headline vs. phones.** "Every lead answered. Even at dinner." reads as if calls get
    answered. Keep the headline, but add one plain line right under it, for example: "Website chat, forms and email
    answered in minutes, in your words. We don't answer your phone: missed calls go to the top of your brief so you
-   can call back." Jerome to approve the wording.
+   can call back." **Done November 6:** Jerome approved that wording and it now sits under the Home headline.
 2. **N-08: frame the free assessment while the agreement is out.** The hold notice is honest, but the call to action
    could say what the call is now: "Book the free assessment and apply for one of the three founding-client spots."
 3. **N-03: show how hours are counted.** A short table of common tasks and the time each counts as (scheduling an
