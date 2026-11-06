@@ -240,7 +240,11 @@ All calls are admin-only (`/api/admin/...`, Basic auth). Times are counted minut
 - **On the 1st**, Jerome gets "Extra hours to bill" for last month. **Nothing is charged automatically.** Stripe
   billing of extra hours is a later step, once Stripe and the agreement are done.
 - Time can only be logged in the current month, so past statements can't change.
-- Not built: a screen for logging time. It's API calls for now (curl, or a small form on the admin dashboard later).
+- **The admin dashboard** (`/api/admin/dashboard`) has an Hours panel at the top (`site/src/adminhours.js`): each
+  client's month (used, available, left, extra), open builds with a "heading past hours" flag and a Mark finished
+  button, and forms to log time, open a build and record the client's written OK. The page now sends its own CSP
+  (script only by per-request nonce, fetch only to this site) and `no-store`. Tested end to end in a browser
+  against the Worker running on SQLite, at 375px and desktop.
 
 ## Next steps
 0. **The Home headline line about phones** (item 1 above). It's the review's one critical finding and a ten-minute fix.

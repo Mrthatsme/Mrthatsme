@@ -29,7 +29,7 @@ export function escapeHtml(s) {
   return String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 }
 
-export function renderAdminPage({ leads, contracts, clients, payments }) {
+export function renderAdminPage({ leads, contracts, clients, payments, hoursPanel = "", hoursCss = "" }) {
   const table = (title, rows, cols) => `
     <h2>${title} (${rows.length})</h2>
     <table>
@@ -51,10 +51,14 @@ export function renderAdminPage({ leads, contracts, clients, payments }) {
   table{width:100%;border-collapse:collapse;font-size:.85rem;background:#fff}
   th,td{border:1px solid #ddd;padding:.4rem .5rem;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:220px}
   th{background:#f4f4ea}
-</style></head>
+${hoursCss}
+</style>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex"></head>
 <body>
   <h1>Minutes Regained — internal CRM</h1>
-  <p>Leads, contracts, clients, and payments. Not linked from the public site.</p>
+  <p>Hours, leads, contracts, clients, and payments. Not linked from the public site.</p>
+  ${hoursPanel}
   ${table("Leads", leads, ["id", "name", "business", "contact", "status", "triage_status", "triage_note", "created_at"])}
   ${table("Contracts", contracts, ["id", "plan_label", "price_cents", "founding_offer", "business_name", "signer_name", "status", "created_at"])}
   ${table("Clients", clients, ["id", "business_name", "contact_name", "plan_id", "status", "created_at"])}

@@ -428,3 +428,29 @@ export async function extraHoursReport(env, now = new Date()) {
   }
   return report;
 }
+
+// ------------------------------------------------------ admin dashboard --
+
+// Every active client with plan hours: where the month stands and each build.
+export async function dashboardHours(env, now = new Date()) {
+  await ensureHoursTables(env);
+  const { results: agents } = await env.DB.prepare(`SELECT * FROM client_agents WHERE status = 'active' ORDER BY label`).all()
+    .catch(() => ({ results: [] }));
+  const out = [];
+  for (const agent of agents || []) {
+    const status = await statusFor(env, agent, monthKey(now)).catch(() => null);
+    if (!status) continue;
+    const { results: builds } = await env.DB.prepare(`SELECT * FROM builds WHERE agent_id = ? ORDER BY status DESC, created_at`).bind(agent.id).all();
+    const list = [];
+    for (const b of builds || []) {
+      const logged = await buildLogged(env, b.id);
+      const p = b.status === "open" ? buildProjection({ estimate: b.estimate_minutes, logged, headroom: status.headroom }) : { short: 0 };
+      list.push({ id: b.id, name: b.name, includedCustom: !!b.included_custom, status: b.status, estimate: b.estimate_minutes,
+        logged, short: p.short, total: b.total_minutes, extra: b.extra_minutes });
+    }
+    out.push({ id: agent.id, label: agent.label, plan: status.plan.label, hourly: status.plan.hourly, month: status.month,
+      planMinutes: status.planMinutes, carry: status.carry, approved: status.approved, used: status.used,
+      available: status.available, headroom: status.headroom, extraUsed: status.extraUsed, builds: list });
+  }
+  return out;
+}

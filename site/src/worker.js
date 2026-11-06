@@ -19,7 +19,8 @@ import { createClientAgent, authenticateClientAgent, draftForClient, logClientAg
 import { createConnectInvite, connectLanding, connectStart, connectCallback, pollConnectedInboxes } from "./connect.js";
 import { intakePage, handleIntake, voicePage, handleVoice, createClientLinks } from "./clientpages.js";
 import { billVoiceOverages } from "./usage.js";
-import { createBuild, updateEstimate, logTime, recordApproval, finishBuild, monthlyStatement, extraHoursReport } from "./hours.js";
+import { createBuild, updateEstimate, logTime, recordApproval, finishBuild, monthlyStatement, extraHoursReport, dashboardHours } from "./hours.js";
+import { renderHoursPanel, HOURS_CSS } from "./adminhours.js";
 import { agreementPage, startPage, signupsOpen, SIGNUPS_CLOSED_MESSAGE } from "./agreementpage.js";
 
 const JSON_HEADERS = { "Content-Type": "application/json; charset=utf-8" };
@@ -601,8 +602,16 @@ async function handleAdmin(path, env) {
   ]);
 
   if (path === "/api/admin/dashboard") {
-    return new Response(renderAdminPage({ leads, contracts, clients, payments }), {
-      headers: { "Content-Type": "text/html; charset=utf-8" },
+    // The Hours panel's one script runs under a fresh nonce; nothing else on the page may run script.
+    const nonce = btoa(String.fromCharCode(...crypto.getRandomValues(new Uint8Array(16))));
+    const hours = await dashboardHours(env).catch((err) => { console.error("hours panel failed", err); return []; });
+    return new Response(renderAdminPage({ leads, contracts, clients, payments, hoursPanel: renderHoursPanel(hours, nonce), hoursCss: HOURS_CSS }), {
+      headers: {
+        "Content-Type": "text/html; charset=utf-8",
+        "Cache-Control": "no-store",
+        "Content-Security-Policy": `default-src 'none'; script-src 'nonce-${nonce}'; style-src 'unsafe-inline'; connect-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'`,
+        "X-Robots-Tag": "noindex",
+      },
     });
   }
   return json({ leads, contracts, clients, payments });
