@@ -1,3 +1,4 @@
+import { handleDemoTry } from "./demotry.js";
 import { contractText, sha256Hex, CONTRACT_VERSION } from "./contract.js";
 import { resolvePlan, FOUNDING_OFFER, normalizeBilling } from "./plans.js";
 import {
@@ -71,6 +72,9 @@ export default {
       }
       if (path === "/api/stripe/webhook" && request.method === "POST") {
         return await handleStripeWebhook(request, env, ctx);
+      }
+      if (path === "/api/demo" && request.method === "POST") {
+        return await handleDemoTry(request, env);
       }
       if (path === "/api/feedback" && request.method === "POST") {
         return await handleFeedback(request, env);

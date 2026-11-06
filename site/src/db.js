@@ -172,6 +172,16 @@ export async function recordPayment(db, { clientId, contractId, stripeEventId, s
 // cap BEFORE deciding to call the LLM. Best-effort, not perfectly race-safe
 // under heavy concurrency -- that's fine, this is a spend brake, not a
 // security boundary, and a handful of calls over the line is harmless.
+// A per-day counter in the same table, under its own key (e.g. "demo:2026-11-06"), so no migration is needed.
+export async function incrementAndGetUsage(db, key) {
+  await db
+    .prepare(`INSERT INTO triage_usage (usage_date, calls) VALUES (?, 1) ON CONFLICT(usage_date) DO UPDATE SET calls = calls + 1`)
+    .bind(key)
+    .run();
+  const row = await db.prepare(`SELECT calls FROM triage_usage WHERE usage_date = ?`).bind(key).first();
+  return row ? row.calls : 1;
+}
+
 export async function incrementAndGetTriageUsage(db) {
   const today = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
   await db

@@ -26,6 +26,8 @@ crons = ["0 0,1,12,13 * * *", "*/10 * * * *"]
 # the lead record (never lost), it just won't reach an inbox yet.
 NOTIFY_EMAIL = "support@minutesregained.com"
 TRIAGE_DAILY_CAP = "50"
+# Live drafts per day on the /demo "Try it with your own words" panel; past this the page uses pre-written examples.
+DEMO_DAILY_CAP = "200"
 
 # Speech-to-text for client voice notes (src/clientpages.js).
 [ai]

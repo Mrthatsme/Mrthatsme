@@ -23,7 +23,7 @@ export async function logSecurityEvent(env, { kind, path, hash }) {
 
 // Returns { ok: true, hash } to continue, or { ok: false, kind, silent } to stop.
 // "silent" means answer the bot with a normal-looking success so it learns nothing.
-export async function screenSubmission(request, env, path, { honeypot, elapsedMs }) {
+export async function screenSubmission(request, env, path, { honeypot, elapsedMs }, { windowMinutes = WINDOW_MINUTES, maxPerWindow = MAX_PER_WINDOW } = {}) {
   const hash = await ipHash(request, env);
   if (honeypot && String(honeypot).trim()) {
     await logSecurityEvent(env, { kind: "honeypot", path, hash });
@@ -33,11 +33,11 @@ export async function screenSubmission(request, env, path, { honeypot, elapsedMs
     await logSecurityEvent(env, { kind: "too_fast", path, hash });
     return { ok: false, kind: "too_fast", silent: true };
   }
-  const since = new Date(Date.now() - WINDOW_MINUTES * 60000).toISOString();
+  const since = new Date(Date.now() - windowMinutes * 60000).toISOString();
   const row = await env.DB.prepare(
     `SELECT COUNT(*) AS n FROM security_events WHERE ip_hash = ? AND path = ? AND kind = 'accepted' AND created_at >= ?`
   ).bind(hash, path, since).first();
-  if (row && row.n >= MAX_PER_WINDOW) {
+  if (row && row.n >= maxPerWindow) {
     await logSecurityEvent(env, { kind: "rate_limited", path, hash });
     return { ok: false, kind: "rate_limited", silent: false };
   }
