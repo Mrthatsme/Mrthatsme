@@ -1,0 +1,2216 @@
+{
+    "name": "Minutes Regained - AI Receptionist",
+    "flow": [
+        {
+            "id": 1,
+            "module": "gateway:CustomWebHook",
+            "version": 1,
+            "parameters": {
+                "maxResults": 1
+            },
+            "mapper": {},
+            "metadata": {
+                "designer": {
+                    "x": 0,
+                    "y": 150,
+                    "name": "Vapi webhook (all events)"
+                },
+                "restore": {},
+                "parameters": [
+                    {
+                        "name": "hook",
+                        "type": "hook:gateway-webhook",
+                        "label": "Webhook",
+                        "required": true
+                    },
+                    {
+                        "name": "maxResults",
+                        "type": "number",
+                        "label": "Maximum number of results"
+                    }
+                ]
+            }
+        },
+        {
+            "id": 2,
+            "module": "builtin:BasicRouter",
+            "version": 1,
+            "mapper": null,
+            "metadata": {
+                "designer": {
+                    "x": 300,
+                    "y": 150
+                }
+            },
+            "routes": [
+                {
+                    "flow": [
+                        {
+                            "id": 3,
+                            "module": "util:SetVariables",
+                            "version": 1,
+                            "parameters": {},
+                            "mapper": {
+                                "scope": "roundtrip",
+                                "variables": [
+                                    {
+                                        "name": "toolName",
+                                        "value": "{{1.message.toolCallList[1].function.name}}"
+                                    },
+                                    {
+                                        "name": "toolCallId",
+                                        "value": "{{1.message.toolCallList[1].id}}"
+                                    },
+                                    {
+                                        "name": "start",
+                                        "value": "{{parseDate(1.message.toolCallList[1].function.arguments.start_time; \"YYYY-MM-DDTHH:mm:ssZ\")}}"
+                                    },
+                                    {
+                                        "name": "end",
+                                        "value": "{{addMinutes(parseDate(1.message.toolCallList[1].function.arguments.start_time; \"YYYY-MM-DDTHH:mm:ssZ\"); 30)}}"
+                                    },
+                                    {
+                                        "name": "dayNum",
+                                        "value": "{{formatDate(parseDate(1.message.toolCallList[1].function.arguments.start_time; \"YYYY-MM-DDTHH:mm:ssZ\"); \"d\"; \"America/New_York\")}}"
+                                    },
+                                    {
+                                        "name": "hour",
+                                        "value": "{{formatDate(parseDate(1.message.toolCallList[1].function.arguments.start_time; \"YYYY-MM-DDTHH:mm:ssZ\"); \"H\"; \"America/New_York\")}}"
+                                    },
+                                    {
+                                        "name": "friendly",
+                                        "value": "{{formatDate(parseDate(1.message.toolCallList[1].function.arguments.start_time; \"YYYY-MM-DDTHH:mm:ssZ\"); \"dddd, MMMM D, h:mm A\"; \"America/New_York\")}}"
+                                    },
+                                    {
+                                        "name": "openHour",
+                                        "value": "9"
+                                    },
+                                    {
+                                        "name": "closeHour",
+                                        "value": "17"
+                                    },
+                                    {
+                                        "name": "name",
+                                        "value": "{{1.message.toolCallList[1].function.arguments.name}}"
+                                    },
+                                    {
+                                        "name": "business",
+                                        "value": "{{1.message.toolCallList[1].function.arguments.business_name}}"
+                                    },
+                                    {
+                                        "name": "phone",
+                                        "value": "{{ifempty(1.message.toolCallList[1].function.arguments.phone; 1.message.customer.number)}}"
+                                    },
+                                    {
+                                        "name": "email",
+                                        "value": "{{1.message.toolCallList[1].function.arguments.email}}"
+                                    },
+                                    {
+                                        "name": "reason",
+                                        "value": "{{1.message.toolCallList[1].function.arguments.reason}}"
+                                    }
+                                ]
+                            },
+                            "metadata": {
+                                "designer": {
+                                    "x": 600,
+                                    "y": 0,
+                                    "name": "Call details + hours (edit hours here)"
+                                },
+                                "restore": {
+                                    "expect": {
+                                        "scope": {
+                                            "label": "One cycle"
+                                        },
+                                        "variables": {
+                                            "items": [
+                                                null,
+                                                null,
+                                                null,
+                                                null,
+                                                null,
+                                                null,
+                                                null,
+                                                null,
+                                                null,
+                                                null,
+                                                null,
+                                                null,
+                                                null,
+                                                null
+                                            ]
+                                        }
+                                    }
+                                },
+                                "expect": [
+                                    {
+                                        "name": "variables",
+                                        "spec": [
+                                            {
+                                                "name": "name",
+                                                "type": "text",
+                                                "label": "Variable name",
+                                                "required": true
+                                            },
+                                            {
+                                                "name": "value",
+                                                "type": "any",
+                                                "label": "Variable value"
+                                            }
+                                        ],
+                                        "type": "array",
+                                        "label": "Variables"
+                                    },
+                                    {
+                                        "name": "scope",
+                                        "type": "select",
+                                        "label": "Variable lifetime",
+                                        "required": true,
+                                        "validate": {
+                                            "enum": [
+                                                "roundtrip",
+                                                "execution"
+                                            ]
+                                        }
+                                    }
+                                ],
+                                "interface": [
+                                    {
+                                        "name": "toolName",
+                                        "type": "any",
+                                        "label": "toolName"
+                                    },
+                                    {
+                                        "name": "toolCallId",
+                                        "type": "any",
+                                        "label": "toolCallId"
+                                    },
+                                    {
+                                        "name": "start",
+                                        "type": "any",
+                                        "label": "start"
+                                    },
+                                    {
+                                        "name": "end",
+                                        "type": "any",
+                                        "label": "end"
+                                    },
+                                    {
+                                        "name": "dayNum",
+                                        "type": "any",
+                                        "label": "dayNum"
+                                    },
+                                    {
+                                        "name": "hour",
+                                        "type": "any",
+                                        "label": "hour"
+                                    },
+                                    {
+                                        "name": "friendly",
+                                        "type": "any",
+                                        "label": "friendly"
+                                    },
+                                    {
+                                        "name": "openHour",
+                                        "type": "any",
+                                        "label": "openHour"
+                                    },
+                                    {
+                                        "name": "closeHour",
+                                        "type": "any",
+                                        "label": "closeHour"
+                                    },
+                                    {
+                                        "name": "name",
+                                        "type": "any",
+                                        "label": "name"
+                                    },
+                                    {
+                                        "name": "business",
+                                        "type": "any",
+                                        "label": "business"
+                                    },
+                                    {
+                                        "name": "phone",
+                                        "type": "any",
+                                        "label": "phone"
+                                    },
+                                    {
+                                        "name": "email",
+                                        "type": "any",
+                                        "label": "email"
+                                    },
+                                    {
+                                        "name": "reason",
+                                        "type": "any",
+                                        "label": "reason"
+                                    }
+                                ]
+                            },
+                            "filter": {
+                                "name": "Tool call",
+                                "conditions": [
+                                    [
+                                        {
+                                            "a": "{{1.message.type}}",
+                                            "o": "text:equal",
+                                            "b": "tool-calls"
+                                        }
+                                    ]
+                                ]
+                            }
+                        },
+                        {
+                            "id": 4,
+                            "module": "builtin:BasicRouter",
+                            "version": 1,
+                            "mapper": null,
+                            "metadata": {
+                                "designer": {
+                                    "x": 900,
+                                    "y": 0
+                                }
+                            },
+                            "routes": [
+                                {
+                                    "flow": [
+                                        {
+                                            "id": 5,
+                                            "module": "gateway:WebhookRespond",
+                                            "version": 1,
+                                            "parameters": {},
+                                            "mapper": {
+                                                "body": "{\n  \"results\": [\n    {\n      \"toolCallId\": \"{{3.toolCallId}}\",\n      \"result\": \"That time is outside our hours. We book free assessments Monday to Friday, {{3.openHour}}:00 to {{3.closeHour}}:00 Eastern. Ask the caller for another time.\"\n    }\n  ]\n}",
+                                                "status": "200",
+                                                "headers": []
+                                            },
+                                            "metadata": {
+                                                "designer": {
+                                                    "x": 1200,
+                                                    "y": -300,
+                                                    "name": "Reply: outside hours"
+                                                },
+                                                "restore": {
+                                                    "expect": {
+                                                        "headers": {
+                                                            "mode": "chose"
+                                                        }
+                                                    }
+                                                },
+                                                "expect": [
+                                                    {
+                                                        "name": "status",
+                                                        "type": "uinteger",
+                                                        "label": "Status",
+                                                        "required": true,
+                                                        "validate": {
+                                                            "min": 100
+                                                        }
+                                                    },
+                                                    {
+                                                        "name": "body",
+                                                        "type": "any",
+                                                        "label": "Body"
+                                                    },
+                                                    {
+                                                        "name": "headers",
+                                                        "spec": [
+                                                            {
+                                                                "name": "key",
+                                                                "type": "text",
+                                                                "label": "Key",
+                                                                "required": true,
+                                                                "validate": {
+                                                                    "max": 256
+                                                                }
+                                                            },
+                                                            {
+                                                                "name": "value",
+                                                                "type": "text",
+                                                                "label": "Value",
+                                                                "required": true,
+                                                                "validate": {
+                                                                    "max": 4096
+                                                                }
+                                                            }
+                                                        ],
+                                                        "type": "array",
+                                                        "label": "Custom headers",
+                                                        "validate": {
+                                                            "maxItems": 16
+                                                        }
+                                                    }
+                                                ]
+                                            },
+                                            "filter": {
+                                                "name": "Outside hours",
+                                                "conditions": [
+                                                    [
+                                                        {
+                                                            "a": "{{3.dayNum}}",
+                                                            "o": "number:equal",
+                                                            "b": "0"
+                                                        }
+                                                    ],
+                                                    [
+                                                        {
+                                                            "a": "{{3.dayNum}}",
+                                                            "o": "number:equal",
+                                                            "b": "6"
+                                                        }
+                                                    ],
+                                                    [
+                                                        {
+                                                            "a": "{{3.hour}}",
+                                                            "o": "number:less",
+                                                            "b": "{{3.openHour}}"
+                                                        }
+                                                    ],
+                                                    [
+                                                        {
+                                                            "a": "{{3.hour}}",
+                                                            "o": "number:greaterorequal",
+                                                            "b": "{{3.closeHour}}"
+                                                        }
+                                                    ]
+                                                ]
+                                            }
+                                        }
+                                    ]
+                                },
+                                {
+                                    "flow": [
+                                        {
+                                            "id": 6,
+                                            "module": "google-calendar:getFreeBusyInformation",
+                                            "version": 5,
+                                            "parameters": {},
+                                            "mapper": {
+                                                "item": [
+                                                    {
+                                                        "id": "primary"
+                                                    }
+                                                ],
+                                                "timeMin": "{{3.start}}",
+                                                "timeMax": "{{3.end}}"
+                                            },
+                                            "metadata": {
+                                                "designer": {
+                                                    "x": 1200,
+                                                    "y": 150,
+                                                    "name": "Is the 30-minute slot free?"
+                                                },
+                                                "restore": {
+                                                    "expect": {
+                                                        "item": {
+                                                            "mode": "chose",
+                                                            "items": [
+                                                                {
+                                                                    "id": {
+                                                                        "mode": "edit"
+                                                                    }
+                                                                }
+                                                            ]
+                                                        }
+                                                    }
+                                                },
+                                                "parameters": [
+                                                    {
+                                                        "name": "__IMTCONN__",
+                                                        "type": "account:google",
+                                                        "label": "Connection",
+                                                        "required": true
+                                                    }
+                                                ],
+                                                "expect": [
+                                                    {
+                                                        "name": "timeMin",
+                                                        "time": true,
+                                                        "type": "date",
+                                                        "label": "Minimum Time",
+                                                        "required": true
+                                                    },
+                                                    {
+                                                        "name": "timeMax",
+                                                        "time": true,
+                                                        "type": "date",
+                                                        "label": "Maximum Time",
+                                                        "required": true
+                                                    },
+                                                    {
+                                                        "name": "item",
+                                                        "spec": [
+                                                            {
+                                                                "mode": "edit",
+                                                                "name": "id",
+                                                                "type": "select",
+                                                                "label": "Calendar ID",
+                                                                "dynamic": true,
+                                                                "options": [],
+                                                                "required": true
+                                                            }
+                                                        ],
+                                                        "type": "array",
+                                                        "label": "Calendars",
+                                                        "required": true
+                                                    }
+                                                ],
+                                                "interface": [
+                                                    {
+                                                        "name": "kind",
+                                                        "type": "text",
+                                                        "label": "Kind"
+                                                    },
+                                                    {
+                                                        "name": "timeMin",
+                                                        "type": "date",
+                                                        "label": "Time Min"
+                                                    },
+                                                    {
+                                                        "name": "timeMax",
+                                                        "type": "date",
+                                                        "label": "Time Max"
+                                                    },
+                                                    {
+                                                        "name": "calendars",
+                                                        "spec": [],
+                                                        "type": "collection",
+                                                        "label": "Calendars"
+                                                    }
+                                                ]
+                                            },
+                                            "filter": {
+                                                "name": "Within hours",
+                                                "conditions": [
+                                                    [
+                                                        {
+                                                            "a": "{{3.dayNum}}",
+                                                            "o": "number:greaterorequal",
+                                                            "b": "1"
+                                                        },
+                                                        {
+                                                            "a": "{{3.dayNum}}",
+                                                            "o": "number:lessorequal",
+                                                            "b": "5"
+                                                        },
+                                                        {
+                                                            "a": "{{3.hour}}",
+                                                            "o": "number:greaterorequal",
+                                                            "b": "{{3.openHour}}"
+                                                        },
+                                                        {
+                                                            "a": "{{3.hour}}",
+                                                            "o": "number:less",
+                                                            "b": "{{3.closeHour}}"
+                                                        }
+                                                    ]
+                                                ]
+                                            }
+                                        },
+                                        {
+                                            "id": 7,
+                                            "module": "builtin:BasicRouter",
+                                            "version": 1,
+                                            "mapper": null,
+                                            "metadata": {
+                                                "designer": {
+                                                    "x": 1500,
+                                                    "y": 150
+                                                }
+                                            },
+                                            "routes": [
+                                                {
+                                                    "flow": [
+                                                        {
+                                                            "id": 8,
+                                                            "module": "gateway:WebhookRespond",
+                                                            "version": 1,
+                                                            "parameters": {},
+                                                            "mapper": {
+                                                                "body": "{\n  \"results\": [\n    {\n      \"toolCallId\": \"{{3.toolCallId}}\",\n      \"result\": \"{{3.friendly}} is already taken. Offer the caller a different time and check again.\"\n    }\n  ]\n}",
+                                                                "status": "200",
+                                                                "headers": []
+                                                            },
+                                                            "metadata": {
+                                                                "designer": {
+                                                                    "x": 1800,
+                                                                    "y": -100,
+                                                                    "name": "Reply: taken"
+                                                                },
+                                                                "restore": {
+                                                                    "expect": {
+                                                                        "headers": {
+                                                                            "mode": "chose"
+                                                                        }
+                                                                    }
+                                                                },
+                                                                "expect": [
+                                                                    {
+                                                                        "name": "status",
+                                                                        "type": "uinteger",
+                                                                        "label": "Status",
+                                                                        "required": true,
+                                                                        "validate": {
+                                                                            "min": 100
+                                                                        }
+                                                                    },
+                                                                    {
+                                                                        "name": "body",
+                                                                        "type": "any",
+                                                                        "label": "Body"
+                                                                    },
+                                                                    {
+                                                                        "name": "headers",
+                                                                        "spec": [
+                                                                            {
+                                                                                "name": "key",
+                                                                                "type": "text",
+                                                                                "label": "Key",
+                                                                                "required": true,
+                                                                                "validate": {
+                                                                                    "max": 256
+                                                                                }
+                                                                            },
+                                                                            {
+                                                                                "name": "value",
+                                                                                "type": "text",
+                                                                                "label": "Value",
+                                                                                "required": true,
+                                                                                "validate": {
+                                                                                    "max": 4096
+                                                                                }
+                                                                            }
+                                                                        ],
+                                                                        "type": "array",
+                                                                        "label": "Custom headers",
+                                                                        "validate": {
+                                                                            "maxItems": 16
+                                                                        }
+                                                                    }
+                                                                ]
+                                                            },
+                                                            "filter": {
+                                                                "name": "Slot taken",
+                                                                "conditions": [
+                                                                    [
+                                                                        {
+                                                                            "a": "{{length(6.calendars.primary.busy)}}",
+                                                                            "o": "number:greater",
+                                                                            "b": "0"
+                                                                        }
+                                                                    ]
+                                                                ]
+                                                            }
+                                                        }
+                                                    ]
+                                                },
+                                                {
+                                                    "flow": [
+                                                        {
+                                                            "id": 9,
+                                                            "module": "gateway:WebhookRespond",
+                                                            "version": 1,
+                                                            "parameters": {},
+                                                            "mapper": {
+                                                                "body": "{\n  \"results\": [\n    {\n      \"toolCallId\": \"{{3.toolCallId}}\",\n      \"result\": \"{{3.friendly}} Eastern is open. Confirm it with the caller, then call book_assessment.\"\n    }\n  ]\n}",
+                                                                "status": "200",
+                                                                "headers": []
+                                                            },
+                                                            "metadata": {
+                                                                "designer": {
+                                                                    "x": 1800,
+                                                                    "y": 150,
+                                                                    "name": "Reply: open"
+                                                                },
+                                                                "restore": {
+                                                                    "expect": {
+                                                                        "headers": {
+                                                                            "mode": "chose"
+                                                                        }
+                                                                    }
+                                                                },
+                                                                "expect": [
+                                                                    {
+                                                                        "name": "status",
+                                                                        "type": "uinteger",
+                                                                        "label": "Status",
+                                                                        "required": true,
+                                                                        "validate": {
+                                                                            "min": 100
+                                                                        }
+                                                                    },
+                                                                    {
+                                                                        "name": "body",
+                                                                        "type": "any",
+                                                                        "label": "Body"
+                                                                    },
+                                                                    {
+                                                                        "name": "headers",
+                                                                        "spec": [
+                                                                            {
+                                                                                "name": "key",
+                                                                                "type": "text",
+                                                                                "label": "Key",
+                                                                                "required": true,
+                                                                                "validate": {
+                                                                                    "max": 256
+                                                                                }
+                                                                            },
+                                                                            {
+                                                                                "name": "value",
+                                                                                "type": "text",
+                                                                                "label": "Value",
+                                                                                "required": true,
+                                                                                "validate": {
+                                                                                    "max": 4096
+                                                                                }
+                                                                            }
+                                                                        ],
+                                                                        "type": "array",
+                                                                        "label": "Custom headers",
+                                                                        "validate": {
+                                                                            "maxItems": 16
+                                                                        }
+                                                                    }
+                                                                ]
+                                                            },
+                                                            "filter": {
+                                                                "name": "Free + just checking",
+                                                                "conditions": [
+                                                                    [
+                                                                        {
+                                                                            "a": "{{length(6.calendars.primary.busy)}}",
+                                                                            "o": "number:equal",
+                                                                            "b": "0"
+                                                                        },
+                                                                        {
+                                                                            "a": "{{3.toolName}}",
+                                                                            "o": "text:equal",
+                                                                            "b": "check_availability"
+                                                                        }
+                                                                    ]
+                                                                ]
+                                                            }
+                                                        }
+                                                    ]
+                                                },
+                                                {
+                                                    "flow": [
+                                                        {
+                                                            "id": 10,
+                                                            "module": "google-calendar:createAnEvent",
+                                                            "version": 5,
+                                                            "parameters": {},
+                                                            "mapper": {
+                                                                "select": "detail",
+                                                                "calendar": "primary",
+                                                                "summary": "Free assessment: {{3.name}} ({{3.business}})",
+                                                                "description": "Booked by the AI receptionist.\n\nName: {{3.name}}\nBusiness: {{3.business}}\nPhone: {{3.phone}}\nEmail: {{3.email}}\n\nWhat's slipping: {{3.reason}}",
+                                                                "start": "{{3.start}}",
+                                                                "end": "{{3.end}}",
+                                                                "allDayEvent": false,
+                                                                "useDefault": true,
+                                                                "visibility": "default",
+                                                                "transparency": "opaque",
+                                                                "sendUpdates": "none",
+                                                                "conferenceDate": false,
+                                                                "guestPermissions": {
+                                                                    "guestsCanModify": false,
+                                                                    "guestsCanInviteOthers": false,
+                                                                    "guestsCanSeeOtherGuests": false
+                                                                }
+                                                            },
+                                                            "metadata": {
+                                                                "designer": {
+                                                                    "x": 1800,
+                                                                    "y": 400,
+                                                                    "name": "Book it on your calendar"
+                                                                },
+                                                                "restore": {
+                                                                    "expect": {
+                                                                        "select": {
+                                                                            "label": "In Detail"
+                                                                        },
+                                                                        "calendar": {
+                                                                            "mode": "edit"
+                                                                        },
+                                                                        "attendees": {
+                                                                            "mode": "chose"
+                                                                        },
+                                                                        "recurrence": {
+                                                                            "mode": "chose"
+                                                                        },
+                                                                        "visibility": {
+                                                                            "mode": "chose",
+                                                                            "label": "Default"
+                                                                        },
+                                                                        "allDayEvent": {
+                                                                            "mode": "chose"
+                                                                        },
+                                                                        "attachments": {
+                                                                            "mode": "chose"
+                                                                        },
+                                                                        "sendUpdates": {
+                                                                            "mode": "chose",
+                                                                            "label": "None"
+                                                                        },
+                                                                        "transparency": {
+                                                                            "mode": "chose",
+                                                                            "label": "Busy"
+                                                                        },
+                                                                        "conferenceDate": {
+                                                                            "mode": "chose"
+                                                                        }
+                                                                    }
+                                                                },
+                                                                "parameters": [
+                                                                    {
+                                                                        "name": "__IMTCONN__",
+                                                                        "type": "account:google",
+                                                                        "label": "Connection",
+                                                                        "required": true
+                                                                    }
+                                                                ],
+                                                                "expect": [
+                                                                    {
+                                                                        "name": "select",
+                                                                        "type": "select",
+                                                                        "label": "Create an Event",
+                                                                        "required": true,
+                                                                        "validate": {
+                                                                            "enum": [
+                                                                                "quick",
+                                                                                "detail"
+                                                                            ]
+                                                                        }
+                                                                    },
+                                                                    {
+                                                                        "name": "calendar",
+                                                                        "type": "select",
+                                                                        "label": "Calendar ID",
+                                                                        "required": true
+                                                                    },
+                                                                    {
+                                                                        "name": "colorId",
+                                                                        "type": "select",
+                                                                        "label": "Color"
+                                                                    },
+                                                                    {
+                                                                        "name": "summary",
+                                                                        "type": "text",
+                                                                        "label": "Event Name",
+                                                                        "required": true
+                                                                    },
+                                                                    {
+                                                                        "name": "allDayEvent",
+                                                                        "type": "boolean",
+                                                                        "label": "All Day Event",
+                                                                        "required": true
+                                                                    },
+                                                                    {
+                                                                        "name": "start",
+                                                                        "time": true,
+                                                                        "type": "date",
+                                                                        "label": "Start Date",
+                                                                        "required": true
+                                                                    },
+                                                                    {
+                                                                        "name": "end",
+                                                                        "time": true,
+                                                                        "type": "date",
+                                                                        "label": "End Date"
+                                                                    },
+                                                                    {
+                                                                        "name": "duration",
+                                                                        "type": "time",
+                                                                        "label": "Duration"
+                                                                    },
+                                                                    {
+                                                                        "name": "description",
+                                                                        "type": "text",
+                                                                        "label": "Description"
+                                                                    },
+                                                                    {
+                                                                        "name": "location",
+                                                                        "type": "text",
+                                                                        "label": "Location"
+                                                                    },
+                                                                    {
+                                                                        "name": "useDefault",
+                                                                        "type": "boolean",
+                                                                        "label": "Use the default reminder settings for this event"
+                                                                    },
+                                                                    {
+                                                                        "name": "overrides",
+                                                                        "spec": [
+                                                                            {
+                                                                                "name": "method",
+                                                                                "type": "select",
+                                                                                "label": "Method",
+                                                                                "options": [
+                                                                                    {
+                                                                                        "label": "Email",
+                                                                                        "value": "email"
+                                                                                    },
+                                                                                    {
+                                                                                        "label": "Pop-up",
+                                                                                        "value": "popup"
+                                                                                    }
+                                                                                ],
+                                                                                "required": true
+                                                                            },
+                                                                            {
+                                                                                "name": "minutes",
+                                                                                "type": "uinteger",
+                                                                                "label": "Minutes",
+                                                                                "required": true,
+                                                                                "validate": {
+                                                                                    "max": 40320
+                                                                                }
+                                                                            }
+                                                                        ],
+                                                                        "type": "array",
+                                                                        "label": "Reminders",
+                                                                        "validate": {
+                                                                            "maxItems": 5
+                                                                        }
+                                                                    },
+                                                                    {
+                                                                        "name": "attendees",
+                                                                        "spec": [
+                                                                            {
+                                                                                "name": "displayName",
+                                                                                "type": "text",
+                                                                                "label": "Name"
+                                                                            },
+                                                                            {
+                                                                                "name": "email",
+                                                                                "type": "email",
+                                                                                "label": "Email",
+                                                                                "required": true
+                                                                            }
+                                                                        ],
+                                                                        "type": "array",
+                                                                        "label": "Attendees"
+                                                                    },
+                                                                    {
+                                                                        "name": "transparency",
+                                                                        "type": "select",
+                                                                        "label": "Show me as",
+                                                                        "required": true,
+                                                                        "validate": {
+                                                                            "enum": [
+                                                                                "opaque",
+                                                                                "transparent"
+                                                                            ]
+                                                                        }
+                                                                    },
+                                                                    {
+                                                                        "name": "visibility",
+                                                                        "type": "select",
+                                                                        "label": "Visibility",
+                                                                        "required": true,
+                                                                        "validate": {
+                                                                            "enum": [
+                                                                                "default",
+                                                                                "public",
+                                                                                "private"
+                                                                            ]
+                                                                        }
+                                                                    },
+                                                                    {
+                                                                        "name": "sendUpdates",
+                                                                        "type": "select",
+                                                                        "label": "Send notifications about the event creation",
+                                                                        "validate": {
+                                                                            "enum": [
+                                                                                "all",
+                                                                                "externalOnly",
+                                                                                "none"
+                                                                            ]
+                                                                        }
+                                                                    },
+                                                                    {
+                                                                        "name": "guestPermissions",
+                                                                        "spec": [
+                                                                            {
+                                                                                "name": "guestsCanModify",
+                                                                                "type": "boolean",
+                                                                                "label": "Modify event",
+                                                                                "required": true
+                                                                            },
+                                                                            {
+                                                                                "name": "guestsCanInviteOthers",
+                                                                                "type": "boolean",
+                                                                                "label": "Invite others",
+                                                                                "required": true
+                                                                            },
+                                                                            {
+                                                                                "name": "guestsCanSeeOtherGuests",
+                                                                                "type": "boolean",
+                                                                                "label": "See guest list",
+                                                                                "required": true
+                                                                            }
+                                                                        ],
+                                                                        "type": "collection",
+                                                                        "label": "Guest Permissions"
+                                                                    },
+                                                                    {
+                                                                        "name": "recurrence",
+                                                                        "spec": {
+                                                                            "name": "value",
+                                                                            "type": "text",
+                                                                            "label": "Value"
+                                                                        },
+                                                                        "type": "array",
+                                                                        "label": "Recurrence"
+                                                                    },
+                                                                    {
+                                                                        "name": "conferenceDate",
+                                                                        "type": "boolean",
+                                                                        "label": "Add Google Meet Video Conferencing",
+                                                                        "required": true
+                                                                    },
+                                                                    {
+                                                                        "name": "attachments",
+                                                                        "spec": [
+                                                                            {
+                                                                                "name": "fileUrl",
+                                                                                "type": "url",
+                                                                                "label": "File URL",
+                                                                                "required": true
+                                                                            }
+                                                                        ],
+                                                                        "type": "array",
+                                                                        "label": "Attachments"
+                                                                    }
+                                                                ],
+                                                                "interface": [
+                                                                    {
+                                                                        "name": "kind",
+                                                                        "type": "text",
+                                                                        "label": "Kind"
+                                                                    },
+                                                                    {
+                                                                        "name": "etag",
+                                                                        "type": "text",
+                                                                        "label": "Etag"
+                                                                    },
+                                                                    {
+                                                                        "name": "id",
+                                                                        "type": "text",
+                                                                        "label": "Event ID"
+                                                                    },
+                                                                    {
+                                                                        "name": "status",
+                                                                        "type": "text",
+                                                                        "label": "Status"
+                                                                    },
+                                                                    {
+                                                                        "name": "htmlLink",
+                                                                        "type": "text",
+                                                                        "label": "Html Link"
+                                                                    },
+                                                                    {
+                                                                        "name": "description",
+                                                                        "type": "text",
+                                                                        "label": "Description"
+                                                                    },
+                                                                    {
+                                                                        "name": "location",
+                                                                        "type": "text",
+                                                                        "label": "Location"
+                                                                    },
+                                                                    {
+                                                                        "name": "created",
+                                                                        "type": "date",
+                                                                        "label": "Created"
+                                                                    },
+                                                                    {
+                                                                        "name": "updated",
+                                                                        "type": "date",
+                                                                        "label": "Updated"
+                                                                    },
+                                                                    {
+                                                                        "name": "summary",
+                                                                        "type": "text",
+                                                                        "label": "Summary"
+                                                                    },
+                                                                    {
+                                                                        "name": "colorId",
+                                                                        "type": "text",
+                                                                        "label": "Color ID"
+                                                                    },
+                                                                    {
+                                                                        "name": "creator",
+                                                                        "spec": [
+                                                                            {
+                                                                                "name": "email",
+                                                                                "type": "text",
+                                                                                "label": "Email"
+                                                                            },
+                                                                            {
+                                                                                "name": "displayName",
+                                                                                "type": "text",
+                                                                                "label": "Display Name"
+                                                                            },
+                                                                            {
+                                                                                "name": "self",
+                                                                                "type": "boolean",
+                                                                                "label": "Self"
+                                                                            }
+                                                                        ],
+                                                                        "type": "collection",
+                                                                        "label": "Creator"
+                                                                    },
+                                                                    {
+                                                                        "name": "organizer",
+                                                                        "spec": [
+                                                                            {
+                                                                                "name": "email",
+                                                                                "type": "text",
+                                                                                "label": "Email"
+                                                                            },
+                                                                            {
+                                                                                "name": "displayName",
+                                                                                "type": "text",
+                                                                                "label": "Display Name"
+                                                                            },
+                                                                            {
+                                                                                "name": "self",
+                                                                                "type": "boolean",
+                                                                                "label": "Self"
+                                                                            }
+                                                                        ],
+                                                                        "type": "collection",
+                                                                        "label": "Organizer"
+                                                                    },
+                                                                    {
+                                                                        "name": "start",
+                                                                        "type": "date",
+                                                                        "label": "Start"
+                                                                    },
+                                                                    {
+                                                                        "name": "end",
+                                                                        "type": "date",
+                                                                        "label": "End"
+                                                                    },
+                                                                    {
+                                                                        "name": "recurrence",
+                                                                        "type": "array",
+                                                                        "label": "Recurrence"
+                                                                    },
+                                                                    {
+                                                                        "name": "recurringEventId",
+                                                                        "type": "text",
+                                                                        "label": "Recurring Event ID"
+                                                                    },
+                                                                    {
+                                                                        "name": "originalStartTime",
+                                                                        "spec": [
+                                                                            {
+                                                                                "name": "dateTime",
+                                                                                "time": true,
+                                                                                "type": "date",
+                                                                                "label": "Date Time"
+                                                                            },
+                                                                            {
+                                                                                "name": "timeZone",
+                                                                                "type": "text",
+                                                                                "label": "Time Zone"
+                                                                            }
+                                                                        ],
+                                                                        "type": "collection",
+                                                                        "label": "Original Start Time"
+                                                                    },
+                                                                    {
+                                                                        "name": "transparency",
+                                                                        "type": "text",
+                                                                        "label": "Transparency"
+                                                                    },
+                                                                    {
+                                                                        "name": "iCalUID",
+                                                                        "type": "text",
+                                                                        "label": "I Cal UID"
+                                                                    },
+                                                                    {
+                                                                        "name": "sequence",
+                                                                        "type": "number",
+                                                                        "label": "Sequence"
+                                                                    },
+                                                                    {
+                                                                        "name": "attendees",
+                                                                        "spec": [
+                                                                            {
+                                                                                "name": "email",
+                                                                                "type": "email",
+                                                                                "label": "Email"
+                                                                            },
+                                                                            {
+                                                                                "name": "self",
+                                                                                "type": "boolean",
+                                                                                "label": "Self"
+                                                                            },
+                                                                            {
+                                                                                "name": "organizer",
+                                                                                "type": "boolean",
+                                                                                "label": "Organizer"
+                                                                            },
+                                                                            {
+                                                                                "name": "displayName",
+                                                                                "type": "text",
+                                                                                "label": "Display Name"
+                                                                            },
+                                                                            {
+                                                                                "name": "responseStatus",
+                                                                                "type": "text",
+                                                                                "label": "Response Status"
+                                                                            },
+                                                                            {
+                                                                                "name": "optional",
+                                                                                "type": "boolean",
+                                                                                "label": "Optional"
+                                                                            }
+                                                                        ],
+                                                                        "type": "array",
+                                                                        "label": "Attendees"
+                                                                    },
+                                                                    {
+                                                                        "name": "guestsCanInviteOthers",
+                                                                        "type": "boolean",
+                                                                        "label": "Guests Can Invite Others"
+                                                                    },
+                                                                    {
+                                                                        "name": "hangoutLink",
+                                                                        "type": "url",
+                                                                        "label": "Hangout Link"
+                                                                    },
+                                                                    {
+                                                                        "name": "conferenceData",
+                                                                        "spec": [
+                                                                            {
+                                                                                "name": "createRequest",
+                                                                                "spec": [
+                                                                                    {
+                                                                                        "name": "requestId",
+                                                                                        "type": "text",
+                                                                                        "label": "Request ID"
+                                                                                    },
+                                                                                    {
+                                                                                        "name": "conferenceSolutionKey",
+                                                                                        "spec": [
+                                                                                            {
+                                                                                                "name": "type",
+                                                                                                "type": "text",
+                                                                                                "label": "Type"
+                                                                                            }
+                                                                                        ],
+                                                                                        "type": "collection",
+                                                                                        "label": "Conference Solution Key"
+                                                                                    },
+                                                                                    {
+                                                                                        "name": "status",
+                                                                                        "spec": [
+                                                                                            {
+                                                                                                "name": "statusCode",
+                                                                                                "type": "text",
+                                                                                                "label": "Status Code"
+                                                                                            }
+                                                                                        ],
+                                                                                        "type": "collection",
+                                                                                        "label": "Status"
+                                                                                    }
+                                                                                ],
+                                                                                "type": "collection",
+                                                                                "label": "Create Request"
+                                                                            },
+                                                                            {
+                                                                                "name": "entryPoints",
+                                                                                "spec": {
+                                                                                    "spec": [
+                                                                                        {
+                                                                                            "name": "regionCode",
+                                                                                            "type": "text",
+                                                                                            "label": "Region Code"
+                                                                                        },
+                                                                                        {
+                                                                                            "name": "entryPointType",
+                                                                                            "type": "text",
+                                                                                            "label": "Entry Point Type"
+                                                                                        },
+                                                                                        {
+                                                                                            "name": "uri",
+                                                                                            "type": "text",
+                                                                                            "label": "Uri"
+                                                                                        },
+                                                                                        {
+                                                                                            "name": "label",
+                                                                                            "type": "text",
+                                                                                            "label": "Label"
+                                                                                        },
+                                                                                        {
+                                                                                            "name": "pin",
+                                                                                            "type": "text",
+                                                                                            "label": "Pin"
+                                                                                        }
+                                                                                    ],
+                                                                                    "type": "collection"
+                                                                                },
+                                                                                "type": "array",
+                                                                                "label": "Entry Points"
+                                                                            },
+                                                                            {
+                                                                                "name": "conferenceSolution",
+                                                                                "spec": [
+                                                                                    {
+                                                                                        "name": "key",
+                                                                                        "spec": [
+                                                                                            {
+                                                                                                "name": "type",
+                                                                                                "type": "text",
+                                                                                                "label": "Type"
+                                                                                            }
+                                                                                        ],
+                                                                                        "type": "collection",
+                                                                                        "label": "Key"
+                                                                                    },
+                                                                                    {
+                                                                                        "name": "name",
+                                                                                        "type": "text",
+                                                                                        "label": "Name"
+                                                                                    },
+                                                                                    {
+                                                                                        "name": "iconUri",
+                                                                                        "type": "text",
+                                                                                        "label": "Icon Uri"
+                                                                                    }
+                                                                                ],
+                                                                                "type": "collection",
+                                                                                "label": "Conference Solution"
+                                                                            },
+                                                                            {
+                                                                                "name": "conferenceId",
+                                                                                "type": "text",
+                                                                                "label": "Conference ID"
+                                                                            },
+                                                                            {
+                                                                                "name": "signature",
+                                                                                "type": "text",
+                                                                                "label": "Signature"
+                                                                            }
+                                                                        ],
+                                                                        "type": "collection",
+                                                                        "label": "Conference Data"
+                                                                    },
+                                                                    {
+                                                                        "name": "reminders",
+                                                                        "spec": [
+                                                                            {
+                                                                                "name": "useDefault",
+                                                                                "type": "boolean",
+                                                                                "label": "Use Default"
+                                                                            },
+                                                                            {
+                                                                                "name": "overrides",
+                                                                                "spec": {
+                                                                                    "spec": [
+                                                                                        {
+                                                                                            "name": "method",
+                                                                                            "type": "text",
+                                                                                            "label": "Method"
+                                                                                        },
+                                                                                        {
+                                                                                            "name": "minutes",
+                                                                                            "type": "number",
+                                                                                            "label": "Minutes"
+                                                                                        }
+                                                                                    ],
+                                                                                    "type": "collection"
+                                                                                },
+                                                                                "type": "array",
+                                                                                "label": "Overrides"
+                                                                            }
+                                                                        ],
+                                                                        "type": "collection",
+                                                                        "label": "Reminders"
+                                                                    },
+                                                                    {
+                                                                        "name": "eventType",
+                                                                        "type": "text",
+                                                                        "label": "Event Type"
+                                                                    },
+                                                                    {
+                                                                        "name": "visibility",
+                                                                        "type": "text",
+                                                                        "label": "Visibility"
+                                                                    },
+                                                                    {
+                                                                        "name": "outOfOfficeProperties",
+                                                                        "spec": [
+                                                                            {
+                                                                                "name": "autoDeclineMode",
+                                                                                "type": "text",
+                                                                                "label": "Auto Decline Mode"
+                                                                            },
+                                                                            {
+                                                                                "name": "declineMessage",
+                                                                                "type": "text",
+                                                                                "label": "Decline Message"
+                                                                            }
+                                                                        ],
+                                                                        "type": "collection",
+                                                                        "label": "Out of Office Properties"
+                                                                    },
+                                                                    {
+                                                                        "name": "guestsCanSeeOtherGuests",
+                                                                        "type": "boolean",
+                                                                        "label": "Guests Can See Other Guests"
+                                                                    },
+                                                                    {
+                                                                        "name": "attachments",
+                                                                        "spec": {
+                                                                            "spec": [
+                                                                                {
+                                                                                    "name": "fileUrl",
+                                                                                    "type": "url",
+                                                                                    "label": "File URL"
+                                                                                },
+                                                                                {
+                                                                                    "name": "title",
+                                                                                    "type": "text",
+                                                                                    "label": "Title"
+                                                                                },
+                                                                                {
+                                                                                    "name": "mimeType",
+                                                                                    "type": "text",
+                                                                                    "label": "Mime Type"
+                                                                                },
+                                                                                {
+                                                                                    "name": "iconLink",
+                                                                                    "type": "url",
+                                                                                    "label": "Icon Link"
+                                                                                },
+                                                                                {
+                                                                                    "name": "fileId",
+                                                                                    "type": "text",
+                                                                                    "label": "File ID"
+                                                                                }
+                                                                            ],
+                                                                            "type": "collection"
+                                                                        },
+                                                                        "type": "array",
+                                                                        "label": "Attachments"
+                                                                    },
+                                                                    {
+                                                                        "name": "workingLocationProperties",
+                                                                        "spec": [
+                                                                            {
+                                                                                "name": "type",
+                                                                                "type": "text",
+                                                                                "label": "Type"
+                                                                            },
+                                                                            {
+                                                                                "name": "officeLocation",
+                                                                                "type": "collection",
+                                                                                "label": "Office Location"
+                                                                            },
+                                                                            {
+                                                                                "name": "homeOffice",
+                                                                                "type": "collection",
+                                                                                "label": "Home Office"
+                                                                            }
+                                                                        ],
+                                                                        "type": "collection",
+                                                                        "label": "Working Location Properties"
+                                                                    },
+                                                                    {
+                                                                        "name": "guestsCanModify",
+                                                                        "type": "boolean",
+                                                                        "label": "Guests Can Modify"
+                                                                    }
+                                                                ],
+                                                                "advanced": true
+                                                            },
+                                                            "filter": {
+                                                                "name": "Free + book it",
+                                                                "conditions": [
+                                                                    [
+                                                                        {
+                                                                            "a": "{{length(6.calendars.primary.busy)}}",
+                                                                            "o": "number:equal",
+                                                                            "b": "0"
+                                                                        },
+                                                                        {
+                                                                            "a": "{{3.toolName}}",
+                                                                            "o": "text:equal",
+                                                                            "b": "book_assessment"
+                                                                        }
+                                                                    ]
+                                                                ]
+                                                            }
+                                                        },
+                                                        {
+                                                            "id": 11,
+                                                            "module": "google-sheets:addRow",
+                                                            "version": 2,
+                                                            "parameters": {},
+                                                            "mapper": {
+                                                                "from": "drive",
+                                                                "mode": "select",
+                                                                "values": {
+                                                                    "0": "{{formatDate(now; \"YYYY-MM-DD h:mm A\"; \"America/New_York\")}}",
+                                                                    "1": "Booking",
+                                                                    "2": "{{3.name}}",
+                                                                    "3": "{{3.business}}",
+                                                                    "4": "{{3.phone}}",
+                                                                    "5": "{{3.email}}",
+                                                                    "6": "{{3.friendly}}",
+                                                                    "7": "{{3.reason}}"
+                                                                },
+                                                                "sheetId": "Calls",
+                                                                "spreadsheetId": "/PASTE_YOUR_SHEET_ID",
+                                                                "includesHeaders": true,
+                                                                "insertDataOption": "INSERT_ROWS",
+                                                                "valueInputOption": "USER_ENTERED",
+                                                                "insertUnformatted": false
+                                                            },
+                                                            "metadata": {
+                                                                "designer": {
+                                                                    "x": 2100,
+                                                                    "y": 400,
+                                                                    "name": "Log the booking"
+                                                                },
+                                                                "restore": {
+                                                                    "expect": {
+                                                                        "from": {
+                                                                            "label": "My Drive"
+                                                                        },
+                                                                        "mode": {
+                                                                            "label": "Search by path"
+                                                                        },
+                                                                        "sheetId": {
+                                                                            "label": "Calls"
+                                                                        },
+                                                                        "spreadsheetId": {
+                                                                            "path": [
+                                                                                "Minutes Regained - Calls"
+                                                                            ]
+                                                                        },
+                                                                        "includesHeaders": {
+                                                                            "label": "Yes",
+                                                                            "nested": [
+                                                                                {
+                                                                                    "name": "values",
+                                                                                    "spec": [
+                                                                                        {
+                                                                                            "name": "0",
+                                                                                            "type": "text",
+                                                                                            "label": "Date (A)"
+                                                                                        },
+                                                                                        {
+                                                                                            "name": "1",
+                                                                                            "type": "text",
+                                                                                            "label": "Type (B)"
+                                                                                        },
+                                                                                        {
+                                                                                            "name": "2",
+                                                                                            "type": "text",
+                                                                                            "label": "Name (C)"
+                                                                                        },
+                                                                                        {
+                                                                                            "name": "3",
+                                                                                            "type": "text",
+                                                                                            "label": "Business (D)"
+                                                                                        },
+                                                                                        {
+                                                                                            "name": "4",
+                                                                                            "type": "text",
+                                                                                            "label": "Phone (E)"
+                                                                                        },
+                                                                                        {
+                                                                                            "name": "5",
+                                                                                            "type": "text",
+                                                                                            "label": "Email (F)"
+                                                                                        },
+                                                                                        {
+                                                                                            "name": "6",
+                                                                                            "type": "text",
+                                                                                            "label": "Appointment (G)"
+                                                                                        },
+                                                                                        {
+                                                                                            "name": "7",
+                                                                                            "type": "text",
+                                                                                            "label": "Notes / summary (H)"
+                                                                                        },
+                                                                                        {
+                                                                                            "name": "8",
+                                                                                            "type": "text",
+                                                                                            "label": "Ended reason (I)"
+                                                                                        },
+                                                                                        {
+                                                                                            "name": "9",
+                                                                                            "type": "text",
+                                                                                            "label": "Duration / cost (J)"
+                                                                                        }
+                                                                                    ],
+                                                                                    "type": "collection",
+                                                                                    "label": "Values"
+                                                                                }
+                                                                            ]
+                                                                        },
+                                                                        "insertDataOption": {
+                                                                            "mode": "chose",
+                                                                            "label": "Insert rows"
+                                                                        },
+                                                                        "valueInputOption": {
+                                                                            "mode": "chose",
+                                                                            "label": "User entered"
+                                                                        },
+                                                                        "insertUnformatted": {
+                                                                            "mode": "chose"
+                                                                        }
+                                                                    }
+                                                                },
+                                                                "parameters": [
+                                                                    {
+                                                                        "name": "__IMTCONN__",
+                                                                        "type": "account:google",
+                                                                        "label": "Connection",
+                                                                        "required": true
+                                                                    }
+                                                                ],
+                                                                "expect": [
+                                                                    {
+                                                                        "name": "mode",
+                                                                        "type": "select",
+                                                                        "label": "Search Method",
+                                                                        "required": true,
+                                                                        "validate": {
+                                                                            "enum": [
+                                                                                "select",
+                                                                                "fromAll",
+                                                                                "map"
+                                                                            ]
+                                                                        }
+                                                                    },
+                                                                    {
+                                                                        "name": "insertUnformatted",
+                                                                        "type": "boolean",
+                                                                        "label": "Unformatted",
+                                                                        "required": true
+                                                                    },
+                                                                    {
+                                                                        "name": "valueInputOption",
+                                                                        "type": "select",
+                                                                        "label": "Value input option",
+                                                                        "validate": {
+                                                                            "enum": [
+                                                                                "USER_ENTERED",
+                                                                                "RAW"
+                                                                            ]
+                                                                        }
+                                                                    },
+                                                                    {
+                                                                        "name": "insertDataOption",
+                                                                        "type": "select",
+                                                                        "label": "Insert data option",
+                                                                        "validate": {
+                                                                            "enum": [
+                                                                                "INSERT_ROWS",
+                                                                                "OVERWRITE"
+                                                                            ]
+                                                                        }
+                                                                    },
+                                                                    {
+                                                                        "name": "from",
+                                                                        "type": "select",
+                                                                        "label": "Drive",
+                                                                        "required": true,
+                                                                        "validate": {
+                                                                            "enum": [
+                                                                                "drive",
+                                                                                "share",
+                                                                                "team"
+                                                                            ]
+                                                                        }
+                                                                    },
+                                                                    {
+                                                                        "name": "spreadsheetId",
+                                                                        "type": "file",
+                                                                        "label": "Spreadsheet ID",
+                                                                        "required": true
+                                                                    },
+                                                                    {
+                                                                        "name": "sheetId",
+                                                                        "type": "select",
+                                                                        "label": "Sheet Name",
+                                                                        "required": true
+                                                                    },
+                                                                    {
+                                                                        "name": "includesHeaders",
+                                                                        "type": "select",
+                                                                        "label": "Table contains headers",
+                                                                        "required": true,
+                                                                        "validate": {
+                                                                            "enum": [
+                                                                                true,
+                                                                                false
+                                                                            ]
+                                                                        }
+                                                                    },
+                                                                    {
+                                                                        "name": "values",
+                                                                        "spec": [
+                                                                            {
+                                                                                "name": "0",
+                                                                                "type": "text",
+                                                                                "label": "Date (A)"
+                                                                            },
+                                                                            {
+                                                                                "name": "1",
+                                                                                "type": "text",
+                                                                                "label": "Type (B)"
+                                                                            },
+                                                                            {
+                                                                                "name": "2",
+                                                                                "type": "text",
+                                                                                "label": "Name (C)"
+                                                                            },
+                                                                            {
+                                                                                "name": "3",
+                                                                                "type": "text",
+                                                                                "label": "Business (D)"
+                                                                            },
+                                                                            {
+                                                                                "name": "4",
+                                                                                "type": "text",
+                                                                                "label": "Phone (E)"
+                                                                            },
+                                                                            {
+                                                                                "name": "5",
+                                                                                "type": "text",
+                                                                                "label": "Email (F)"
+                                                                            },
+                                                                            {
+                                                                                "name": "6",
+                                                                                "type": "text",
+                                                                                "label": "Appointment (G)"
+                                                                            },
+                                                                            {
+                                                                                "name": "7",
+                                                                                "type": "text",
+                                                                                "label": "Notes / summary (H)"
+                                                                            },
+                                                                            {
+                                                                                "name": "8",
+                                                                                "type": "text",
+                                                                                "label": "Ended reason (I)"
+                                                                            },
+                                                                            {
+                                                                                "name": "9",
+                                                                                "type": "text",
+                                                                                "label": "Duration / cost (J)"
+                                                                            }
+                                                                        ],
+                                                                        "type": "collection",
+                                                                        "label": "Values"
+                                                                    }
+                                                                ],
+                                                                "interface": [
+                                                                    {
+                                                                        "name": "spreadsheetId",
+                                                                        "type": "text",
+                                                                        "label": "Spreadsheet ID"
+                                                                    },
+                                                                    {
+                                                                        "name": "tableRange",
+                                                                        "type": "text",
+                                                                        "label": "Table Range"
+                                                                    },
+                                                                    {
+                                                                        "name": "updates",
+                                                                        "spec": [
+                                                                            {
+                                                                                "name": "spreadsheetId",
+                                                                                "type": "text",
+                                                                                "label": "Spreadsheet ID"
+                                                                            },
+                                                                            {
+                                                                                "name": "updatedRange",
+                                                                                "type": "text",
+                                                                                "label": "Updated range"
+                                                                            },
+                                                                            {
+                                                                                "name": "updatedRows",
+                                                                                "type": "text",
+                                                                                "label": "Updated rows"
+                                                                            },
+                                                                            {
+                                                                                "name": "updatedColumns",
+                                                                                "type": "text",
+                                                                                "label": "Updated columns"
+                                                                            },
+                                                                            {
+                                                                                "name": "updatedCells",
+                                                                                "type": "text",
+                                                                                "label": "Updated cells"
+                                                                            }
+                                                                        ],
+                                                                        "type": "collection",
+                                                                        "label": "Updates"
+                                                                    },
+                                                                    {
+                                                                        "name": "sheetName",
+                                                                        "type": "text",
+                                                                        "label": "Sheet"
+                                                                    },
+                                                                    {
+                                                                        "name": "rowNumber",
+                                                                        "type": "number",
+                                                                        "label": "Row Number"
+                                                                    }
+                                                                ],
+                                                                "advanced": true
+                                                            }
+                                                        },
+                                                        {
+                                                            "id": 12,
+                                                            "module": "gateway:WebhookRespond",
+                                                            "version": 1,
+                                                            "parameters": {},
+                                                            "mapper": {
+                                                                "body": "{\n  \"results\": [\n    {\n      \"toolCallId\": \"{{3.toolCallId}}\",\n      \"result\": \"Booked: free 30-minute assessment on {{3.friendly}} Eastern. Jerome will call {{3.phone}} at that time.\"\n    }\n  ]\n}",
+                                                                "status": "200",
+                                                                "headers": []
+                                                            },
+                                                            "metadata": {
+                                                                "designer": {
+                                                                    "x": 2400,
+                                                                    "y": 400,
+                                                                    "name": "Reply: booked"
+                                                                },
+                                                                "restore": {
+                                                                    "expect": {
+                                                                        "headers": {
+                                                                            "mode": "chose"
+                                                                        }
+                                                                    }
+                                                                },
+                                                                "expect": [
+                                                                    {
+                                                                        "name": "status",
+                                                                        "type": "uinteger",
+                                                                        "label": "Status",
+                                                                        "required": true,
+                                                                        "validate": {
+                                                                            "min": 100
+                                                                        }
+                                                                    },
+                                                                    {
+                                                                        "name": "body",
+                                                                        "type": "any",
+                                                                        "label": "Body"
+                                                                    },
+                                                                    {
+                                                                        "name": "headers",
+                                                                        "spec": [
+                                                                            {
+                                                                                "name": "key",
+                                                                                "type": "text",
+                                                                                "label": "Key",
+                                                                                "required": true,
+                                                                                "validate": {
+                                                                                    "max": 256
+                                                                                }
+                                                                            },
+                                                                            {
+                                                                                "name": "value",
+                                                                                "type": "text",
+                                                                                "label": "Value",
+                                                                                "required": true,
+                                                                                "validate": {
+                                                                                    "max": 4096
+                                                                                }
+                                                                            }
+                                                                        ],
+                                                                        "type": "array",
+                                                                        "label": "Custom headers",
+                                                                        "validate": {
+                                                                            "maxItems": 16
+                                                                        }
+                                                                    }
+                                                                ]
+                                                            }
+                                                        }
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "flow": [
+                        {
+                            "id": 13,
+                            "module": "google-sheets:addRow",
+                            "version": 2,
+                            "parameters": {},
+                            "mapper": {
+                                "from": "drive",
+                                "mode": "select",
+                                "values": {
+                                    "0": "{{formatDate(now; \"YYYY-MM-DD h:mm A\"; \"America/New_York\")}}",
+                                    "1": "Call",
+                                    "4": "{{1.message.customer.number}}",
+                                    "7": "{{1.message.analysis.summary}}",
+                                    "8": "{{1.message.endedReason}}",
+                                    "9": "{{round(1.message.durationSeconds)}}s / ${{1.message.cost}}"
+                                },
+                                "sheetId": "Calls",
+                                "spreadsheetId": "/PASTE_YOUR_SHEET_ID",
+                                "includesHeaders": true,
+                                "insertDataOption": "INSERT_ROWS",
+                                "valueInputOption": "USER_ENTERED",
+                                "insertUnformatted": false
+                            },
+                            "metadata": {
+                                "designer": {
+                                    "x": 600,
+                                    "y": 450,
+                                    "name": "Log every call"
+                                },
+                                "restore": {
+                                    "expect": {
+                                        "from": {
+                                            "label": "My Drive"
+                                        },
+                                        "mode": {
+                                            "label": "Search by path"
+                                        },
+                                        "sheetId": {
+                                            "label": "Calls"
+                                        },
+                                        "spreadsheetId": {
+                                            "path": [
+                                                "Minutes Regained - Calls"
+                                            ]
+                                        },
+                                        "includesHeaders": {
+                                            "label": "Yes",
+                                            "nested": [
+                                                {
+                                                    "name": "values",
+                                                    "spec": [
+                                                        {
+                                                            "name": "0",
+                                                            "type": "text",
+                                                            "label": "Date (A)"
+                                                        },
+                                                        {
+                                                            "name": "1",
+                                                            "type": "text",
+                                                            "label": "Type (B)"
+                                                        },
+                                                        {
+                                                            "name": "2",
+                                                            "type": "text",
+                                                            "label": "Name (C)"
+                                                        },
+                                                        {
+                                                            "name": "3",
+                                                            "type": "text",
+                                                            "label": "Business (D)"
+                                                        },
+                                                        {
+                                                            "name": "4",
+                                                            "type": "text",
+                                                            "label": "Phone (E)"
+                                                        },
+                                                        {
+                                                            "name": "5",
+                                                            "type": "text",
+                                                            "label": "Email (F)"
+                                                        },
+                                                        {
+                                                            "name": "6",
+                                                            "type": "text",
+                                                            "label": "Appointment (G)"
+                                                        },
+                                                        {
+                                                            "name": "7",
+                                                            "type": "text",
+                                                            "label": "Notes / summary (H)"
+                                                        },
+                                                        {
+                                                            "name": "8",
+                                                            "type": "text",
+                                                            "label": "Ended reason (I)"
+                                                        },
+                                                        {
+                                                            "name": "9",
+                                                            "type": "text",
+                                                            "label": "Duration / cost (J)"
+                                                        }
+                                                    ],
+                                                    "type": "collection",
+                                                    "label": "Values"
+                                                }
+                                            ]
+                                        },
+                                        "insertDataOption": {
+                                            "mode": "chose",
+                                            "label": "Insert rows"
+                                        },
+                                        "valueInputOption": {
+                                            "mode": "chose",
+                                            "label": "User entered"
+                                        },
+                                        "insertUnformatted": {
+                                            "mode": "chose"
+                                        }
+                                    }
+                                },
+                                "parameters": [
+                                    {
+                                        "name": "__IMTCONN__",
+                                        "type": "account:google",
+                                        "label": "Connection",
+                                        "required": true
+                                    }
+                                ],
+                                "expect": [
+                                    {
+                                        "name": "mode",
+                                        "type": "select",
+                                        "label": "Search Method",
+                                        "required": true,
+                                        "validate": {
+                                            "enum": [
+                                                "select",
+                                                "fromAll",
+                                                "map"
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "name": "insertUnformatted",
+                                        "type": "boolean",
+                                        "label": "Unformatted",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "valueInputOption",
+                                        "type": "select",
+                                        "label": "Value input option",
+                                        "validate": {
+                                            "enum": [
+                                                "USER_ENTERED",
+                                                "RAW"
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "name": "insertDataOption",
+                                        "type": "select",
+                                        "label": "Insert data option",
+                                        "validate": {
+                                            "enum": [
+                                                "INSERT_ROWS",
+                                                "OVERWRITE"
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "name": "from",
+                                        "type": "select",
+                                        "label": "Drive",
+                                        "required": true,
+                                        "validate": {
+                                            "enum": [
+                                                "drive",
+                                                "share",
+                                                "team"
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "name": "spreadsheetId",
+                                        "type": "file",
+                                        "label": "Spreadsheet ID",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "sheetId",
+                                        "type": "select",
+                                        "label": "Sheet Name",
+                                        "required": true
+                                    },
+                                    {
+                                        "name": "includesHeaders",
+                                        "type": "select",
+                                        "label": "Table contains headers",
+                                        "required": true,
+                                        "validate": {
+                                            "enum": [
+                                                true,
+                                                false
+                                            ]
+                                        }
+                                    },
+                                    {
+                                        "name": "values",
+                                        "spec": [
+                                            {
+                                                "name": "0",
+                                                "type": "text",
+                                                "label": "Date (A)"
+                                            },
+                                            {
+                                                "name": "1",
+                                                "type": "text",
+                                                "label": "Type (B)"
+                                            },
+                                            {
+                                                "name": "2",
+                                                "type": "text",
+                                                "label": "Name (C)"
+                                            },
+                                            {
+                                                "name": "3",
+                                                "type": "text",
+                                                "label": "Business (D)"
+                                            },
+                                            {
+                                                "name": "4",
+                                                "type": "text",
+                                                "label": "Phone (E)"
+                                            },
+                                            {
+                                                "name": "5",
+                                                "type": "text",
+                                                "label": "Email (F)"
+                                            },
+                                            {
+                                                "name": "6",
+                                                "type": "text",
+                                                "label": "Appointment (G)"
+                                            },
+                                            {
+                                                "name": "7",
+                                                "type": "text",
+                                                "label": "Notes / summary (H)"
+                                            },
+                                            {
+                                                "name": "8",
+                                                "type": "text",
+                                                "label": "Ended reason (I)"
+                                            },
+                                            {
+                                                "name": "9",
+                                                "type": "text",
+                                                "label": "Duration / cost (J)"
+                                            }
+                                        ],
+                                        "type": "collection",
+                                        "label": "Values"
+                                    }
+                                ],
+                                "interface": [
+                                    {
+                                        "name": "spreadsheetId",
+                                        "type": "text",
+                                        "label": "Spreadsheet ID"
+                                    },
+                                    {
+                                        "name": "tableRange",
+                                        "type": "text",
+                                        "label": "Table Range"
+                                    },
+                                    {
+                                        "name": "updates",
+                                        "spec": [
+                                            {
+                                                "name": "spreadsheetId",
+                                                "type": "text",
+                                                "label": "Spreadsheet ID"
+                                            },
+                                            {
+                                                "name": "updatedRange",
+                                                "type": "text",
+                                                "label": "Updated range"
+                                            },
+                                            {
+                                                "name": "updatedRows",
+                                                "type": "text",
+                                                "label": "Updated rows"
+                                            },
+                                            {
+                                                "name": "updatedColumns",
+                                                "type": "text",
+                                                "label": "Updated columns"
+                                            },
+                                            {
+                                                "name": "updatedCells",
+                                                "type": "text",
+                                                "label": "Updated cells"
+                                            }
+                                        ],
+                                        "type": "collection",
+                                        "label": "Updates"
+                                    },
+                                    {
+                                        "name": "sheetName",
+                                        "type": "text",
+                                        "label": "Sheet"
+                                    },
+                                    {
+                                        "name": "rowNumber",
+                                        "type": "number",
+                                        "label": "Row Number"
+                                    }
+                                ],
+                                "advanced": true
+                            },
+                            "filter": {
+                                "name": "End of call",
+                                "conditions": [
+                                    [
+                                        {
+                                            "a": "{{1.message.type}}",
+                                            "o": "text:equal",
+                                            "b": "end-of-call-report"
+                                        }
+                                    ]
+                                ]
+                            }
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "metadata": {
+        "instant": true,
+        "version": 1,
+        "scenario": {
+            "roundtrips": 1,
+            "maxErrors": 3,
+            "autoCommit": true,
+            "autoCommitTriggerLast": true,
+            "sequential": false,
+            "slots": null,
+            "confidential": false,
+            "dataloss": false,
+            "dlq": false,
+            "freshVariables": false
+        },
+        "designer": {
+            "orphans": []
+        },
+        "notes": []
+    }
+}
