@@ -314,6 +314,11 @@ may have answered or handed off without listing a gap. If so, the drafter's prom
 question about a place, service or policy not covered word for word. Also confirm the request was received
 (owner email "New request from your social link"). Test 3 (emergency) and the 8 PM brief still to check.
 Retire the test client afterwards with `POST /api/admin/client-agent-status {id, status: "retired"}`.
+## Agent checklist
+
+`docs/agent-checklist.md` tracks every back-office capability a client needs, our agent name for it, and its
+status (built, partly, not yet, not offered), with a suggested build order. Update it whenever something is built.
+
 ## Next steps
 0. **The Home headline line about phones** (item 1 above). It's the review's one critical finding and a ten-minute fix.
 1. **Settle the founding client offer** (Jerome's numbers). Then update every place that names it: the Business Support card on `/pricing`,

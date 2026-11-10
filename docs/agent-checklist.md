@@ -1,0 +1,52 @@
+# Agent checklist: what each client's back office needs, and where we stand
+
+Started November 10, 2026 from a general back-office diagram Jerome liked. It is used here as a checklist of
+capabilities, in our own names; it is not our design and is not copied onto the site. Update the status column
+whenever something is built or decided. Anything that would message a customer still has to pass the never-list
+in CLAUDE.md.
+
+Status: **Built** (works today), **Partly**, **Not yet**, **Not offered** (deliberately out of scope).
+
+## The shape
+
+| Layer | Ours | Status |
+| --- | --- | --- |
+| Owner reviews and approves | Every reply is a draft the owner sends; permission levels Handle It / Tell Me / Ask Me / Never | Partly: drafts-only works; the four levels are described in the agreement and FAQ but not yet enforced per kind of work in code |
+| Coordinator | **The GM** (`site/src/gm.js`) | Partly: brief twice a day, client rules and approved answers, answers other agents' questions, learns from Jerome, hours and builds. Not yet: routing work between agents, calendar, task board, a daily summary the owner OKs |
+| Internal build team | Jerome (and CICWO, never shown to a client) | Built: setup, connections, repairs |
+
+## Client-facing agents
+
+| Capability | Our agent / automation | Status | Next step |
+| --- | --- | --- | --- |
+| Inbox: sort, draft, flag | **Intake** | Built for Gmail (polls every 10 minutes, drafts, labels MR/Draft-Ready, MR/Needs-You, MR/Urgent). Outlook code exists, Microsoft keys not set | Set the Microsoft keys when a client needs Outlook |
+| Documents: file in the right place | Intake | Not yet (no Drive access) | Needs Google Drive permission, so Google verification first |
+| New leads answered fast | **Lead Catcher** / Intake | Partly: request form, drafted reply, fixed acknowledgement, emergency routing | Website chat widget per client |
+| Quote follow-up | **Quote Chaser** / Quotes | Not yet | One reusable Zapier recipe, tested on QA Test Co, demo-able on calls |
+| Scheduling, reminders, no-shows | **Schedule Keeper** / Schedule | Not yet | Calendar permission (Google verification), or the client's own scheduling app via Zapier |
+| Invoices sent and chased (never takes money) | **Invoice & Chase** / Billing | Not yet | Built in the client's own invoicing tool at onboarding |
+| Reviews after a job | **Review Builder** / Aftercare | Not yet | Built per client at onboarding |
+| Customer accounts in a CRM | (none yet) | Not yet | Connect through the client's CRM or field-service app; confirm on the assessment call |
+| Watching that everything runs | **The Watch** | Partly: health and quiet-agent checks in the brief | The GM's watch on the 10-minute cron, alerts at once (handoff "24/7") |
+| Fixing what breaks | **The Fixer** | Jerome, by hand | Stays human for now |
+| Daily summary the owner OKs | The GM / The Daily Brief | Partly: the brief is a report, not an approval list | Turn the brief into a short yes/no list |
+| Marketing posts and graphics | none | Not offered | Out of scope; revisit only as a deliberate decision |
+| Campaigns and promotions | none | Not offered | Conflicts with the never-list: messages people who didn't contact the business first |
+
+## Connected tools
+
+| Tool | Status |
+| --- | --- |
+| Email | Built (Gmail). Outlook ready but not switched on |
+| Calendar | Not yet (needs Google permission and verification) |
+| Drive / Docs | Not yet (same) |
+| CRM / field-service app | Not yet (Zapier per client; Jobber, ServiceTitan, Housecall Pro, Workiz, FieldPulse verified in Zapier) |
+| Task board | Not yet |
+| Design tools | Not offered |
+
+## Suggested order
+
+1. Calendar permission (unlocks Schedule Keeper and the GM's calendar duties).
+2. A daily summary the owner OKs.
+3. Quote Chaser as a reusable recipe, tested on QA Test Co.
+4. The GM's watch with instant alerts.
