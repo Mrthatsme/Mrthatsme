@@ -314,6 +314,21 @@ may have answered or handed off without listing a gap. If so, the drafter's prom
 question about a place, service or policy not covered word for word. Also confirm the request was received
 (owner email "New request from your social link"). Test 3 (emergency) and the 8 PM brief still to check.
 Retire the test client afterwards with `POST /api/admin/client-agent-status {id, status: "retired"}`.
+## Calendar access and the client Daily Brief (built November 10)
+
+- **Read-only calendar** on the same one-link connection: Google `calendar.events.readonly`, Microsoft `Calendars.Read`.
+  The granted scopes are stored per connection (Google lets owners untick calendar). Microsoft refresh asks only for
+  what was granted. Existing connections have no calendar until the owner reconnects with a new connect link.
+- **Jerome must add `https://www.googleapis.com/auth/calendar.events.readonly` to the OAuth consent screen** in Google
+  Cloud (Data access), and include it in Google's verification. Until then owners see the unverified-app warning.
+- **The client Daily Brief** (`site/src/clientbrief.js`): every morning with the 8 AM Eastern run, once per client per
+  day, to the owner only: today's calendar in their time zone, overlapping appointments, what's waiting on them, what
+  came in, hours used. Skipped when there's nothing to say. `POST /api/admin/client-brief {agentId}` sends one now.
+- **The GM** has a `schedule_today` skill (internal; a customer is never given a time from it).
+- **Privacy policy** now says what calendar data is read and why. Jasmine is reviewing the privacy policy: she needs
+  this change.
+- Tested by `node site/tools/test_calendar.mjs`.
+
 ## Agent checklist
 
 `docs/agent-checklist.md` tracks every back-office capability a client needs, our agent name for it, and its

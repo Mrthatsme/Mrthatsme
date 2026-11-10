@@ -112,6 +112,12 @@ export const SKILLS = {
     const p = prof(agent);
     return { answer: { tone: p.tone || "friendly and plain", neverSay: p.neverSay || "", signOff: p.signOff || "", levels: p.levels || {} }, internal: true };
   },
+  // Today's calendar, read-only. Internal: a customer is never given a time from it.
+  schedule_today: async (env, agent) => {
+    const { todaysEvents } = await import("./clientbrief.js");
+    const events = await todaysEvents(env, agent).catch(() => null);
+    return { answer: events, internal: true };
+  },
   hours_status: async (env, agent) => {
     const s = await statusFor(env, agent).catch(() => null);
     return { answer: s ? { used: s.used, available: s.available, headroom: s.headroom, extraUsed: s.extraUsed } : null, internal: true };

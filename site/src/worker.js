@@ -24,6 +24,7 @@ import { renderHoursPanel, HOURS_CSS, GM_CSS } from "./adminhours.js";
 import { askGM, saveAnswer, dismissGap, dashboardGaps } from "./gm.js";
 import { renderGmPanel } from "./admingm.js";
 import { setupClient, renderSetupPanel, SETUP_CSS } from "./adminsetup.js";
+import { sendClientBriefs } from "./clientbrief.js";
 import { agreementPage, startPage, signupsOpen, SIGNUPS_CLOSED_MESSAGE } from "./agreementpage.js";
 
 const JSON_HEADERS = { "Content-Type": "application/json; charset=utf-8" };
@@ -176,6 +177,12 @@ export default {
           return json(out, out.error ? 400 : 200);
         }
         // The GM: save an answer the owner approved, or dismiss a question that needs none.
+        // Send a client's Daily Brief now (testing): {agentId, force}.
+        if (path === "/api/admin/client-brief" && request.method === "POST") {
+          const body = (await readJson(request)) || {};
+          if (!body.agentId) return json({ error: "missing_agentId" }, 400);
+          return json({ report: await sendClientBriefs(env, new Date(), { agentId: body.agentId, force: body.force !== false }) });
+        }
         if (path === "/api/admin/setup-client" && request.method === "POST") {
           const out = await setupClient(env, `${url.protocol}//${url.host}`, (await readJson(request)) || {});
           return json(out, out.error ? 400 : 200);
@@ -226,6 +233,9 @@ export default {
     const at = new Date(event.scheduledTime);
     if (!isBriefHour(at)) return;
     ctx.waitUntil(sendDailyBrief(env).catch((err) => console.error("daily brief failed", err)));
+    // Clients' Daily Briefs go out with the 8 AM Eastern run (once per client per day).
+    const easternHour = Number(new Intl.DateTimeFormat("en-US", { timeZone: "America/New_York", hour: "numeric", hourCycle: "h23" }).format(at));
+    if (easternHour < 12) ctx.waitUntil(sendClientBriefs(env, at).catch((err) => console.error("client briefs failed", err)));
     if (at.getUTCHours() >= 12) {
       ctx.waitUntil(sendRenewalNotices(env).catch((err) => console.error("renewal notices failed", err)));
       // On the 1st, bill last month's voice notes over each plan's allowance (once per client).

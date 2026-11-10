@@ -70,7 +70,7 @@ const PROVIDERS = {
     name: "Gmail / Google Workspace",
     authUrl: "https://accounts.google.com/o/oauth2/v2/auth",
     tokenUrl: "https://oauth2.googleapis.com/token",
-    scope: "openid email https://www.googleapis.com/auth/gmail.modify",
+    scope: "openid email https://www.googleapis.com/auth/gmail.modify https://www.googleapis.com/auth/calendar.events.readonly",
     idKey: "GOOGLE_CLIENT_ID",
     secretKey: "GOOGLE_CLIENT_SECRET",
     extraAuth: { access_type: "offline", prompt: "consent", include_granted_scopes: "true" },
@@ -79,7 +79,7 @@ const PROVIDERS = {
     name: "Outlook / Microsoft 365",
     authUrl: "https://login.microsoftonline.com/common/oauth2/v2.0/authorize",
     tokenUrl: "https://login.microsoftonline.com/common/oauth2/v2.0/token",
-    scope: "openid email offline_access User.Read Mail.ReadWrite",
+    scope: "openid email offline_access User.Read Mail.ReadWrite Calendars.Read",
     idKey: "MICROSOFT_CLIENT_ID",
     secretKey: "MICROSOFT_CLIENT_SECRET",
     extraAuth: { prompt: "select_account" },
@@ -113,6 +113,8 @@ async function ensureTables(env) {
       connection_id TEXT NOT NULL, message_id TEXT NOT NULL, processed_at TEXT NOT NULL,
       PRIMARY KEY (connection_id, message_id))`),
   ]);
+  // Which permissions the owner actually granted (Google lets them untick calendar).
+  await env.DB.prepare(`ALTER TABLE client_connections ADD COLUMN scopes TEXT`).run().catch(() => {});
   tablesReady = true;
 }
 
@@ -270,13 +272,14 @@ export async function connectCallback(env, url, providerId) {
   const email = await accountEmail(providerId, tok);
   const id = "con_" + randomToken(6);
   await env.DB.batch([
-    env.DB.prepare(`INSERT INTO client_connections (id, agent_id, provider, email, enc_refresh_token, connected_at) VALUES (?, ?, ?, ?, ?, ?)`)
-      .bind(id, inv.agent_id, providerId, email, await seal(env, tok.refresh_token), new Date().toISOString()),
+    env.DB.prepare(`INSERT INTO client_connections (id, agent_id, provider, email, enc_refresh_token, connected_at, scopes) VALUES (?, ?, ?, ?, ?, ?, ?)`)
+      .bind(id, inv.agent_id, providerId, email, await seal(env, tok.refresh_token), new Date().toISOString(), String(tok.scope || "")),
     env.DB.prepare(`UPDATE connect_invites SET used_at = ? WHERE id = ?`).bind(new Date().toISOString(), inv.id),
   ]);
   await logClientAgentEvent(env, inv.agent_id, "connected", `${provider.name} connected: ${email}`);
   return page("Connected", `<h1>You're connected</h1>
 <p><b>${escapeHtml(email)}</b> is connected. From now on, replies to new customer email appear as drafts in your Drafts folder for you to check and send.</p>
+${hasCalendar({ provider: providerId, scopes: tok.scope }) ? `<p>Your calendar is connected too, read-only: your Daily Brief will show the day's schedule and any overlaps. We can't add, change or delete events.</p>` : ""}
 <p class="small">We never send, forward or delete anything. To disconnect, remove "Minutes Regained" from your ${providerId === "google" ? "Google Account (Security > Third-party connections)" : "Microsoft account (My Apps or Privacy > Apps and services)"}.</p>
 <p>You can close this page.</p>`);
 }
@@ -301,7 +304,9 @@ async function accessToken(env, conn) {
     body: new URLSearchParams({
       client_id: cfg(env, provider.idKey), client_secret: cfg(env, provider.secretKey),
       refresh_token: await unseal(env, conn.enc_refresh_token), grant_type: "refresh_token",
-      ...(conn.provider === "microsoft" ? { scope: provider.scope } : {}),
+      // Microsoft re-states scopes on refresh: ask only for what this owner granted,
+      // so a connection made before calendar was added doesn't get refused.
+      ...(conn.provider === "microsoft" ? { scope: conn.scopes ? `${conn.scopes} offline_access` : "openid email offline_access User.Read Mail.ReadWrite" } : {}),
     }),
   });
   const tok = await res.json();
@@ -465,4 +470,55 @@ async function pollOutlook(env, conn, token) {
     handled++;
   }
   return handled;
+}
+
+// ------------------------------------------------------------- calendar --
+// Read-only. The owner's day for the Daily Brief and the GM; nothing here can
+// create, change or delete an event, and nothing here is shown to a customer.
+
+export function hasCalendar(conn) {
+  const sc = String(conn.scopes || "");
+  return conn.provider === "google" ? /calendar\.events\.readonly|auth\/calendar/.test(sc) : /Calendars\.Read/i.test(sc);
+}
+
+// Events between two instants: [{ title, location, start, end, allDay }] with
+// start/end as ISO strings (all-day events as YYYY-MM-DD). Cancelled ones are left out.
+export async function calendarEvents(env, conn, fromIso, toIso) {
+  if (!hasCalendar(conn)) return null;
+  const token = await accessToken(env, conn);
+  if (conn.provider === "google") {
+    const q = new URLSearchParams({ timeMin: fromIso, timeMax: toIso, singleEvents: "true", orderBy: "startTime", maxResults: "50",
+      fields: "items(summary,location,start,end,status)" });
+    const res = await fetch(`https://www.googleapis.com/calendar/v3/calendars/primary/events?${q}`, { headers: { Authorization: `Bearer ${token}` } });
+    if (!res.ok) throw new Error(`calendar ${res.status}`);
+    const data = await res.json();
+    return (data.items || []).filter((e) => e.status !== "cancelled").map((e) => ({
+      title: e.summary || "(no title)", location: e.location || "",
+      allDay: !!(e.start && e.start.date), start: e.start.dateTime || e.start.date, end: e.end.dateTime || e.end.date,
+    }));
+  }
+  const q = new URLSearchParams({ startDateTime: fromIso, endDateTime: toIso, $select: "subject,location,start,end,isAllDay,isCancelled",
+    $orderby: "start/dateTime", $top: "50" });
+  const res = await fetch(`https://graph.microsoft.com/v1.0/me/calendarView?${q}`, { headers: { Authorization: `Bearer ${token}`, Prefer: 'outlook.timezone="UTC"' } });
+  if (!res.ok) throw new Error(`calendar ${res.status}`);
+  const data = await res.json();
+  const utc = (dt) => (dt && !/Z|[+-]\d\d:\d\d$/.test(dt) ? dt.replace(/\.\d+$/, "") + "Z" : dt);
+  return (data.value || []).filter((e) => !e.isCancelled).map((e) => ({
+    title: e.subject || "(no title)", location: (e.location && e.location.displayName) || "",
+    allDay: !!e.isAllDay, start: e.isAllDay ? e.start.dateTime.slice(0, 10) : utc(e.start.dateTime), end: e.isAllDay ? e.end.dateTime.slice(0, 10) : utc(e.end.dateTime),
+  }));
+}
+
+// The agent's active connection, newest first, or null.
+export async function activeConnection(env, agentId) {
+  await ensureTables(env);
+  return env.DB.prepare(`SELECT * FROM client_connections WHERE agent_id = ? AND status = 'active' ORDER BY connected_at DESC LIMIT 1`)
+    .bind(agentId).first().catch(() => null);
+}
+
+// For tests only: store a connection the way the callback would.
+export async function _storeConnectionForTest(env, { id, agentId, provider, email, refreshToken, scopes }) {
+  await ensureTables(env);
+  await env.DB.prepare(`INSERT INTO client_connections (id, agent_id, provider, email, enc_refresh_token, connected_at, scopes) VALUES (?, ?, ?, ?, ?, ?, ?)`)
+    .bind(id, agentId, provider, email, await seal(env, refreshToken), new Date().toISOString(), scopes).run();
 }

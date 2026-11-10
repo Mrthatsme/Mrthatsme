@@ -12,7 +12,7 @@ Status: **Built** (works today), **Partly**, **Not yet**, **Not offered** (delib
 | Layer | Ours | Status |
 | --- | --- | --- |
 | Owner reviews and approves | Every reply is a draft the owner sends; permission levels Handle It / Tell Me / Ask Me / Never | Partly: drafts-only works; the four levels are described in the agreement and FAQ but not yet enforced per kind of work in code |
-| Coordinator | **The GM** (`site/src/gm.js`) | Partly: brief twice a day, client rules and approved answers, answers other agents' questions, learns from Jerome, hours and builds. Not yet: routing work between agents, calendar, task board, a daily summary the owner OKs |
+| Coordinator | **The GM** (`site/src/gm.js`) | Partly: brief twice a day, client rules and approved answers, answers other agents' questions, learns from Jerome, hours and builds, today's schedule (read-only, internal). Not yet: routing work between agents, task board, a daily summary the owner OKs |
 | Internal build team | Jerome (and CICWO, never shown to a client) | Built: setup, connections, repairs |
 
 ## Client-facing agents
@@ -29,7 +29,7 @@ Status: **Built** (works today), **Partly**, **Not yet**, **Not offered** (delib
 | Customer accounts in a CRM | (none yet) | Not yet | Connect through the client's CRM or field-service app; confirm on the assessment call |
 | Watching that everything runs | **The Watch** | Partly: health and quiet-agent checks in the brief | The GM's watch on the 10-minute cron, alerts at once (handoff "24/7") |
 | Fixing what breaks | **The Fixer** | Jerome, by hand | Stays human for now |
-| Daily summary the owner OKs | The GM / The Daily Brief | Partly: the brief is a report, not an approval list | Turn the brief into a short yes/no list |
+| The Daily Brief to each client | The GM / The Daily Brief (`site/src/clientbrief.js`) | Built November 10: every morning, today's calendar, overlaps, what's waiting on them, what came in, hours used. Skipped on an empty day | Turn it into a short yes/no list the owner OKs |
 | Marketing posts and graphics | none | Not offered | Out of scope; revisit only as a deliberate decision |
 | Campaigns and promotions | none | Not offered | Conflicts with the never-list: messages people who didn't contact the business first |
 
@@ -38,7 +38,7 @@ Status: **Built** (works today), **Partly**, **Not yet**, **Not offered** (delib
 | Tool | Status |
 | --- | --- |
 | Email | Built (Gmail). Outlook ready but not switched on |
-| Calendar | Not yet (needs Google permission and verification) |
+| Calendar | Built in code, read-only (Google `calendar.events.readonly`, Microsoft `Calendars.Read`). Jerome must add the scope to the Google consent screen; it becomes part of Google's verification. Owners can untick it and still connect email |
 | Drive / Docs | Not yet (same) |
 | CRM / field-service app | Not yet (Zapier per client; Jobber, ServiceTitan, Housecall Pro, Workiz, FieldPulse verified in Zapier) |
 | Task board | Not yet |
@@ -46,7 +46,7 @@ Status: **Built** (works today), **Partly**, **Not yet**, **Not offered** (delib
 
 ## Suggested order
 
-1. Calendar permission (unlocks Schedule Keeper and the GM's calendar duties).
+1. ~~Calendar permission~~ read-only built November 10; next is writing events behind the owner's OK (Schedule Keeper).
 2. A daily summary the owner OKs.
 3. Quote Chaser as a reusable recipe, tested on QA Test Co.
 4. The GM's watch with instant alerts.
