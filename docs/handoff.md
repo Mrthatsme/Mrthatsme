@@ -224,6 +224,9 @@ Essential $650 (4 hr), Business Support $1,300 (8 hr), extra hours $95, Retainer
 offer is now a two-year rate lock at $1,300 plus a free process map, no discount. Agreement version 2026-11-10.1
 (the attorney has 2026-11-06.2; send the new one). Pricing gained "What the price pays for", comparing against a
 part-time and full-time admin (Nate's displacement frame). Margin arithmetic is in the Shared Drive.
+**Shared Drive updated November 10:** Decision Log 14.17 and 14.18, the business plan, the attorney brief and the
+onboarding package (all retitled "Nov 10", agreement 2026-11-10.1), and the open-decisions document (items 1 to 3
+marked settled). The business plan's revenue projections still use the old prices and need re-running.
 **Stripe (done in test mode):** the four new Prices exist with lookup keys; checkout finds them by key and refuses
 any amount that doesn't match the signed agreement (site/SETUP-PAYMENTS.md). Still to do by Jerome: archive the ten
 old test-mode Prices in the Stripe dashboard (the session's safety check blocked doing it from here), and confirm
