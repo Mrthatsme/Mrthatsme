@@ -227,6 +227,9 @@ part-time and full-time admin (Nate's displacement frame). Margin arithmetic is 
 **Shared Drive updated November 10:** Decision Log 14.17 and 14.18, the business plan, the attorney brief and the
 onboarding package (all retitled "Nov 10", agreement 2026-11-10.1), and the open-decisions document (items 1 to 3
 marked settled). The business plan's projections were re-run the same day at the new prices (Decision Log 14.19).
+**Restructure trigger (Decision Log 14.20):** hold the decision when logged hours average over 15 a week for a month,
+or at the eighth client. Possible next build: have the GM's brief warn when total logged hours approach that line
+(the hours ledger already has the data).
 **Stripe (done in test mode):** the four new Prices exist with lookup keys; checkout finds them by key and refuses
 any amount that doesn't match the signed agreement (site/SETUP-PAYMENTS.md). Still to do by Jerome: archive the ten
 old test-mode Prices in the Stripe dashboard (the session's safety check blocked doing it from here), and confirm
