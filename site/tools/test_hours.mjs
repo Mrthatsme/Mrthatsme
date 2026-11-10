@@ -88,8 +88,8 @@ const lines = await hoursLines(env, { id: "ca_1", label: "Harbor Ridge", profile
 check("brief shows the open build", lines.some((l) => /Warranty reminders/.test(l)), lines);
 
 r = await finishBuild(env, { buildId });
-check("GM totals the build", r.ok && r.totalMinutes === 600 && r.extraMinutes === 120 && r.extraCents === 15000, r);
-check("finish note tells the client the split", toClient().some((m) => /is finished/.test(m.subject) && /8 hr came out of your plan hours/.test(m.text) && /\$150\.00/.test(m.text)), toClient().map((m) => m.text));
+check("GM totals the build", r.ok && r.totalMinutes === 600 && r.extraMinutes === 120 && r.extraCents === 19000, r);
+check("finish note tells the client the split", toClient().some((m) => /is finished/.test(m.subject) && /8 hr came out of your plan hours/.test(m.text) && /\$190\.00/.test(m.text)), toClient().map((m) => m.text));
 r = await updateEstimate(env, { buildId, estimateMinutes: 700 }, nov(10));
 check("finished build can't be changed", r.error === "build_is_done", r);
 
@@ -97,7 +97,7 @@ r = await monthlyStatement(env, { agentId: "ca_1", month: "2026-11" });
 check("statement lists every entry with its split", r.entries.length === 4 && r.totals.used === 600 && r.totals.extraUsed === 120 && r.totals.rollsOver === 0, r.totals);
 
 const report = await extraHoursReport(env, new Date("2026-12-01T13:00:00Z"));
-check("1st of the month lists extra to bill", report.length === 1 && /\$150\.00/.test(report[0]), report);
+check("1st of the month lists extra to bill", report.length === 1 && /\$190\.00/.test(report[0]), report);
 const again = sent.length; await extraHoursReport(env, new Date("2026-12-01T13:00:00Z"));
 check("report email sent once", sent.length === again, sent.length - again);
 

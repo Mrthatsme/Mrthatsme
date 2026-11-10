@@ -347,7 +347,7 @@ export async function finishBuild(env, { buildId }) {
   await env.DB.prepare(`UPDATE builds SET status = 'done', done_at = ?, total_minutes = ?, extra_minutes = ? WHERE id = ?`)
     .bind(new Date().toISOString(), total, extra, buildId).run();
   const plan = await hoursPlan(env, agent);
-  const hourly = plan ? plan.hourly : 75;
+  const hourly = plan ? plan.hourly : 95;
   const kinds = Object.entries(byKind).map(([k, m]) => `${k} ${fmtMinutes(m)}`).join(", ");
   const extraLine = extra
     ? `${fmtMinutes(total - extra)} came out of your plan hours. The other ${fmtMinutes(extra)} was extra time you approved in writing, at $${hourly} an hour: $${(extraCents(extra, hourly) / 100).toFixed(2)}, which we'll bill separately.`

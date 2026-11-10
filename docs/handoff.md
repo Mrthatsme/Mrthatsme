@@ -218,6 +218,14 @@ phones" on Services; "hours are a person's time" on Pricing; the "what happens i
     vendor permissions, revoking access. For law firms, check confidentiality rules before connecting anything.
 12. **The agreement** (N-08, P0): finish it with the attorney. That unblocks everything on `/start`.
 
+## Prices changed November 10 (Jerome)
+
+Essential $650 (4 hr), Business Support $1,300 (8 hr), extra hours $95, Retainers $7,020 and $14,040. Founding
+offer is now a two-year rate lock at $1,300 plus a free process map, no discount. Agreement version 2026-11-10.1
+(the attorney has 2026-11-06.2; send the new one). Pricing gained "What the price pays for", comparing against a
+part-time and full-time admin (Nate's displacement frame). Margin arithmetic is in the Shared Drive.
+**Stripe:** new Prices still to be created and the four secrets in site/SETUP-PAYMENTS.md pointed at them.
+
 ## The GM's hours ledger (built November 6)
 
 `site/src/hours.js`, tested by `node site/tools/test_hours.mjs` (runs the real code on SQLite, no network).

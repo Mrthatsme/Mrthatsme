@@ -9,7 +9,7 @@
     // The plan suggested for a given monthly value of the hours that come back, highest first.
     plans: [
       { atLeast: 4000, name: "Custom Automation, whole back office", price: 2100 },
-      { atLeast: 1800, name: "Business Support", price: 900 },
+      { atLeast: 2600, name: "Business Support", price: 1300 },
       { atLeast: 0,    name: "Custom Automation, one gap", price: 550 }
     ]
   };

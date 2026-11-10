@@ -8,7 +8,23 @@ you without them.
 Add **"D1" → "Edit"** permission to the API token (My Profile → API Tokens →
 edit the token you already created). Paste the token back once updated.
 
-## 2. Stripe: create the four recurring Prices
+## 2. Stripe: the recurring Prices (updated November 10, 2026)
+
+Current prices. Stripe Prices can't be edited, so a price change means new
+Prices, then pointing the Cloudflare secrets at the new IDs.
+
+| Secret | Amount |
+|---|---|
+| STRIPE_PRICE_ESSENTIAL | $650 / month |
+| STRIPE_PRICE_ESSENTIAL_RETAINER | $7,020 / year |
+| STRIPE_PRICE_BUSINESS_SUPPORT | $1,300 / month (also used by the Founding Client rate lock) |
+| STRIPE_PRICE_BUSINESS_SUPPORT_RETAINER | $14,040 / year |
+
+STRIPE_PRICE_FOUNDING_OFFER and STRIPE_PRICE_OPERATIONS_PLUS are no longer used.
+Extra hours ($95) and voice-note overages are added as invoice items by the
+code, so they need no Price. The original setup notes follow.
+
+## 2a. (original) Stripe: create the four recurring Prices
 In the Stripe Dashboard (**test mode** to start — switch to live only when
 ready to actually charge cards), create one Product ("Minutes Regained —
 AI Operations") with four recurring monthly Prices:

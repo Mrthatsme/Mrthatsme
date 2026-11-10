@@ -5,7 +5,7 @@
 
 import { CORE_AUTOMATIONS } from "./plans.js";
 
-export const CONTRACT_VERSION = "2026-11-06.2";
+export const CONTRACT_VERSION = "2026-11-10.1";
 
 const usd = (cents) => `$${(cents / 100).toLocaleString("en-US", { maximumFractionDigits: 0 })}`;
 
@@ -13,7 +13,7 @@ const usd = (cents) => `$${(cents / 100).toLocaleString("en-US", { maximumFracti
 export function contractText({ businessName, plan, foundingOffer }) {
   const retainer = plan.billing === "retainer";
   const priceLine = foundingOffer
-    ? `${usd(plan.priceCents)}/month for your first 90 days (Founding Client offer: Business Support, ${plan.hours} hours/month), then ${usd(plan.afterFoundingCents)}/month for Business Support. Minutes Regained will remind Client 14 days before the price changes.`
+    ? `${usd(plan.priceCents)}/month for the Business Support plan. Founding Client terms: this price is locked for ${plan.lockMonths === 24 ? "twenty-four (24)" : plan.lockMonths} months from the start date, whatever the published price becomes, and Client receives one process map of its operation at no charge during the first month.`
     : retainer
       ? `${usd(plan.chargeCents)} for twelve (12) months of the ${plan.planName} plan, paid in full at sign-up (equal to ${usd(plan.priceCents)}/month, 10% off the standard ${usd(plan.standardCents)}/month).`
       : `${usd(plan.priceCents)}/month for the ${plan.label} plan.`;

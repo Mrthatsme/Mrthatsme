@@ -92,10 +92,14 @@ those live in the Shared Drive. The open-decisions and internal ops documents fr
 
 Decisions made after the package, which override `docs/build-spec.md` where they differ:
 
-- Published plans: Essential $450 with **4 hours** a month, Business Support $900 with **8 hours**, extra hours
-  **$75 an hour** on both, only with written approval. Custom Automation from $550 as specified.
-- Retainer refund example: a $4,860 year ended after four months refunds **$3,060**, which matches the agreement.
-  The spec's $2,860 is wrong.
+- Published plans (Jerome, November 10, replacing $450/$900/$75): Essential **$650** with **4 hours** a month,
+  Business Support **$1,300** with **8 hours**, extra hours **$95 an hour** on both, only with written approval.
+  12-month Retainers $7,020 and $14,040 (10% off). Custom Automation from $550 as specified. Set so both plans
+  keep about 50% when every hour is used; the arithmetic is in the Shared Drive, not here.
+- Founding client offer (November 10): the first three Business Support clients lock $1,300 a month for two
+  years and get a free process map. No discount; monthly only.
+- Retainer refund example: a $7,020 year ended after four months refunds **$4,420** (prepaid less the standard
+  monthly price for each month started), which matches the agreement.
 - The owner is named on the site with no photo for now.
 - **The site is five main pages, not one long homepage** (Jerome, November 6): Home `/`, Services `/services`,
   Pricing `/pricing`, Industries `/for/` (with `/for/contractors` and `/for/law-firms`) and About `/about`, in that

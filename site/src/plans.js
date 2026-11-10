@@ -13,32 +13,33 @@ export const CORE_AUTOMATIONS = ["Lead Catcher", "Quote Chaser", "Schedule Keepe
 export const PLANS = {
   essential: {
     label: "Essential",
-    priceCents: 45000,
-    retainerCents: 40500,
+    priceCents: 65000,
+    retainerCents: 58500,
     envKey: "STRIPE_PRICE_ESSENTIAL",
     retainerEnvKey: "STRIPE_PRICE_ESSENTIAL_RETAINER",
     automations: 3, coreLine: "3 of the 5 core automations", hours: 4, rollover: "Unused hours roll over 1 month",
-    extraHourly: 75, softwareAllowance: 50, inboxes: 1, reviewCall: null, voiceNotes: 100,
+    extraHourly: 95, softwareAllowance: 50, inboxes: 1, reviewCall: null, voiceNotes: 100,
   },
   business_support: {
     label: "Business Support",
-    priceCents: 90000,
-    retainerCents: 81000,
+    priceCents: 130000,
+    retainerCents: 117000,
     envKey: "STRIPE_PRICE_BUSINESS_SUPPORT",
     retainerEnvKey: "STRIPE_PRICE_BUSINESS_SUPPORT_RETAINER",
     automations: 6, coreLine: "All 5 core automations, plus 1 custom automation", hours: 8, rollover: "Unused hours roll over 1 month",
-    extraHourly: 75, softwareAllowance: 100, inboxes: 2, reviewCall: "30-minute monthly review call", voiceNotes: 250,
+    extraHourly: 95, softwareAllowance: 100, inboxes: 2, reviewCall: "30-minute monthly review call", voiceNotes: 250,
   },
 };
 
-// Founding-client offer: Business Support (8 hours) at $450/mo for the first
-// 90 days, then the standard Business Support price for the billing option
-// chosen. Its own Stripe Price; we remind the client 14 days before it ends.
+// Founding-client offer (set November 10, 2026): the first three clients on
+// Business Support lock the standard monthly price for 24 months, whatever the
+// published price becomes, and get one process map of their operation free in
+// the first month. No discount, so it uses the standard Business Support Stripe
+// Price. Monthly billing only.
 export const FOUNDING_OFFER = {
   planId: "business_support",
-  label: "Business Support (Founding Client offer)",
-  priceCents: 45000,
-  envKey: "STRIPE_PRICE_FOUNDING_OFFER",
+  label: "Business Support (Founding Client)",
+  lockMonths: 24,
   maxClients: 3,
 };
 
@@ -63,7 +64,8 @@ export function resolvePlan(planId, founding, billing = "monthly") {
   if (founding) {
     // The founding offer is monthly billing only.
     if (planId !== FOUNDING_OFFER.planId || billing !== "monthly") return null;
-    return { id: planId, ...base, ...FOUNDING_OFFER, billing, afterFoundingCents: afterCents, chargeCents: FOUNDING_OFFER.priceCents, interval: "month" };
+    return { id: planId, ...base, ...FOUNDING_OFFER, billing, priceCents: base.priceCents, standardCents: base.priceCents, planName: base.label,
+      chargeCents: base.priceCents, interval: "month", envKey: base.envKey };
   }
   return {
     id: planId,

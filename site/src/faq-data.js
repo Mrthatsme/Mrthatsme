@@ -53,7 +53,7 @@ export const FAQ = [
   ["If I cancel, do I lose the automations?",
    "No. They live in your own accounts and keep running. We just stop monitoring and maintaining them."],
   ["How many hours do I get?",
-   "Essential includes 4 hours a month and Business Support 8 hours of a person's time: building new automations, and one-off admin you hand us, like rescheduling a week of jobs or cleaning up your contact list. Automations you've approved never use your hours, however often they run, and neither do monitoring, repairs or your daily brief. Each task a person does for you is counted at the time a skilled assistant would take, even when AI tools help get it done faster (for example, 5 minutes to schedule an appointment), and your monthly report lists every one. Unused hours roll over one month. Extra hours are $75 an hour on either plan, and we never bill them without asking first."],
+   "Essential includes 4 hours a month and Business Support 8 hours of a person's time: building new automations, and one-off admin you hand us, like rescheduling a week of jobs or cleaning up your contact list. Automations you've approved never use your hours, however often they run, and neither do monitoring, repairs or your daily brief. Each task a person does for you is counted at the time a skilled assistant would take, even when AI tools help get it done faster (for example, 5 minutes to schedule an appointment), and your monthly report lists every one. Unused hours roll over one month. Extra hours are $95 an hour on either plan, and we never bill them without asking first."],
   ["Is software included?",
    "Yes. The tools we use to serve you are included in your plan, up to an allowance. We never bill you for software above it: if a tool you'd need costs more, we tell you first and you decide. Your own existing subscriptions, like your email or accounting software, stay yours."],
   ["Can I cancel?",
@@ -63,11 +63,11 @@ export const FAQ = [
 ];
 
 export const PRICING_SUMMARY = `No setup fee. Software included up to each plan's allowance. Every plan includes automations built, run and monitored, the Daily Brief, and repairs at no charge. Approved automations, monitoring, repairs and the Daily Brief never use a client's hours.
-Essential: $450/month ($4,860/year on a 12-month Retainer, paid upfront, 10% off) -- 3 of the 5 core automations, 4 hours/month of hands-on admin (unused hours roll over 1 month), extra hours $75/hr only with approval, software up to $50/mo, 1 inbox, 100 voice notes/mo. Cancel with 30 days' notice.
-Business Support: $900/month ($9,720/year on a 12-month Retainer, paid upfront, 10% off) -- all 5 core automations plus 1 custom, 8 hours/month (unused hours roll over 1 month), extra hours $75/hr only with approval, software up to $100/mo, 2 inboxes, 250 voice notes/mo, 30-minute monthly review call. Cancel with 30 days' notice.
+Essential: $650/month ($7,020/year on a 12-month Retainer, paid upfront, 10% off) -- 3 of the 5 core automations, 4 hours/month of hands-on admin (unused hours roll over 1 month), extra hours $95/hr only with approval, software up to $50/mo, 1 inbox, 100 voice notes/mo. Cancel with 30 days' notice.
+Business Support: $1,300/month ($14,040/year on a 12-month Retainer, paid upfront, 10% off) -- all 5 core automations plus 1 custom, 8 hours/month (unused hours roll over 1 month), extra hours $95/hr only with approval, software up to $100/mo, 2 inboxes, 250 voice notes/mo, 30-minute monthly review call. Cancel with 30 days' notice.
 Custom Automation: from $550/month, dropping to $250 once the build is paid off. No assistant hours. A process map first, built live on recorded calls, documentation and a walkthrough, checked daily with breaks fixed free, and a quarterly session. Scopes: one gap $550 then $250; one side of the business $1,150 then $450; whole back office $2,100 then $750. 12-month term, then monthly; or pay the build upfront ($2,500 / $6,000 / $12,000) and start at the lower rate.
 Voice notes over the allowance: $10 for each extra 100.
-Founding Client offer (first 3 clients only): Business Support at $450/month for the first 90 days, then $900/month, monthly billing only.
+Founding Client offer (first 3 clients only): Business Support with the $1,300/month price locked for two years, plus a free process map of the business in the first month. Monthly billing only.
 The five core automations: Lead Catcher, Quote Chaser, Schedule Keeper, Review Builder, Invoice & Chase, plus the Daily Brief with every plan.
 Sign-ups are not open yet: the service agreement is with the attorney, and no one is signed or charged until it is back.`;
 
