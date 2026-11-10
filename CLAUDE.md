@@ -109,3 +109,20 @@ Decisions made after the package, which override `docs/build-spec.md` where they
   Run `python3 site/tools/check_site.py` before pushing (add `--fix` to update the CSP hashes for JSON-LD).
 
 Current state, open bugs and next steps: `docs/handoff.md`.
+
+## Where the history lives (read before deciding anything)
+
+Earlier chats about Minutes Regained can't be read from a new session. Everything they settled was written down
+in one of these places, so check them before redoing work or contradicting a past decision:
+
+- **This repo:** `CLAUDE.md` (rules), `docs/handoff.md` (state and next steps), `docs/build-spec.md`, `mockups/`.
+- **Shared Drive, 01 Start Here & Decisions:** the Decision and Cost Log (every decision with its date and reason)
+  and the Master Register.
+- **Shared Drive, 02 Business, Legal & Contracts:** the current business plan for attorney review, the attorney
+  brief, and the filled-in client onboarding package. These carry the agreement version the attorney has; when
+  the agreement changes, update all three, and tell Jerome the attorney needs the new version.
+- **Shared Drive, 03 Operations & Automations:** the open decisions and internal ops documents (margins and labour
+  cost live here, never in this repo).
+
+When a session makes a decision, add it to the Decision and Cost Log and, if it changes the site, to the list above.
+Nothing is ever sent to the attorney, clients or prospects by a session; Jerome sends.
