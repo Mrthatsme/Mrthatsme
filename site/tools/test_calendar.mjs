@@ -3,7 +3,7 @@
 //   node site/tools/test_calendar.mjs
 import { DatabaseSync } from "node:sqlite";
 import { tzOffsetMinutes, localDay, findOverlaps, composeClientBrief, sendClientBriefs } from "../src/clientbrief.js";
-import { hasCalendar, calendarEvents, _storeConnectionForTest } from "../src/connect.js";
+import { hasCalendar, calendarEvents, _storeConnectionForTest, createConnectInvite, connectStart } from "../src/connect.js";
 import { ensureClientAgentTables } from "../src/clientagent.js";
 
 let fails = 0;
@@ -99,6 +99,19 @@ await sendClientBriefs(env, new Date("2026-11-11T18:00:00Z"));
 check("once per day", sent.length === before, sent.length - before);
 report = await sendClientBriefs(env, at, { agentId: "ca_quiet", force: true });
 check("admin can force one for testing", to("quiet@example.test").length === 1, report);
+
+// ---- calendar is asked for only on calendar invites until Google verifies it
+const scopeOf = async (inviteUrl, e = env) => {
+  const tok = new URL(inviteUrl).searchParams.get("i");
+  const res = await connectStart(e, new URL(`https://minutesregained.com/api/connect/start?i=${tok}&p=google`));
+  return new URL(res.headers.get("Location")).searchParams.get("scope");
+};
+const plain = await createConnectInvite(env, "https://minutesregained.com", { agentId: "ca_quiet" });
+const withCal = await createConnectInvite(env, "https://minutesregained.com", { agentId: "ca_quiet", calendar: true });
+check("normal invite asks for email only", !/calendar/.test(await scopeOf(plain.url)), await scopeOf(plain.url));
+check("calendar invite asks for read-only calendar", /calendar\.events\.readonly/.test(await scopeOf(withCal.url)), await scopeOf(withCal.url));
+const plain2 = await createConnectInvite(env, "https://minutesregained.com", { agentId: "ca_quiet" });
+check("CALENDAR_SCOPE=on turns it on for everyone", /calendar\.events\.readonly/.test(await scopeOf(plain2.url, { ...env, CALENDAR_SCOPE: "on" })));
 
 console.log(fails ? `\n${fails} FAILED` : "\nAll passed.");
 process.exit(fails ? 1 : 0);

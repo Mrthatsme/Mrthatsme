@@ -70,7 +70,8 @@ const PROVIDERS = {
     name: "Gmail / Google Workspace",
     authUrl: "https://accounts.google.com/o/oauth2/v2/auth",
     tokenUrl: "https://oauth2.googleapis.com/token",
-    scope: "openid email https://www.googleapis.com/auth/gmail.modify https://www.googleapis.com/auth/calendar.events.readonly",
+    scope: "openid email https://www.googleapis.com/auth/gmail.modify",
+    calendarScope: "https://www.googleapis.com/auth/calendar.events.readonly",
     idKey: "GOOGLE_CLIENT_ID",
     secretKey: "GOOGLE_CLIENT_SECRET",
     extraAuth: { access_type: "offline", prompt: "consent", include_granted_scopes: "true" },
@@ -79,7 +80,8 @@ const PROVIDERS = {
     name: "Outlook / Microsoft 365",
     authUrl: "https://login.microsoftonline.com/common/oauth2/v2.0/authorize",
     tokenUrl: "https://login.microsoftonline.com/common/oauth2/v2.0/token",
-    scope: "openid email offline_access User.Read Mail.ReadWrite Calendars.Read",
+    scope: "openid email offline_access User.Read Mail.ReadWrite",
+    calendarScope: "Calendars.Read",
     idKey: "MICROSOFT_CLIENT_ID",
     secretKey: "MICROSOFT_CLIENT_SECRET",
     extraAuth: { prompt: "select_account" },
@@ -115,6 +117,8 @@ async function ensureTables(env) {
   ]);
   // Which permissions the owner actually granted (Google lets them untick calendar).
   await env.DB.prepare(`ALTER TABLE client_connections ADD COLUMN scopes TEXT`).run().catch(() => {});
+  // Calendar is asked for only on invites made with it, until Google verifies the scope.
+  await env.DB.prepare(`ALTER TABLE connect_invites ADD COLUMN calendar INTEGER NOT NULL DEFAULT 0`).run().catch(() => {});
   tablesReady = true;
 }
 
@@ -174,16 +178,19 @@ const escapeHtml = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&a
 // --------------------------------------------------------------- invites --
 
 // Admin: one link per client. Creates the client's agent if needed.
-export async function createConnectInvite(env, origin, { agentId, label, profile, dailyCap }) {
+// calendar: true asks for read-only calendar too. Until Google verifies that
+// scope (env CALENDAR_SCOPE = "on"), only invites made with calendar: true ask
+// for it, so live sign-ins don't carry an unverified scope.
+export async function createConnectInvite(env, origin, { agentId, label, profile, dailyCap, calendar }) {
   await ensureTables(env);
   let id = agentId;
   if (!id) id = (await createClientAgent(env, { label, profile, dailyCap })).id;
   const token = randomToken(24);
   const inviteId = "inv_" + randomToken(6);
   const now = new Date();
-  await env.DB.prepare(`INSERT INTO connect_invites (id, token_hash, agent_id, expires_at, created_at) VALUES (?, ?, ?, ?, ?)`)
-    .bind(inviteId, await sha256(token), id, new Date(now.getTime() + INVITE_DAYS * 86400000).toISOString(), now.toISOString()).run();
-  return { agentId: id, url: `${origin}/api/connect?i=${token}`, expires: `${INVITE_DAYS} days` };
+  await env.DB.prepare(`INSERT INTO connect_invites (id, token_hash, agent_id, expires_at, created_at, calendar) VALUES (?, ?, ?, ?, ?, ?)`)
+    .bind(inviteId, await sha256(token), id, new Date(now.getTime() + INVITE_DAYS * 86400000).toISOString(), now.toISOString(), calendar ? 1 : 0).run();
+  return { agentId: id, url: `${origin}/api/connect?i=${token}`, expires: `${INVITE_DAYS} days`, calendar: !!calendar || calendarOn(env) };
 }
 
 async function findInvite(env, token) {
@@ -232,7 +239,7 @@ export async function connectStart(env, url) {
     client_id: cfg(env, provider.idKey),
     redirect_uri: `${url.origin}/api/connect/${url.searchParams.get("p")}/callback`,
     response_type: "code",
-    scope: provider.scope,
+    scope: inv.calendar || calendarOn(env) ? `${provider.scope} ${provider.calendarScope}` : provider.scope,
     state,
     code_challenge: await sha256(verifier),
     code_challenge_method: "S256",
@@ -473,6 +480,8 @@ async function pollOutlook(env, conn, token) {
 }
 
 // ------------------------------------------------------------- calendar --
+
+export const calendarOn = (env) => cfg(env, "CALENDAR_SCOPE").toLowerCase() === "on";
 // Read-only. The owner's day for the Daily Brief and the GM; nothing here can
 // create, change or delete an event, and nothing here is shown to a customer.
 

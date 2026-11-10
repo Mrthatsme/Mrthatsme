@@ -319,6 +319,9 @@ Retire the test client afterwards with `POST /api/admin/client-agent-status {id,
 - **Read-only calendar** on the same one-link connection: Google `calendar.events.readonly`, Microsoft `Calendars.Read`.
   The granted scopes are stored per connection (Google lets owners untick calendar). Microsoft refresh asks only for
   what was granted. Existing connections have no calendar until the owner reconnects with a new connect link.
+- **Until Google verifies the calendar scope, only invites made with `calendar: true`** (`POST /api/admin/connect-invite
+  {agentId, calendar: true}`) ask for it; normal sign-ins ask for email only, as Google requires. Once verified, set
+  the Worker variable `CALENDAR_SCOPE=on` and every sign-in asks for it.
 - **Jerome must add `https://www.googleapis.com/auth/calendar.events.readonly` to the OAuth consent screen** in Google
   Cloud (Data access), and include it in Google's verification. Until then owners see the unverified-app warning.
 - **The client Daily Brief** (`site/src/clientbrief.js`): every morning with the 8 AM Eastern run, once per client per
