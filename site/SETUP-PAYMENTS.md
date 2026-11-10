@@ -10,17 +10,24 @@ edit the token you already created). Paste the token back once updated.
 
 ## 2. Stripe: the recurring Prices (updated November 10, 2026)
 
-Current prices. Stripe Prices can't be edited, so a price change means new
-Prices, then pointing the Cloudflare secrets at the new IDs.
+Created in **test mode** on November 10 on product `prod_VQPwRafurf0MNS`. Checkout
+finds each Price by its **lookup key** and refuses to start unless Stripe's amount
+and interval match the signed agreement exactly, so a price change needs no
+Cloudflare secret: create the new Price with the same lookup key and
+"transfer lookup key" on.
 
-| Secret | Amount |
-|---|---|
-| STRIPE_PRICE_ESSENTIAL | $650 / month |
-| STRIPE_PRICE_ESSENTIAL_RETAINER | $7,020 / year |
-| STRIPE_PRICE_BUSINESS_SUPPORT | $1,300 / month (also used by the Founding Client rate lock) |
-| STRIPE_PRICE_BUSINESS_SUPPORT_RETAINER | $14,040 / year |
+| Lookup key | Amount | Test-mode Price |
+|---|---|---|
+| monthly_essential | $650 / month | price_1UaLg0LM63aam91BjtBDh8DL |
+| retainer_yearly_essential | $7,020 / year | price_1UaLg1LM63aam91BURrlgccv |
+| monthly_business_support | $1,300 / month (also the Founding Client rate lock) | price_1UaLg1LM63aam91BjbLiQJJ8 |
+| retainer_yearly_business_support | $14,040 / year | price_1UaLg1LM63aam91BhpKxkHCV |
 
-STRIPE_PRICE_FOUNDING_OFFER and STRIPE_PRICE_OPERATIONS_PLUS are no longer used.
+The old STRIPE_PRICE_* secrets are only a fallback and must pass the same amount
+check, so stale ones can't charge an old price. The ten old Prices ($450, $900,
+$450 founding, Operations+, old yearly) are still active in test mode; archive them
+in the Stripe dashboard. When switching to live mode, create the same four Prices
+with the same lookup keys in live mode.
 Extra hours ($95) and voice-note overages are added as invoice items by the
 code, so they need no Price. The original setup notes follow.
 

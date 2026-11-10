@@ -111,3 +111,25 @@ export async function retrieveSubscription(secretKey, subscriptionId) {
   });
   return res.json();
 }
+
+// The active Price with this lookup key, or null. Prices are found by a fixed
+// name (lookup key) so a price change in Stripe needs no Cloudflare secret.
+export async function findPriceByLookupKey(secretKey, lookupKey) {
+  const q = new URLSearchParams({ active: "true", limit: "1" });
+  q.append("lookup_keys[]", lookupKey);
+  const res = await fetch(`${STRIPE_API}/prices?${q}`, { headers: { Authorization: `Bearer ${secretKey}` } });
+  if (!res.ok) return null;
+  const data = await res.json();
+  return (data.data && data.data[0]) || null;
+}
+
+export async function retrievePrice(secretKey, priceId) {
+  const res = await fetch(`${STRIPE_API}/prices/${encodeURIComponent(priceId)}`, { headers: { Authorization: `Bearer ${secretKey}` } });
+  return res.ok ? res.json() : null;
+}
+
+// Never charge a different amount from the one the client agreed to.
+export function priceMatches(price, { cents, interval }) {
+  return !!price && price.active && price.currency === "usd" && price.unit_amount === cents
+    && !!price.recurring && price.recurring.interval === interval;
+}

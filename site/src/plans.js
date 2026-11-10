@@ -16,6 +16,8 @@ export const PLANS = {
     priceCents: 65000,
     retainerCents: 58500,
     envKey: "STRIPE_PRICE_ESSENTIAL",
+    lookupKey: "monthly_essential",
+    retainerLookupKey: "retainer_yearly_essential",
     retainerEnvKey: "STRIPE_PRICE_ESSENTIAL_RETAINER",
     automations: 3, coreLine: "3 of the 5 core automations", hours: 4, rollover: "Unused hours roll over 1 month",
     extraHourly: 95, softwareAllowance: 50, inboxes: 1, reviewCall: null, voiceNotes: 100,
@@ -25,6 +27,8 @@ export const PLANS = {
     priceCents: 130000,
     retainerCents: 117000,
     envKey: "STRIPE_PRICE_BUSINESS_SUPPORT",
+    lookupKey: "monthly_business_support",
+    retainerLookupKey: "retainer_yearly_business_support",
     retainerEnvKey: "STRIPE_PRICE_BUSINESS_SUPPORT_RETAINER",
     automations: 6, coreLine: "All 5 core automations, plus 1 custom automation", hours: 8, rollover: "Unused hours roll over 1 month",
     extraHourly: 95, softwareAllowance: 100, inboxes: 2, reviewCall: "30-minute monthly review call", voiceNotes: 250,
@@ -65,7 +69,7 @@ export function resolvePlan(planId, founding, billing = "monthly") {
     // The founding offer is monthly billing only.
     if (planId !== FOUNDING_OFFER.planId || billing !== "monthly") return null;
     return { id: planId, ...base, ...FOUNDING_OFFER, billing, priceCents: base.priceCents, standardCents: base.priceCents, planName: base.label,
-      chargeCents: base.priceCents, interval: "month", envKey: base.envKey };
+      chargeCents: base.priceCents, interval: "month", envKey: base.envKey, lookupKey: base.lookupKey };
   }
   return {
     id: planId,
@@ -79,5 +83,6 @@ export function resolvePlan(planId, founding, billing = "monthly") {
     chargeCents: billing === "retainer" ? afterCents * RETAINER_MONTHS : afterCents,
     interval: billing === "retainer" ? "year" : "month",
     envKey: billing === "retainer" ? base.retainerEnvKey : base.envKey,
+    lookupKey: billing === "retainer" ? base.retainerLookupKey : base.lookupKey,
   };
 }

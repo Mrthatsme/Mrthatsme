@@ -1,13 +1,13 @@
 import { handleDemoTry } from "./demotry.js";
 import { contractText, sha256Hex, CONTRACT_VERSION } from "./contract.js";
-import { resolvePlan, FOUNDING_OFFER, normalizeBilling } from "./plans.js";
+import { resolvePlan, FOUNDING_OFFER, normalizeBilling, RETAINER_MONTHS } from "./plans.js";
 import {
   insertLead, insertContract, getContract, attachStripeSessionToContract,
   activateContractAndClient, recordPayment, getClientByContractId,
   countFoundingOfferTaken, listLeads, listContracts, listClients, listPayments,
   claimContractForCheckout, isCheckoutClaimPending,
 } from "./db.js";
-import { createCheckoutSession, retrieveCheckoutSession, verifyStripeSignature, updateCustomer } from "./stripe.js";
+import { createCheckoutSession, retrieveCheckoutSession, verifyStripeSignature, updateCustomer, findPriceByLookupKey, retrievePrice, priceMatches } from "./stripe.js";
 import { requireAdmin, unauthorizedResponse, renderAdminPage } from "./admin.js";
 import { notifyNewClient, sendNotificationEmail } from "./email.js";
 import { triageLead } from "./triage.js";
@@ -458,6 +458,20 @@ async function handleCheckout(request, env, url) {
 
   if (contract.status !== "pending_payment") return json({ error: "contract_not_pending" }, 409);
 
+  // The Stripe Price must charge exactly what the signed agreement says, or
+  // checkout doesn't start. Found by lookup key; the old secret is a fallback
+  // that has to pass the same check.
+  const plan = resolvePlan(contract.plan_id, !!contract.founding_offer, contract.billing);
+  if (!plan) return json({ error: "plan_not_offered" }, 409);
+  const agreed = { cents: contract.billing === "retainer" ? contract.price_cents * RETAINER_MONTHS : contract.price_cents, interval: plan.interval };
+  let price = plan.lookupKey ? await findPriceByLookupKey(env.STRIPE_SECRET_KEY, plan.lookupKey) : null;
+  if (!priceMatches(price, agreed) && env[plan.envKey]) price = await retrievePrice(env.STRIPE_SECRET_KEY, env[plan.envKey]);
+  if (!priceMatches(price, agreed)) {
+    console.error("stripe price mismatch", plan.lookupKey, agreed, price && { id: price.id, amount: price.unit_amount });
+    return json({ error: "stripe_price_mismatch", message: "The price in Stripe doesn't match your agreement, so checkout was not started. Email support@minutesregained.com." }, 500);
+  }
+  const priceId = price.id;
+
   const claimed = await claimContractForCheckout(env.DB, contractId);
   if (!claimed) {
     // Lost the race to a concurrent request. Check what it left behind.
@@ -468,10 +482,6 @@ async function handleCheckout(request, env, url) {
     }
     return json({ error: "checkout_in_progress", message: "A checkout session is already being created for this contract -- please retry in a moment." }, 409);
   }
-
-  const plan = resolvePlan(contract.plan_id, !!contract.founding_offer, contract.billing);
-  const priceId = env[plan.envKey];
-  if (!priceId) return json({ error: "stripe_price_not_configured", envKey: plan.envKey }, 500);
 
   const origin = `${url.protocol}//${url.host}`;
   const session = await createCheckoutSession(env.STRIPE_SECRET_KEY, {
