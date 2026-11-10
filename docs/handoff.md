@@ -324,6 +324,14 @@ Retire the test client afterwards with `POST /api/admin/client-agent-status {id,
   the Worker variable `CALENDAR_SCOPE=on` and every sign-in asks for it.
 - **Jerome must add `https://www.googleapis.com/auth/calendar.events.readonly` to the OAuth consent screen** in Google
   Cloud (Data access), and include it in Google's verification. Until then owners see the unverified-app warning.
+- **Paused November 10 (Jerome, end of day): Google console steps.** Done so far: found the project (Minutes Regained
+  Connect) and the Data Access page. Google won't save the new calendar scope without a YouTube demo video, so the
+  order is: (1) enable the Google Calendar API (APIs & Services > Library), (2) record the video using a test Gmail
+  account with 3 appointments today, two overlapping, via the calendar connect invite for QA Test Co (made Nov 10,
+  expires Nov 24; make a new one with `POST /api/admin/connect-invite {agentId: "ca_417411d713e1", calendar: true}`),
+  showing the unverified-app screen, the calendar permission line, "You're connected" and the Daily Brief email
+  (`POST /api/admin/client-brief {agentId}` sends it), (3) upload as Unlisted, (4) Data Access > add
+  `calendar.events.readonly`, paste the usage text and the YouTube link, Save, (5) Verification Center.
 - **The client Daily Brief** (`site/src/clientbrief.js`): every morning with the 8 AM Eastern run, once per client per
   day, to the owner only: today's calendar in their time zone, overlapping appointments, what's waiting on them, what
   came in, hours used. Skipped when there's nothing to say. `POST /api/admin/client-brief {agentId}` sends one now.
