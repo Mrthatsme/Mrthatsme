@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pricing: live vs draft</title>
+<style>
+:root{--bg:#FBF7F1;--fg:#1C2B2A;--line:#E4D9CC;--signal:#C24E17}
+@media (prefers-color-scheme:dark){:root{--bg:#151B1A;--fg:#F1ECE4;--line:#34403E;--signal:#F28A4B}}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--fg);font:15px/1.4 system-ui,sans-serif}
+.top{padding:10px 16px;border-bottom:1px solid var(--line);display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.top b{font-size:16px}.top span{opacity:.75}
+.cols{display:grid;grid-template-columns:1fr 1fr;height:calc(100% - 52px)}
+.col{display:flex;flex-direction:column;border-right:1px solid var(--line);min-width:0}
+.col h2{margin:0;padding:8px 14px;font-size:13px;letter-spacing:.06em;text-transform:uppercase;border-bottom:1px solid var(--line)}
+.col:last-child h2{color:var(--signal)}
+iframe{flex:1;width:100%;border:0}
+@media (max-width:900px){.cols{grid-template-columns:1fr;height:auto}.col iframe{height:80vh}}
+</style></head><body>
+<div class="top"><b>Pricing page: live vs draft</b><span>Scroll each side separately. Orange dashed boxes marked NEW are the only changes. Nothing here is live.</span></div>
+<div class="cols">
+<div class="col"><h2>Live today</h2><iframe src="pricing-live.html" title="Live pricing page"></iframe></div>
+<div class="col"><h2>Draft with additions</h2><iframe src="pricing-draft.html" title="Draft pricing page"></iframe></div>
+</div></body></html>

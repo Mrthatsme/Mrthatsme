@@ -28,4 +28,7 @@ Everything in this folder is a **proposal for review**. Nothing has been changed
 - Low-price $19 kits, Grok-specific content, evening-only calls.
 - Rewriting the live site's wording.
 
+## Side by side with the real page
+`compare/index.html` shows your **actual live Pricing page** (exact copy) next to the same page with only the additions dropped in, each marked with an orange **NEW** box. Images: `screenshots/compare-pricing-*.png` (header, calculator, plan cards, price table, security band).
+
 **To view:** open any `.html` file in `mockups/` in a browser. The dashed orange boxes are review notes, not page content.
