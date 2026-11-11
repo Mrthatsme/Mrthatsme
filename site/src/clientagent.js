@@ -97,14 +97,20 @@ export async function aiCostLine(env, agentId, now = new Date()) {
   if (!rep.models.length) return null;
   const haiku = rep.models.find((m) => m.model === MODEL);
   const sonnet = rep.models.find((m) => m.model === STEP_UP_MODEL);
-  const parts = [haiku ? `${haiku.calls} Haiku call(s)` : "", sonnet ? `${sonnet.calls} second look(s) on Sonnet` : ""].filter(Boolean).join(", ");
+  // Sonnet calls are second looks on drafts plus the weekly SITREP paragraph.
+  const parts = [haiku ? `${haiku.calls} Haiku call(s)` : "", sonnet ? `${sonnet.calls} Sonnet call(s)` : ""].filter(Boolean).join(", ");
   return `  AI cost this month: $${rep.usd.toFixed(2)} at list prices (${parts}).`;
 }
 
-async function stepUpsToday(env, agentId) {
-  const row = await env.DB.prepare(`SELECT calls FROM client_agent_tokens WHERE agent_id = ? AND usage_date = ? AND model = ?`)
-    .bind(agentId, new Date().toISOString().slice(0, 10), STEP_UP_MODEL).first();
-  return row ? row.calls : 0;
+// The second look's own daily counter: every attempt counts, whether or not it
+// succeeds. Kept apart from the token log, which other Sonnet work (the SITREP)
+// also writes to. Stored in client_agent_usage under "<agent id>#stepup".
+async function useStepUpBudget(env, agent) {
+  const row = await env.DB.prepare(
+    `INSERT INTO client_agent_usage (agent_id, usage_date, calls) VALUES (?, ?, 1)
+     ON CONFLICT(agent_id, usage_date) DO UPDATE SET calls = calls + 1 RETURNING calls`
+  ).bind(`${agent.id}#stepup`, new Date().toISOString().slice(0, 10)).first();
+  return row.calls <= STEP_UP_DAILY_CAP;
 }
 
 // The rule. Returns why this draft deserves a second pass, or null. Only drafts a
@@ -338,7 +344,7 @@ export async function draftForClient(env, agent, { from, subject, body }) {
   // Step-up: a second, better draft from Sonnet for the few emails the rule picks.
   // It can only improve the draft or make it more cautious (hand off), never less.
   const why = stepUpReason(profile, out, body);
-  if (why && (await stepUpsToday(env, agent.id)) < STEP_UP_DAILY_CAP) {
+  if (why && (await useStepUpBudget(env, agent))) {
     const better = await stepUpDraft(env, agent, profile, gmUsed, { from, subject, body }, out.draft);
     if (better && better.handoff) {
       out.action = "handoff"; delete out.draft; delete out.levelNote;

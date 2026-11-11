@@ -98,11 +98,20 @@ Decisions made after the package, which override `docs/build-spec.md` where they
   CLOCK keeps the day, STARS asks for the review, PAID gets the invoice out, WATCH tells you all of it every morning.
   **Not yet in the agreement:** `site/src/plans.js` and `site/src/contract.js` still use the old names until the attorney
   updates the agreement; change them together with the attorney's version. Trademark search pending.
+- **The weekly SITREP (Jerome, November 11):** `site/src/sitrep.js` emails each client's owner on Monday at 7 AM their
+  time, covering the Monday-to-Sunday week before, and sends Jerome a copy. It goes out on its own (Jerome's decision);
+  a week with nothing to report is skipped. Code gathers the facts; Claude Sonnet 5.5 writes one short paragraph from
+  counts and open questions only (never a customer's name or an email subject), and code drops the paragraph if it
+  contains any number that is not on the fact sheet, a percentage, a dollar amount or a spelled-out quantity. "Time you
+  got back" is counts times minutes per task: the standard `DEFAULT_MINUTES` (5 a drafted reply, 5 a form request, 10 a
+  voice note; the 10 is our own figure, not a published one) until a client's `profile.sitrepMinutes` is agreed on the
+  assessment call, and the report says which was used. Preview or resend: POST `/api/admin/sitrep` `{agentId, preview}`
+  or `{agentId, force}`. A failed send is recorded and reported to Jerome, and does not retry on its own.
 - **Second look and AI cost per client (Jerome, November 11):** inbox drafts stay on Claude Haiku 5.5. A plain rule in
   `site/src/clientagent.js` (`stepUpReason`), never the AI, sends a few drafts to Claude Sonnet 5.5 for a second pass:
   threads over 2,500 characters, drafts with 2 or more [GAP]s, or a repeat customer's question. Never urgent, emergency,
-  hand-off or Never email. Off per client until "Second look on Sonnet" is ticked on the admin levels card; at most 5 a
-  day per client; any failure or decline keeps Haiku's draft, and Sonnet may only improve a draft or hand it off. The
+  hand-off or Never email. Off per client until "Second look on Sonnet" is ticked on the admin levels card; at most 5
+  attempts a day per client (its own counter, `<agent id>#stepup` in `client_agent_usage`); any failure or decline keeps Haiku's draft, and Sonnet may only improve a draft or hand it off. The
   Sonnet call uses structured output because Sonnet 5.5 rejects the forced tool choice the Haiku call uses. Every model
   call logs tokens to `client_agent_tokens` (per client, day and model); Jerome's brief shows each client's AI cost this
   month at the list prices in `PRICES`, which must be updated when Anthropic's prices change.

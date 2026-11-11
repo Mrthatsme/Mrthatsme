@@ -25,6 +25,7 @@ import { askGM, saveAnswer, dismissGap, dashboardGaps } from "./gm.js";
 import { renderGmPanel } from "./admingm.js";
 import { setupClient, renderSetupPanel, SETUP_CSS } from "./adminsetup.js";
 import { sendClientBriefs } from "./clientbrief.js";
+import { sendSitreps } from "./sitrep.js";
 import { gmWatch, watchHealth } from "./gmwatch.js";
 import { saveLevels, dashboardLevels, renderLevelsPanel } from "./adminlevels.js";
 import { linkPage, linkAct } from "./approvals.js";
@@ -204,6 +205,13 @@ export default {
           const out = await saveLevels(env, (await readJson(request)) || {});
           return json(out, out.error ? 400 : 200);
         }
+        // A client's weekly SITREP: {agentId, preview} shows it without sending;
+        // {agentId, force} sends it now, even if this week's already went.
+        if (path === "/api/admin/sitrep" && request.method === "POST") {
+          const body = (await readJson(request)) || {};
+          if (!body.agentId) return json({ error: "missing_agentId" }, 400);
+          return json({ report: await sendSitreps(env, new Date(), { agentId: body.agentId, preview: body.preview === true, force: body.force === true }) });
+        }
         if (path === "/api/admin/client-brief" && request.method === "POST") {
           const body = (await readJson(request)) || {};
           if (!body.agentId) return json({ error: "missing_agentId" }, 400);
@@ -256,6 +264,10 @@ export default {
       // The GM's watch runs right after, so it sees this round's results.
       ctx.waitUntil(pollConnectedInboxes(env).catch((err) => console.error("inbox poll failed", err))
         .then(() => gmWatch(env)).catch((err) => console.error("GM watch failed", err)));
+      // Weekly SITREPs: each client's goes once it is Monday 7 AM where they are.
+      // Monday anywhere in the US falls on a UTC Monday or early UTC Tuesday.
+      const utcDay = new Date(event.scheduledTime).getUTCDay();
+      if (utcDay === 1 || utcDay === 2) ctx.waitUntil(sendSitreps(env, new Date(event.scheduledTime)).catch((err) => console.error("sitreps failed", err)));
       return;
     }
     const at = new Date(event.scheduledTime);

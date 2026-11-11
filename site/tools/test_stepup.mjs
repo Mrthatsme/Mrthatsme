@@ -93,18 +93,22 @@ sonnet.mode = "refusal";
 r = await run({ action: "draft", draft: "Hi Sam, thanks.", reason: "Follow-up.", category: "new_lead" });
 check("Sonnet declines: Haiku's draft is kept", r.action === "draft" && r.draft === "Hi Sam, thanks." && !r.steppedUp, r);
 
-// So far today: ok + handoff + refusal reached Sonnet and were logged (the 529 error was not billed or logged).
+// So far today: 4 attempts (ok, handoff, error, refusal). Every attempt counts toward
+// the cap, so a string of failures can't run up calls. Other Sonnet work logged to the
+// token table (the weekly SITREP) must not use up second looks.
+await recordTokens(env, "ca_1", STEP_UP_MODEL, { input_tokens: 700, output_tokens: 400 });
+await recordTokens(env, "ca_1", STEP_UP_MODEL, { input_tokens: 700, output_tokens: 400 });
 sonnet.mode = "ok";
-let made = 0;
+let made = 0, attempts = 0;
 for (let i = 0; i < 10; i++) {
   r = await run({ action: "draft", draft: "Hi Sam, thanks.", reason: "Follow-up.", category: "new_lead" });
   if (r.steppedUp) made++;
+  attempts += sonnetCalls().length;
 }
-const today = new Date().toISOString().slice(0, 10);
-const sonnetRow = db.prepare(`SELECT calls FROM client_agent_tokens WHERE agent_id='ca_1' AND usage_date=? AND model=?`).get(today, STEP_UP_MODEL);
-check(`daily step-up cap holds at ${STEP_UP_DAILY_CAP}`, sonnetRow.calls === STEP_UP_DAILY_CAP && made === STEP_UP_DAILY_CAP - 3, { sonnetRow, made });
+check(`daily cap holds at ${STEP_UP_DAILY_CAP} attempts, and SITREP calls don't use them up`, made === STEP_UP_DAILY_CAP - 4 && attempts === 1, { made, attempts });
 check("over the cap, the Haiku draft still goes through", r.action === "draft" && r.draft === "Hi Sam, thanks.", r);
 
+const today = new Date().toISOString().slice(0, 10);
 setProfile({ business: "QA Test Plumbing" });
 db.prepare(`DELETE FROM client_agent_tokens`).run();
 r = await run({ action: "draft", draft: "Hi Sam, thanks.", reason: "Follow-up.", category: "new_lead" });
@@ -122,7 +126,7 @@ check("cost report: Haiku $0.00025", haiku.usd === 0.00025, haiku);
 check("cost report: Sonnet $0.01061", son.usd === 0.01061, son);
 check("cost report total", rep.usd === 0.01086, rep);
 const line = await aiCostLine(env, "ca_1");
-check("brief line shows month-to-date cost", line === "  AI cost this month: $0.01 at list prices (2 Haiku call(s), 1 second look(s) on Sonnet).", line);
+check("brief line shows month-to-date cost", line === "  AI cost this month: $0.01 at list prices (2 Haiku call(s), 1 Sonnet call(s)).", line);
 check("no usage, no brief line", (await aiCostLine(env, "ca_nobody")) === null);
 const broken = { DB: { prepare: () => { throw new Error("db down"); } } };
 await recordTokens(broken, "ca_1", "claude-haiku-5-5", { input_tokens: 1 });
