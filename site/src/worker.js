@@ -27,6 +27,7 @@ import { setupClient, renderSetupPanel, SETUP_CSS } from "./adminsetup.js";
 import { sendClientBriefs } from "./clientbrief.js";
 import { gmWatch, watchHealth } from "./gmwatch.js";
 import { saveLevels, dashboardLevels, renderLevelsPanel } from "./adminlevels.js";
+import { linkPage, linkAct } from "./approvals.js";
 import { agreementPage, startPage, signupsOpen, SIGNUPS_CLOSED_MESSAGE } from "./agreementpage.js";
 
 const JSON_HEADERS = { "Content-Type": "application/json; charset=utf-8" };
@@ -62,6 +63,10 @@ export default {
       if ((path === "/start" || path === "/start.html" || path === "/start/") && (request.method === "GET" || request.method === "HEAD")) {
         return await startPage(env, request, url);
       }
+      // The owner's one-tap answers (approvals.js): GET confirms, only POST acts.
+      const bm = path.match(/^\/b\/([A-Za-z0-9_-]+\.[A-Za-z0-9_-]+)$/);
+      if (bm && (request.method === "GET" || request.method === "HEAD")) return await linkPage(env, bm[1]);
+      if (bm && request.method === "POST") return await linkAct(env, bm[1], request);
       // For an outside uptime monitor: 200 while the GM's watch runs, 503 if it stopped.
       if (path === "/api/health" && (request.method === "GET" || request.method === "HEAD")) {
         const h = await watchHealth(env);

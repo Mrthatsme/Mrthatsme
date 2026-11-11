@@ -19,6 +19,7 @@
 import { PLANS } from "./plans.js";
 import { sendNotificationEmail } from "./email.js";
 import { voicePlan, monthKey } from "./usage.js";
+import { makeLink } from "./links.js";
 
 export const KINDS = ["conversation", "research", "build", "testing", "admin"];
 const MAX_ENTRY_MINUTES = 8 * 60;
@@ -113,6 +114,11 @@ export async function ensureHoursTables(env) {
       minutes INTEGER NOT NULL, note TEXT NOT NULL, created_at TEXT NOT NULL)`),
     env.DB.prepare(`CREATE TABLE IF NOT EXISTS hours_notices (
       key TEXT PRIMARY KEY, agent_id TEXT NOT NULL, created_at TEXT NOT NULL)`),
+    // A request for the owner's yes or no on extra time, answered by one-tap link.
+    env.DB.prepare(`CREATE TABLE IF NOT EXISTS hours_requests (
+      id INTEGER PRIMARY KEY AUTOINCREMENT, agent_id TEXT NOT NULL, build_id TEXT, month TEXT NOT NULL,
+      minutes INTEGER NOT NULL, status TEXT NOT NULL DEFAULT 'pending', created_at TEXT NOT NULL,
+      decided_at TEXT, decided_note TEXT)`),
   ]);
   ready = true;
 }
@@ -186,6 +192,7 @@ async function warnIfHeadingPast(env, agent, build, status) {
   if (!proj.short) return null;
   // Once per build, month and limit: a new approval that still falls short warns again.
   if (!(await noticeOnce(env, `heading:${build.id}:${status.month}:${status.limit}`, agent.id))) return proj;
+  const req = await createHoursRequest(env, agent.id, build.id, status.month, proj.short);
   const carryLine = status.carry ? ` (your ${fmtMinutes(status.planMinutes)} plan plus ${fmtMinutes(status.carry)} rolled over from last month)` : "";
   const approvedLine = status.approved ? `, including the ${fmtMinutes(status.approved)} of extra time you already approved` : "";
   const clientText = [
@@ -195,19 +202,33 @@ async function warnIfHeadingPast(env, agent, build, status) {
     ``,
     `You have ${fmtMinutes(status.headroom)} left this month${approvedLine}${status.approved ? "" : carryLine}. That leaves the build about ${fmtMinutes(proj.short)} short.`,
     ``,
-    `We won't go past your hours without your OK. Reply to this email with one of these:`,
-    `- OK up to ${fmtMinutes(proj.short)} of extra time at $${status.plan.hourly} an hour (about $${(extraCents(proj.short, status.plan.hourly) / 100).toFixed(2)}).`,
-    `- Pause the build and pick it up with next month's hours.`,
-    `- Let's talk it through first.`,
+    `We won't go past your hours without your OK. Tap one:`,
+    `- Yes, OK up to ${fmtMinutes(proj.short)} of extra time at $${status.plan.hourly} an hour (about $${(extraCents(proj.short, status.plan.hourly) / 100).toFixed(2)}):`,
+    `  ${req.yes}`,
+    `- No, pause the build and pick it up with next month's hours:`,
+    `  ${req.no}`,
     ``,
-    `Until we hear from you, we only work within the hours you have.`,
+    `Or reply to this email if you'd like to talk it through first. Until we hear from you, we only work within the hours you have. The same choice is in your Daily Brief.`,
   ].join("\n");
   await tell(env, agent, {
     subject: `${build.name} is heading past your plan hours`,
     clientText,
-    jeromeNote: `Build ${build.id} is projected ${fmtMinutes(proj.short)} past this client's hours for ${status.month}. When they reply in writing, record it with POST /api/admin/hours-approval (agentId, minutes, note quoting their reply).`,
+    jeromeNote: `Build ${build.id} is projected ${fmtMinutes(proj.short)} past this client's hours for ${status.month}. They can approve or decline with the one-tap links (you're emailed when they do). If they reply in writing instead, record it with POST /api/admin/hours-approval (agentId, minutes, note quoting their reply).`,
   });
   return proj;
+}
+
+// One pending request per build: a new one replaces any still waiting.
+export async function createHoursRequest(env, agentId, buildId, month, minutes) {
+  await env.DB.prepare(`UPDATE hours_requests SET status = 'superseded', decided_at = ? WHERE agent_id = ? AND build_id IS ? AND status = 'pending'`)
+    .bind(new Date().toISOString(), agentId, buildId || null).run();
+  const row = await env.DB.prepare(`INSERT INTO hours_requests (agent_id, build_id, month, minutes, created_at) VALUES (?, ?, ?, ?, ?) RETURNING id`)
+    .bind(agentId, buildId || null, month, minutes, new Date().toISOString()).first();
+  return {
+    id: row.id,
+    yes: await makeLink(env, { t: "hours", id: row.id, a: "yes", ag: agentId }),
+    no: await makeLink(env, { t: "hours", id: row.id, a: "no", ag: agentId }),
+  };
 }
 
 // Told once per month and limit when a log is refused for want of hours.

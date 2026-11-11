@@ -29,7 +29,7 @@ Status: **Built** (works today), **Partly**, **Not yet**, **Not offered** (delib
 | Customer accounts in a CRM | (none yet) | Not yet | Connect through the client's CRM or field-service app; confirm on the assessment call |
 | Watching that everything runs | **The Watch** (`site/src/gmwatch.js`) | Built November 11: every 10 minutes, emails Jerome when a problem starts and when it clears (inbox disconnected or not checked, agent quiet, our script stopped, inquiries stuck, hours nearing the restructure trigger). `/api/health` for an outside uptime monitor | Jerome sets up a free uptime monitor on /api/health |
 | Fixing what breaks | **The Fixer** | Jerome, by hand | Stays human for now |
-| The Daily Brief to each client | The GM / The Daily Brief (`site/src/clientbrief.js`) | Built November 10: every morning, today's calendar, overlaps, what's waiting on them, what came in, hours used. Skipped on an empty day | Turn it into a short yes/no list the owner OKs |
+| The Daily Brief to each client | The GM / The Daily Brief (`site/src/clientbrief.js`) | Built November 10-11: every morning, a yes/no list (extra-time requests with one-tap Yes/No), today's calendar, overlaps, what's waiting on them with a Done link (stays until done, up to 7 days), what came in, hours used | More yes/no item types as features arrive (approved replies, bookings) |
 | Marketing posts and graphics | none | Not offered | Out of scope; revisit only as a deliberate decision |
 | Campaigns and promotions | none | Not offered | Conflicts with the never-list: messages people who didn't contact the business first |
 
@@ -47,6 +47,6 @@ Status: **Built** (works today), **Partly**, **Not yet**, **Not offered** (delib
 ## Suggested order
 
 1. ~~Calendar permission~~ read-only built November 10; next is writing events behind the owner's OK (Schedule Keeper).
-2. A daily summary the owner OKs.
+2. ~~A daily summary the owner OKs~~ built November 11 (yes/no list with one-tap links).
 3. Quote Chaser as a reusable recipe, tested on QA Test Co.
 4. ~~The GM's watch with instant alerts~~ built November 11.

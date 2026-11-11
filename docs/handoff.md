@@ -363,6 +363,17 @@ lifted: price and cancel/change max Ask Me; complaints, legal, payment always Ne
 - Gap found: the Services page says the client can "pause everything with one switch". Only Jerome can pause today
   (`/api/admin/client-agent-status`). Build a client-facing pause, or change the copy.
 
+## Yes/no list and one-tap links (built November 11)
+
+`site/src/links.js` (signed links, 14 days), `site/src/approvals.js`, tested by `node site/tools/test_approvals.mjs`.
+- When a build heads past a client's hours, the warning email now has **Yes** and **No** links (an `hours_requests` row).
+  Yes records the approval through the hours ledger with the time and address; No declines and the work stays within
+  their hours. Jerome is emailed either way. A request for an earlier month expires instead of approving.
+- The client's Daily Brief opens with **NEEDS YOUR YES OR NO** for pending requests, and every waiting item has a
+  **Done** link; items stay until marked done (up to 7 days).
+- Opening a link only shows a confirmation page; only the button (POST) acts, so mail scanners change nothing.
+- **For Jasmine:** is a one-tap "Yes" on a signed link "prior written approval" under clause 6? Added to her brief.
+
 ## Agent checklist
 
 `docs/agent-checklist.md` tracks every back-office capability a client needs, our agent name for it, and its

@@ -36,7 +36,7 @@ const stmt = (sql, args = []) => ({
 const sent = [];
 globalThis.fetch = async (url, init) => { sent.push(JSON.parse(init.body)); return new Response("{}", { status: 200 }); };
 const env = { DB: { prepare: (sql) => stmt(sql), batch: async (list) => Promise.all(list.map((s) => s.run())) },
-  RESEND_API_KEY: "test", NOTIFY_EMAIL: "jerome@example.test" };
+  RESEND_API_KEY: "test", NOTIFY_EMAIL: "jerome@example.test", TOKEN_ENC_KEY: "k".repeat(40) };
 db.exec(`CREATE TABLE client_agents (id TEXT PRIMARY KEY, label TEXT, key_hash TEXT, profile TEXT, daily_cap INTEGER,
   status TEXT DEFAULT 'active', last_seen TEXT, created_at TEXT)`);
 db.prepare(`INSERT INTO client_agents VALUES ('ca_1', 'Harbor Ridge', 'x', ?, 30, 'active', NULL, '2026-11-01T00:00:00Z')`)
