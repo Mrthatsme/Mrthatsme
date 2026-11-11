@@ -5,7 +5,7 @@
 import { escapeHtml as e } from "./admin.js";
 import { CATEGORIES, LEVELS, effectiveLevel, validateLevels } from "./levels.js";
 
-export async function saveLevels(env, { agentId, levels, neverFrom }) {
+export async function saveLevels(env, { agentId, levels, neverFrom, stepUp }) {
   const agent = await env.DB.prepare(`SELECT * FROM client_agents WHERE id = ?`).bind(agentId).first();
   if (!agent) return { error: "agent_not_found" };
   const v = validateLevels({ levels, neverFrom });
@@ -13,8 +13,10 @@ export async function saveLevels(env, { agentId, levels, neverFrom }) {
   const profile = JSON.parse(agent.profile || "{}");
   profile.levels = { ...(profile.levels || {}), ...v.levels };
   profile.neverFrom = v.neverFrom;
+  // Second look on Sonnet (clientagent.js). Only changed when the form sends it.
+  if (typeof stepUp === "boolean") profile.stepUp = stepUp;
   await env.DB.prepare(`UPDATE client_agents SET profile = ? WHERE id = ?`).bind(JSON.stringify(profile), agentId).run();
-  return { ok: true, levels: Object.fromEntries(Object.keys(CATEGORIES).map((c) => [c, effectiveLevel(profile, c)])), neverFrom: profile.neverFrom };
+  return { ok: true, levels: Object.fromEntries(Object.keys(CATEGORIES).map((c) => [c, effectiveLevel(profile, c)])), neverFrom: profile.neverFrom, stepUp: profile.stepUp === true };
 }
 
 export async function dashboardLevels(env) {
@@ -22,7 +24,7 @@ export async function dashboardLevels(env) {
     .catch(() => ({ results: [] }));
   return (results || []).map((a) => {
     const p = JSON.parse(a.profile || "{}");
-    return { id: a.id, label: a.label, neverFrom: [].concat(p.neverFrom || []), levels: Object.fromEntries(Object.keys(CATEGORIES).map((c) => [c, effectiveLevel(p, c)])) };
+    return { id: a.id, label: a.label, stepUp: p.stepUp === true, neverFrom: [].concat(p.neverFrom || []), levels: Object.fromEntries(Object.keys(CATEGORIES).map((c) => [c, effectiveLevel(p, c)])) };
   });
 }
 
@@ -38,6 +40,7 @@ export function renderLevelsPanel(clients, nonce) {
       }).join("")}
       <label>Never send to the AI: emails from these senders, one per line (an address, or @domain.com for everyone there)
         <textarea name="neverFrom" rows="3" placeholder="lawyer@smithlaw.com&#10;@mybank.com">${e(c.neverFrom.join("\n"))}</textarea></label>
+      <label><input type="checkbox" name="stepUp"${c.stepUp ? " checked" : ""}> Second look on Sonnet for long threads, drafts with 2+ blanks, and repeat customers (up to 5 a day, about 1.5 cents each)</label>
       <p class="note">Ask Me: a draft waits for the owner. Tell Me: emergencies go to the on-call person, then the owner is told. Handle It: mail that isn't from a customer is set aside. Until approved replies are switched on, Handle It and Tell Me on a reply still leave a draft.</p>
       <button type="submit">Save levels</button>
     </form>`;
@@ -59,7 +62,7 @@ export function renderLevelsPanel(clients, nonce) {
       var never = f.neverFrom.value.split("\\n").map(function (x) { return x.trim(); }).filter(Boolean);
       f.querySelector("button").disabled = true;
       fetch("/api/admin/levels", { method: "POST", headers: { "Content-Type": "application/json" }, credentials: "same-origin",
-        body: JSON.stringify({ agentId: f.dataset.agent, levels: levels, neverFrom: never }) })
+        body: JSON.stringify({ agentId: f.dataset.agent, levels: levels, neverFrom: never, stepUp: f.stepUp.checked }) })
         .then(function (r) { return r.json(); }).then(function (r) {
           f.querySelector("button").disabled = false;
           if (r.ok) return show("Saved for " + f.querySelector("h3").textContent + ".");

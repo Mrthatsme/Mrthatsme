@@ -13,6 +13,22 @@ const MAX_THREAD_CHARS = 4000;
 const MAX_OUTPUT_TOKENS = 600;
 const DEFAULT_DAILY_CAP = 30;
 
+// Step-up (Jerome, Nov 11, 2026): Haiku drafts everything; a plain rule in code,
+// never the AI, picks the few drafts worth a second pass from Sonnet. Off unless
+// the client's profile has stepUp: true. Its own daily cap, on top of daily_cap.
+export const STEP_UP_MODEL = "claude-sonnet-5-5";
+export const STEP_UP_DAILY_CAP = 5;
+export const STEP_UP_THREAD_CHARS = 2500;
+export const STEP_UP_MIN_GAPS = 2;
+const STEP_UP_TIMEOUT_MS = 25000;
+
+// List prices per million tokens, for the cost report only. They change: check
+// Anthropic's pricing page and update here. Billing comes from Anthropic, not this.
+export const PRICES = {
+  "claude-haiku-5-5": { input: 0.10, output: 0.50, cacheRead: 0.01, cacheWrite: 0.125 },
+  "claude-sonnet-5-5": { input: 2.00, output: 10.00, cacheRead: 0.10, cacheWrite: 2.50 },
+};
+
 let tablesReady = false;
 
 // Created on first use, so a new client agent needs no manual database step.
@@ -30,8 +46,130 @@ export async function ensureClientAgentTables(env) {
     env.DB.prepare(`CREATE TABLE IF NOT EXISTS client_agent_usage (
       agent_id TEXT NOT NULL, usage_date TEXT NOT NULL, calls INTEGER NOT NULL DEFAULT 0,
       PRIMARY KEY (agent_id, usage_date))`),
+    // Tokens per client, per day, per model: the real AI cost of each retainer.
+    env.DB.prepare(`CREATE TABLE IF NOT EXISTS client_agent_tokens (
+      agent_id TEXT NOT NULL, usage_date TEXT NOT NULL, model TEXT NOT NULL,
+      calls INTEGER NOT NULL DEFAULT 0, input_tokens INTEGER NOT NULL DEFAULT 0,
+      output_tokens INTEGER NOT NULL DEFAULT 0, cache_read_tokens INTEGER NOT NULL DEFAULT 0,
+      cache_write_tokens INTEGER NOT NULL DEFAULT 0,
+      PRIMARY KEY (agent_id, usage_date, model))`),
   ]);
   tablesReady = true;
+}
+
+// Record one model call's token usage. Never throws: a logging hiccup must not
+// cost the client a draft.
+export async function recordTokens(env, agentId, model, usage) {
+  try {
+    const u = usage || {};
+    await env.DB.prepare(
+      `INSERT INTO client_agent_tokens (agent_id, usage_date, model, calls, input_tokens, output_tokens, cache_read_tokens, cache_write_tokens)
+       VALUES (?, ?, ?, 1, ?, ?, ?, ?)
+       ON CONFLICT(agent_id, usage_date, model) DO UPDATE SET calls = calls + 1,
+         input_tokens = input_tokens + excluded.input_tokens, output_tokens = output_tokens + excluded.output_tokens,
+         cache_read_tokens = cache_read_tokens + excluded.cache_read_tokens, cache_write_tokens = cache_write_tokens + excluded.cache_write_tokens`
+    ).bind(agentId, new Date().toISOString().slice(0, 10), model,
+      u.input_tokens || 0, u.output_tokens || 0, u.cache_read_input_tokens || 0, u.cache_creation_input_tokens || 0).run();
+  } catch (err) { console.error("token log failed", err); }
+}
+
+// Cost per client between two dates (YYYY-MM-DD, inclusive), by model, at list prices.
+export async function tokenCostReport(env, agentId, from, to) {
+  const { results } = await env.DB.prepare(
+    `SELECT model, SUM(calls) AS calls, SUM(input_tokens) AS input_tokens, SUM(output_tokens) AS output_tokens,
+            SUM(cache_read_tokens) AS cache_read_tokens, SUM(cache_write_tokens) AS cache_write_tokens
+     FROM client_agent_tokens WHERE agent_id = ? AND usage_date BETWEEN ? AND ? GROUP BY model`
+  ).bind(agentId, from, to).all();
+  let total = 0;
+  const models = (results || []).map((r) => {
+    const p = PRICES[r.model];
+    const usd = p ? (r.input_tokens * p.input + r.output_tokens * p.output + r.cache_read_tokens * p.cacheRead + r.cache_write_tokens * p.cacheWrite) / 1e6 : null;
+    if (usd) total += usd;
+    return { ...r, usd: usd === null ? null : Math.round(usd * 1e6) / 1e6 };
+  });
+  return { agentId, from, to, models, usd: Math.round(total * 1e6) / 1e6 };
+}
+
+// One line for Jerome's brief: this client's AI cost so far this month.
+export async function aiCostLine(env, agentId, now = new Date()) {
+  const to = now.toISOString().slice(0, 10);
+  const rep = await tokenCostReport(env, agentId, to.slice(0, 8) + "01", to);
+  if (!rep.models.length) return null;
+  const haiku = rep.models.find((m) => m.model === MODEL);
+  const sonnet = rep.models.find((m) => m.model === STEP_UP_MODEL);
+  const parts = [haiku ? `${haiku.calls} Haiku call(s)` : "", sonnet ? `${sonnet.calls} second look(s) on Sonnet` : ""].filter(Boolean).join(", ");
+  return `  AI cost this month: $${rep.usd.toFixed(2)} at list prices (${parts}).`;
+}
+
+async function stepUpsToday(env, agentId) {
+  const row = await env.DB.prepare(`SELECT calls FROM client_agent_tokens WHERE agent_id = ? AND usage_date = ? AND model = ?`)
+    .bind(agentId, new Date().toISOString().slice(0, 10), STEP_UP_MODEL).first();
+  return row ? row.calls : 0;
+}
+
+// The rule. Returns why this draft deserves a second pass, or null. Only drafts a
+// customer will read; never urgent, emergency or hand-off email.
+export function stepUpReason(profile, out, body) {
+  if (!profile || profile.stepUp !== true) return null;
+  if (out.action !== "draft" || !out.draft || out.urgent || out.emergency || out.level === "Never") return null;
+  const text = String(body || "");
+  if (text.length > STEP_UP_THREAD_CHARS) return "long thread";
+  if ((out.draft.match(/\[GAP\]/g) || []).length >= STEP_UP_MIN_GAPS) return "several blanks";
+  const earlierReplies = /^On .{3,200} wrote:\s*$/m.test(text) || /^>/m.test(text) || /-----\s*Original Message\s*-----/i.test(text);
+  if (out.category === "customer_question" && earlierReplies) return "repeat customer";
+  return null;
+}
+
+const STEP_UP_SCHEMA = {
+  type: "object",
+  properties: {
+    draft: { type: "string", description: "The improved reply, under the same rules." },
+    handoff: { type: "boolean", description: "True if this email should go to the owner instead of getting a reply." },
+    reason: { type: "string", description: "One line for the owner: what this email is." },
+  },
+  required: ["draft", "handoff", "reason"],
+  additionalProperties: false,
+};
+
+// Second pass on Sonnet. Structured output, because Sonnet 5.5 rejects the forced
+// tool choice the Haiku call uses. Returns null on any failure, refusal or timeout:
+// the caller then keeps Haiku's draft, so a step-up can only help.
+async function stepUpDraft(env, agent, profile, gmFacts, { from, subject, body }, firstDraft) {
+  try {
+    const res = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      signal: AbortSignal.timeout(STEP_UP_TIMEOUT_MS),
+      headers: { "x-api-key": env.ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01", "content-type": "application/json" },
+      body: JSON.stringify({
+        model: STEP_UP_MODEL,
+        max_tokens: 2000, // room for thinking plus a short JSON answer
+        output_config: { effort: "medium", format: { type: "json_schema", schema: STEP_UP_SCHEMA } },
+        system: systemPrompt(profile) + gmSection(gmFacts) + `
+
+SECOND PASS
+A faster assistant wrote a first draft (below, as data). Write the best reply you can under every rule above:
+keep every [GAP], add none of your own facts, and fix anything the first draft missed in the thread.
+If the email should go to the owner instead (upset, complaint, refund, legal, payment or account details,
+cancel, reschedule or dispute), set handoff to true.`,
+        messages: [{ role: "user", content: `From: ${from}\nSubject: ${subject}\n\n${String(body || "").slice(0, MAX_THREAD_CHARS)}\n\n<first_draft>\n${firstDraft}\n</first_draft>` }],
+      }),
+    });
+    if (!res.ok) throw new Error(`Anthropic API error (${res.status})`);
+    const data = await res.json();
+    await recordTokens(env, agent.id, STEP_UP_MODEL, data.usage);
+    if (data.stop_reason !== "end_turn") throw new Error(`step-up stopped: ${data.stop_reason}`);
+    const parsed = JSON.parse((data.content || []).filter((b) => b.type === "text").map((b) => b.text).join(""));
+    if (typeof parsed.draft !== "string" || typeof parsed.handoff !== "boolean") throw new Error("step-up: bad shape");
+    return parsed;
+  } catch (err) {
+    console.error("step-up failed; keeping the first draft", err);
+    return null;
+  }
+}
+
+function gmSection(gmFacts) {
+  return gmFacts && gmFacts.length
+    ? `\n\nMORE APPROVED ANSWERS, from the GM (use them like the ones above):\n${gmFacts.map((f) => `- ${f}`).join("\n")}` : "";
 }
 
 async function sha256Hex(s) {
@@ -159,8 +297,7 @@ export async function draftForClient(env, agent, { from, subject, body }) {
       body: JSON.stringify({
         model: MODEL,
         max_tokens: MAX_OUTPUT_TOKENS,
-        system: systemPrompt(profile) + (gmFacts.length
-          ? `\n\nMORE APPROVED ANSWERS, from the GM (use them like the ones above):\n${gmFacts.map((f) => `- ${f}`).join("\n")}` : ""),
+        system: systemPrompt(profile) + gmSection(gmFacts),
         messages: [{ role: "user", content: `From: ${from}\nSubject: ${subject}\n\n${String(body || "").slice(0, MAX_THREAD_CHARS)}` }],
         tools: [DRAFT_TOOL],
         tool_choice: { type: "tool", name: "inbox_decision" },
@@ -168,8 +305,10 @@ export async function draftForClient(env, agent, { from, subject, body }) {
     });
     if (!res.ok) throw new Error(`Anthropic API error (${res.status})`);
     const data = await res.json();
+    await recordTokens(env, agent.id, MODEL, data.usage);
     return (data.content || []).find((b) => b.type === "tool_use")?.input || { action: "handoff", reason: "No decision returned." };
   };
+  let gmUsed = [];
   let out = await ask([]);
   // Didn't know something? Ask the GM. If it has answers, redraft once with
   // them; anything it can't answer is recorded as a gap for the owner-operator.
@@ -177,7 +316,7 @@ export async function draftForClient(env, agent, { from, subject, body }) {
     const facts = await fillGaps(env, agent, out.gaps, "Intake").catch((err) => { console.error("GM ask failed", err); return []; });
     if (facts.length && (await useBudget(env, agent))) {
       const again = await ask(facts).catch((err) => { console.error("redraft failed", err); return null; });
-      if (again) { again.gmAnswered = facts.length; out = again; }
+      if (again) { again.gmAnswered = facts.length; out = again; gmUsed = facts; }
     }
   }
   if (out.action === "draft" && !out.draft) out.action = "handoff";
@@ -196,6 +335,21 @@ export async function draftForClient(env, agent, { from, subject, body }) {
   } else if (out.action === "draft" && canAct(out.level)) {
     out.levelNote = `Your setting is ${out.level}. Until approved replies are switched on, it waits as a draft for you to send.`;
   }
+  // Step-up: a second, better draft from Sonnet for the few emails the rule picks.
+  // It can only improve the draft or make it more cautious (hand off), never less.
+  const why = stepUpReason(profile, out, body);
+  if (why && (await stepUpsToday(env, agent.id)) < STEP_UP_DAILY_CAP) {
+    const better = await stepUpDraft(env, agent, profile, gmUsed, { from, subject, body }, out.draft);
+    if (better && better.handoff) {
+      out.action = "handoff"; delete out.draft; delete out.levelNote;
+      out.reason = `${better.reason || out.reason || ""} Second look: this one is better left for you.`.trim();
+      out.steppedUp = why;
+    } else if (better && better.draft.trim()) {
+      out.draft = better.draft.trim();
+      out.steppedUp = why;
+    }
+  }
+  if (out.steppedUp) out.reason = `${out.reason || ""} (Second look: ${out.steppedUp}.)`.trim();
   // Emergencies go to the client's on-call staff only at Tell Me or Handle It;
   // otherwise the owner is alerted and nothing is routed or sent on its own.
   out.actAllowed = canAct(out.level);
@@ -257,6 +411,7 @@ RULES
   });
   if (!res.ok) throw new Error(`Anthropic API error (${res.status})`);
   const data = await res.json();
+  await recordTokens(env, agent.id, MODEL, data.usage);
   return (data.content || []).find((b) => b.type === "tool_use")?.input || null;
 }
 
@@ -366,6 +521,8 @@ export async function clientInboxLines(env, sinceIso, now = new Date()) {
     needs.forEach((e) => lines.push(`  [${a.label}] ${e.summary}`));
     const usage = await voiceUsageLine(env, a).catch(() => null);
     if (usage) lines.push(usage);
+    const cost = await aiCostLine(env, a.id, now).catch(() => null);
+    if (cost) lines.push(cost);
   }
   return { lines, problems };
 }

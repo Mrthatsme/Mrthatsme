@@ -98,6 +98,14 @@ Decisions made after the package, which override `docs/build-spec.md` where they
   CLOCK keeps the day, STARS asks for the review, PAID gets the invoice out, WATCH tells you all of it every morning.
   **Not yet in the agreement:** `site/src/plans.js` and `site/src/contract.js` still use the old names until the attorney
   updates the agreement; change them together with the attorney's version. Trademark search pending.
+- **Second look and AI cost per client (Jerome, November 11):** inbox drafts stay on Claude Haiku 5.5. A plain rule in
+  `site/src/clientagent.js` (`stepUpReason`), never the AI, sends a few drafts to Claude Sonnet 5.5 for a second pass:
+  threads over 2,500 characters, drafts with 2 or more [GAP]s, or a repeat customer's question. Never urgent, emergency,
+  hand-off or Never email. Off per client until "Second look on Sonnet" is ticked on the admin levels card; at most 5 a
+  day per client; any failure or decline keeps Haiku's draft, and Sonnet may only improve a draft or hand it off. The
+  Sonnet call uses structured output because Sonnet 5.5 rejects the forced tool choice the Haiku call uses. Every model
+  call logs tokens to `client_agent_tokens` (per client, day and model); Jerome's brief shows each client's AI cost this
+  month at the list prices in `PRICES`, which must be updated when Anthropic's prices change.
 - **Added November 11:** one page per automation (`/automations/first` and the rest), three calculators and a calculators
   page (`/calculators/`), "Not included" lists on the plan cards, two rows in the price comparison table, and a security
   band on Pricing and Services. Styles for all of it live in `site/public/extras.css` and calculator scripts in
