@@ -29,7 +29,8 @@ Everything in this folder is a **proposal for review**. Nothing has been changed
 - Rewriting the live site's wording.
 
 ## Side by side with the real page
-`compare/index.html` shows your **actual live pages** (exact copies) next to the same pages with only the additions dropped in, each marked with an orange **NEW** box. Use the Pricing / Services tabs at the top.
+`compare/index.html` shows your **actual live pages** (exact copies) next to the same pages with only the additions dropped in, each marked with an orange **NEW** box. Use the Home / Pricing / Services tabs at the top.
+- Home images: `screenshots/compare-home-*.png` (header + hero, five automations, pricing line, full page). Kept deliberately light: busy owner-operators won't scroll or click through a lot.
 - Pricing images: `screenshots/compare-pricing-*.png` (header, calculator, plan cards, price table, security band)
 - Services images: `screenshots/compare-services-*.png` (header, automation cards with links, tools + security band, demo + proof log link)
 
