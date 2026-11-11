@@ -2,16 +2,30 @@
 
 Everything in this folder is a **proposal for review**. Nothing has been changed on minutesregained.com. Each item waits for Jerome's approval.
 
-| # | Item | Files | Your decision |
-|---|---|---|---|
-| 1 | **Wording rewrites (v2, plain English):** stop sounding like the other AI-built site | `01-wording-rewrites.md` · mockup `mockups/01-home-wording.html` · `screenshots/01-home-wording-*.png` | Keep / Use mine / Rewrite, per row. Answer **D1** (how follow-ups are sent). |
-| 2 | **Pricing:** Included / Not included on each plan, a cost comparison table (names no competitor), a security band | `mockups/02-pricing.html` · `screenshots/02-pricing-*.png` | Approve the table and band. Add any certifications? |
-| 3 | **Process Map offer:** a paid, credited first step | `mockups/03-process-map.html` · `screenshots/03-process-map-*.png` | Price ($295/$395/$495), name, keep the free call in front? |
-| 4 | **Five automation outcome pages:** sell the result, no how-to | `mockups/automations/*.html` · `screenshots/auto-*.png` | Approve the format, then the sample wording on each. |
-| 5 | **Proof log:** dated tests on sample businesses (format only, no invented results) | `mockups/05-proof-log.html` · `screenshots/05-proof-log-*.png` | Run the tests to fill it in, or drop it. |
-| 6 | **llms.txt:** lets AI assistants describe you accurately | `llms.txt` | Approve the facts. |
-| 7 | **Light/dark switch:** Auto (follows the visitor's device) · Light · Dark, and it remembers the choice | In every mockup header · `screenshots/theme-switch-*.png` · `screenshots/*-dark.png` | Approve? Your live stylesheet already supports it; it only needs the button. |
+**Wording:** Jerome keeps the live site's wording. The rewrite drafts were removed, and every mockup here uses the live site's own phrases. 12-hour time throughout.
 
-**Not included, by decision:** free step-by-step how-to pages. Jerome's call: they could teach a prospect to do it themselves.
+## Ideas taken from the other site's *structure* (their wording is not used)
 
-**To view the mockups:** open any `.html` file in `mockups/` in a browser. They use the live site's colors and fonts, and support light and dark mode. Each one has a dashed orange "What you're looking at" box that explains it. Those boxes are notes for review, not page content.
+| # | What they do | Our draft | Files | Status |
+|---|---|---|---|---|
+| 1 | Light/dark switch in the header | Auto (follows the visitor's device) · Light · Dark. Remembers the choice. The live stylesheet already supports it; only the button is missing. | In every mockup header · `screenshots/*-desktop-dark.png` | Drafted |
+| 2 | One page per job, each with what it does and what it doesn't | Five automation **outcome** pages: result, sample message, Daily Brief entry, hard limits. **No how-to.** | `mockups/automations/*.html` | Drafted |
+| 3 | Free cost calculators on their own pages | Three calculators (slow replies, forgotten quotes, late invoices) plus a hub page. They put a dollar figure on the problem and teach nothing. | `mockups/tools/*.html` | **New. Drafted** |
+| 4 | "Included / Not included" on every offer | Added to all three plan cards. Prices and details unchanged. | `mockups/02-pricing.html` (top) | Drafted |
+| 5 | A paid first step, credited toward the build (their $249 call) | **Optional.** A paid Process Map, credited toward month one. Not a price change to your plans. Drop it if you don't want it. | `mockups/03-process-map.html` | Drafted, **your call** |
+| 6 | "Tested" receipts, dated | A proof log page. Format only; no invented results. | `mockups/05-proof-log.html` | Drafted, needs real tests |
+| 7 | Site files AI assistants can read (`llms.txt`, data feeds) | `llms.txt` describing your services and limits | `llms.txt` | Drafted |
+
+## Ideas that came from comparing the two sites (not copied from theirs)
+
+| What | Why | Files |
+|---|---|---|
+| Cost comparison table (do it yourself / one-off builds / hire an admin / Minutes Regained) | Your plans cost less per automation than buying one-off builds plus upkeep. The table shows that without naming anyone. | `mockups/02-pricing.html` (middle) |
+| Security band | They exclude "security work of any kind." Your background is cybersecurity. | `mockups/02-pricing.html` (bottom) |
+
+## Not doing, by decision
+- Free step-by-step how-to pages (could teach a prospect to do it themselves).
+- Low-price $19 kits, Grok-specific content, evening-only calls.
+- Rewriting the live site's wording.
+
+**To view:** open any `.html` file in `mockups/` in a browser. The dashed orange boxes are review notes, not page content.
