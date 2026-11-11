@@ -16,6 +16,12 @@ Everything in this folder is a **proposal for review**. Nothing has been changed
 | 6 | "Tested" receipts, dated | A proof log page. Format only; no invented results. | `mockups/05-proof-log.html` | Drafted, needs real tests |
 | 7 | Site files AI assistants can read (`llms.txt`, data feeds) | `llms.txt` describing your services and limits | `llms.txt` | Drafted |
 
+## Automation names (new)
+
+| Draft | Files | Your decision |
+|---|---|---|
+| Replace the generic AI-style names. **Option 1 (recommended):** FIRST (leads), TRACE (quotes), CLOCK (schedule), STARS (reviews), PAID (invoices), WATCH (daily brief), each a real word whose letters say what it does. **Option 2:** one system word, WATCH, with one letter per automation. | `mockups/06-agent-names.html` · `screenshots/06-agent-names-*.png` | Pick an option or swap any single name. Trademark check before launch. Once picked, I'll roll the names through every draft page. |
+
 ## Ideas that came from comparing the two sites (not copied from theirs)
 
 | What | Why | Files |
@@ -32,6 +38,6 @@ Everything in this folder is a **proposal for review**. Nothing has been changed
 `compare/index.html` shows your **actual live pages** (exact copies) next to the same pages with only the additions dropped in, each marked with an orange **NEW** box. Use the Home / Pricing / Services tabs at the top.
 - Home images: `screenshots/compare-home-*.png` (header + hero, five automations, pricing line, full page). Kept deliberately light: busy owner-operators won't scroll or click through a lot.
 - Pricing images: `screenshots/compare-pricing-*.png` (header, calculator, plan cards, price table, security band)
-- Services images: `screenshots/compare-services-*.png` (header, automation cards with links, tools + security band, demo + proof log link)
+- Services images: `screenshots/compare-services-*.png` (header, automation cards with one link each, tools + security band). Trimmed for busy owners: no calculator links on cards, proof log link held until real tests exist.
 
 **To view:** open any `.html` file in `mockups/` in a browser. The dashed orange boxes are review notes, not page content.
