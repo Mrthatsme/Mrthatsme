@@ -1,0 +1,52 @@
+# Minutes Regained
+
+> DRAFT FOR REVIEW. Not live. When approved, this file goes at https://minutesregained.com/llms.txt so AI assistants (ChatGPT, Claude, Perplexity) can read and accurately describe the business. It describes services only. It contains no prompts, setup steps or how-to.
+
+> Minutes Regained is a veteran-owned virtual assistant and automation service for small businesses with roughly 10 to 50 people, mainly trades and field services (plumbing, HVAC, electrical, cleaning, landscaping) and solo attorneys and small law firms. It builds five core automations in the client's own accounts, monitors them daily, repairs them free, and provides a real person for admin work that needs judgment. It is run by Jerome, a 20-year U.S. Navy Operations Specialist veteran, Lean Six Sigma Master Black Belt, with a background in cybersecurity and IT operations. Operated by Provident Watch LLC. Serves businesses across the United States.
+
+## What it does
+
+- [Lead Catcher](https://minutesregained.com/services#lead-catcher): answers website chat, forms and email within minutes in wording the owner approved. Never quotes prices or promises dates. Does not answer phone calls; missed calls are listed in the owner's daily brief.
+- [Quote Chaser](https://minutesregained.com/services#quote-chaser): follows up on open quotes on day 2, 5 and 10 and stops when the customer replies.
+- [Schedule Keeper](https://minutesregained.com/services#schedule-keeper): appointment confirmations, reminders, no-show follow-up, and a nightly check of the next day's schedule for conflicts.
+- [Review Builder](https://minutesregained.com/services#review-builder): one review request per completed job, never a second.
+- [Invoice & Chase](https://minutesregained.com/services#invoice-chase): sends invoices from the client's own invoicing tool and follows up on unpaid ones. Never takes, moves or refunds money.
+- [Daily Brief](https://minutesregained.com/services#daily-brief): one morning summary of what was handled, what needs a decision, and anything that failed.
+
+## How it works
+
+- Free 30-minute operations assessment, with a written summary either way.
+- The owner approves all wording and sets each action to Handle It, Tell Me, Ask Me or Never.
+- Two-week read-only trial: everything is drafted and nothing is sent.
+- Access is granted as a user in the client's existing tools (Google Workspace, Microsoft 365, Jobber, Housecall Pro, ServiceTitan, QuickBooks, Xero and others). No passwords are shared, and the client can revoke access at any time.
+- Automations live in the client's accounts and keep running if the client cancels.
+
+## Pricing
+
+- [Essential](https://minutesregained.com/pricing): $650/month. 3 of the 5 core automations, 4 hours of hands-on admin.
+- [Business Support](https://minutesregained.com/pricing): $1,300/month. All 5 automations plus 1 custom, 8 hours of hands-on admin, monthly review call.
+- [Custom Automation](https://minutesregained.com/pricing): from $550/month, no assistant hours, 12-month term, drops to $250/month after the build is paid off.
+- No setup fee. Software included up to the plan's allowance. Cancel Essential or Business Support with 30 days' notice.
+
+## What it never does
+
+- Answer phones or run an AI receptionist.
+- Text customers from its own number.
+- Quote prices, promise dates, or contact anyone who did not reach out first or who asked to stop.
+- Take, move or refund money, or access bank accounts.
+- Give legal advice, or touch law-firm trust (IOLTA) accounts.
+
+## Pages
+
+- [Services](https://minutesregained.com/services)
+- [Pricing](https://minutesregained.com/pricing)
+- [Contractors and home services](https://minutesregained.com/for/contractors)
+- [Small law firms](https://minutesregained.com/for/law-firms)
+- [About](https://minutesregained.com/about)
+- [Demo](https://minutesregained.com/demo)
+
+## Contact
+
+- Phone: (877) 896-8784
+- Email: support@minutesregained.com
+- Book an assessment: https://calendar.app.google/mL2TQQSCAgLAURZC6
