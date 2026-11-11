@@ -8,7 +8,7 @@
 
 The five automations and the daily brief are named FIRST, TRACE, CLOCK, STARS, PAID and WATCH. In order: FIRST answers, TRACE follows up, CLOCK keeps the day, STARS asks for the review, PAID gets the invoice out, WATCH reports all of it every morning.
 
-- [FIRST, new leads](https://minutesregained.com/services#lead-catcher): answers website chat, forms and email within minutes in wording the owner approved. Never quotes prices or promises dates. Does not answer phone calls; missed calls are listed in the owner's WATCH brief.
+- [FIRST, new leads](https://minutesregained.com/services#lead-catcher): answers website chat, forms and email within minutes in wording the owner approved. Never quotes prices or promises dates. Does not answer phone calls; missed calls are listed in the owner's daily brief.
 - [TRACE, quote follow-up](https://minutesregained.com/services#quote-chaser): follows up on open quotes on day 2, 5 and 10 and stops when the customer replies.
 - [CLOCK, scheduling](https://minutesregained.com/services#schedule-keeper): appointment confirmations, reminders, no-show follow-up, and a nightly check of the next day's schedule for conflicts.
 - [STARS, reviews](https://minutesregained.com/services#review-builder): one review request per completed job, never a second.
