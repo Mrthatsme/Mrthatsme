@@ -9,7 +9,7 @@ Everything in this folder is a **proposal for review**. Nothing has been changed
 | # | What they do | Our draft | Files | Status |
 |---|---|---|---|---|
 | 1 | Light/dark switch in the header | Auto (follows the visitor's device) · Light · Dark. Remembers the choice. The live stylesheet already supports it; only the button is missing. | In every mockup header · `screenshots/*-desktop-dark.png` | Drafted |
-| 2 | One page per job, each with what it does and what it doesn't | Five automation **outcome** pages: result, sample message, Daily Brief entry, hard limits. **No how-to.** | `mockups/automations/*.html` | Drafted |
+| 2 | One page per job, each with what it does and what it doesn't | Five automation **outcome** pages (FIRST, TRACE, CLOCK, STARS, PAID): what the letters stand for, result, sample message, WATCH brief entry, hard limits. **No how-to.** | `mockups/automations/*.html` | Drafted |
 | 3 | Free cost calculators on their own pages | Three calculators (slow replies, forgotten quotes, late invoices) plus a hub page. They put a dollar figure on the problem and teach nothing. | `mockups/tools/*.html` | **New. Drafted** |
 | 4 | "Included / Not included" on every offer | Added to all three plan cards. Prices and details unchanged. | `mockups/02-pricing.html` (top) | Drafted |
 | 5 | A paid first step, credited toward the build (their $249 call) | **Optional.** A paid Process Map, credited toward month one. Not a price change to your plans. Drop it if you don't want it. | `mockups/03-process-map.html` | Drafted, **your call** |
@@ -20,7 +20,7 @@ Everything in this folder is a **proposal for review**. Nothing has been changed
 
 | Draft | Files | Your decision |
 |---|---|---|
-| Replace the generic AI-style names. **Option 1 (recommended):** FIRST (leads), TRACE (quotes), CLOCK (schedule), STARS (reviews), PAID (invoices), WATCH (daily brief), each a real word whose letters say what it does. **Option 2:** one system word, WATCH, with one letter per automation. | `mockups/06-agent-names.html` · `screenshots/06-agent-names-*.png` | Pick an option or swap any single name. Trademark check before launch. Once picked, I'll roll the names through every draft page. |
+| Replace the generic AI-style names. **Option 1 (recommended):** FIRST (leads), TRACE (quotes), CLOCK (schedule), STARS (reviews), PAID (invoices), WATCH (daily brief), each a real word whose letters say what it does. **Option 2:** one system word, WATCH, with one letter per automation. | `mockups/06-agent-names.html` · `screenshots/06-agent-names-*.png` | **Option 1 chosen.** Rolled through every draft: automation pages (now `automations/first.html`, `trace.html`, `clock.html`, `stars.html`, `paid.html`), calculators, pricing, proof log, `llms.txt`, and the Home/Pricing/Services side-by-sides. Live copies keep today's names for comparison. Trademark check still to do. |
 
 ## Ideas that came from comparing the two sites (not copied from theirs)
 
