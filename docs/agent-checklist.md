@@ -27,7 +27,7 @@ Status: **Built** (works today), **Partly**, **Not yet**, **Not offered** (delib
 | Invoices sent and chased (never takes money) | **Invoice & Chase** / Billing | Not yet | Built in the client's own invoicing tool at onboarding |
 | Reviews after a job | **Review Builder** / Aftercare | Not yet | Built per client at onboarding |
 | Customer accounts in a CRM | (none yet) | Not yet | Connect through the client's CRM or field-service app; confirm on the assessment call |
-| Watching that everything runs | **The Watch** | Partly: health and quiet-agent checks in the brief | The GM's watch on the 10-minute cron, alerts at once (handoff "24/7") |
+| Watching that everything runs | **The Watch** (`site/src/gmwatch.js`) | Built November 11: every 10 minutes, emails Jerome when a problem starts and when it clears (inbox disconnected or not checked, agent quiet, our script stopped, inquiries stuck, hours nearing the restructure trigger). `/api/health` for an outside uptime monitor | Jerome sets up a free uptime monitor on /api/health |
 | Fixing what breaks | **The Fixer** | Jerome, by hand | Stays human for now |
 | The Daily Brief to each client | The GM / The Daily Brief (`site/src/clientbrief.js`) | Built November 10: every morning, today's calendar, overlaps, what's waiting on them, what came in, hours used. Skipped on an empty day | Turn it into a short yes/no list the owner OKs |
 | Marketing posts and graphics | none | Not offered | Out of scope; revisit only as a deliberate decision |
@@ -49,4 +49,4 @@ Status: **Built** (works today), **Partly**, **Not yet**, **Not offered** (delib
 1. ~~Calendar permission~~ read-only built November 10; next is writing events behind the owner's OK (Schedule Keeper).
 2. A daily summary the owner OKs.
 3. Quote Chaser as a reusable recipe, tested on QA Test Co.
-4. The GM's watch with instant alerts.
+4. ~~The GM's watch with instant alerts~~ built November 11.

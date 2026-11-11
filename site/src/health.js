@@ -66,6 +66,17 @@ export async function healthLines(env, leads, now = new Date()) {
     }
   }
 
+  const watch = seen["gm-watch"];
+  if (!watch) lines.push(`- The GM's watch: hasn't run yet`);
+  else {
+    const mins = Math.round((now - new Date(watch)) / 60000);
+    if (mins > 30) { problems++; lines.push(`- The GM's watch: STOPPED? Last ran ${mins} minutes ago (it runs every 10).`); }
+    else {
+      const open = await env.DB.prepare(`SELECT COUNT(*) AS n FROM gm_alerts WHERE resolved_at IS NULL`).first().catch(() => null);
+      lines.push(`- The GM's watch: OK, ran ${mins} min ago${open && open.n ? `. ${open.n} open problem(s), emailed to you when they started` : ", nothing open"}`);
+    }
+  }
+
   const since = new Date(now - 12 * 3600000).toISOString();
   const recent = leads.filter((l) => (l.created_at || "") >= since);
   const failed = recent.filter((l) => l.triage_status === "failed");

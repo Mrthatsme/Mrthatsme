@@ -340,6 +340,15 @@ Retire the test client afterwards with `POST /api/admin/client-agent-status {id,
   this change.
 - Tested by `node site/tools/test_calendar.mjs`.
 
+## The GM's watch (built November 11)
+
+`site/src/gmwatch.js`, tested by `node site/tools/test_gmwatch.mjs`. Runs right after the inbox check every 10
+minutes. Emails Jerome once when a problem starts and once when it clears: a client inbox disconnected or not checked
+for 40 minutes, a client inbox script quiet for 3 hours, our own inbox script stopped, website inquiries unprocessed
+after 30 minutes, logged hours averaging 12+ a week (heads-up) or 15+ (restructure trigger, Decision Log 14.20).
+Open problems are in `gm_alerts`; the brief shows the watch's status. **Dead-man's switch:** `GET /api/health` returns
+200 while the watch runs and 503 if it hasn't run for 30 minutes. Jerome to point a free uptime monitor at it.
+
 ## Agent checklist
 
 `docs/agent-checklist.md` tracks every back-office capability a client needs, our agent name for it, and its

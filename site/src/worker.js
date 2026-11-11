@@ -25,6 +25,7 @@ import { askGM, saveAnswer, dismissGap, dashboardGaps } from "./gm.js";
 import { renderGmPanel } from "./admingm.js";
 import { setupClient, renderSetupPanel, SETUP_CSS } from "./adminsetup.js";
 import { sendClientBriefs } from "./clientbrief.js";
+import { gmWatch, watchHealth } from "./gmwatch.js";
 import { agreementPage, startPage, signupsOpen, SIGNUPS_CLOSED_MESSAGE } from "./agreementpage.js";
 
 const JSON_HEADERS = { "Content-Type": "application/json; charset=utf-8" };
@@ -59,6 +60,11 @@ export default {
       }
       if ((path === "/start" || path === "/start.html" || path === "/start/") && (request.method === "GET" || request.method === "HEAD")) {
         return await startPage(env, request, url);
+      }
+      // For an outside uptime monitor: 200 while the GM's watch runs, 503 if it stopped.
+      if (path === "/api/health" && (request.method === "GET" || request.method === "HEAD")) {
+        const h = await watchHealth(env);
+        return json(h, h.ok ? 200 : 503);
       }
       if (path === "/api/contract-text" && request.method === "GET") {
         return handleContractText(url);
@@ -227,7 +233,9 @@ export default {
     // Connected client inboxes are checked every 10 minutes on their own cron,
     // so they never double up with the brief runs.
     if (event.cron === "*/10 * * * *") {
-      ctx.waitUntil(pollConnectedInboxes(env).catch((err) => console.error("inbox poll failed", err)));
+      // The GM's watch runs right after, so it sees this round's results.
+      ctx.waitUntil(pollConnectedInboxes(env).catch((err) => console.error("inbox poll failed", err))
+        .then(() => gmWatch(env)).catch((err) => console.error("GM watch failed", err)));
       return;
     }
     const at = new Date(event.scheduledTime);
