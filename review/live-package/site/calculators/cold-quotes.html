@@ -80,7 +80,7 @@
   var set=function(i,t){document.getElementById(i).textContent=t};
   function run(){ var nf=$("q")*$("nf")/100, jobs=nf*$("win")/100, m=jobs*$("amt");
     set("r_month",money(m));set("r_year",money(m*12));set("r_nf",nf.toFixed(1));set("r_jobs",jobs.toFixed(1)); }
-  document.querySelectorAll(".calc input").forEach(function(el){el.addEventListener("input",run)});
+  document.querySelectorAll(".m-calc input").forEach(function(el){el.addEventListener("input",run)});
   run();
 })();
 </script>
