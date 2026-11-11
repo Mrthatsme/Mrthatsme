@@ -349,6 +349,20 @@ after 30 minutes, logged hours averaging 12+ a week (heads-up) or 15+ (restructu
 Open problems are in `gm_alerts`; the brief shows the watch's status. **Dead-man's switch:** `GET /api/health` returns
 200 while the watch runs and 503 if it hasn't run for 30 minutes. Jerome to point a free uptime monitor at it.
 
+## Permission levels (built November 11)
+
+`site/src/levels.js`, `site/src/adminlevels.js`, tested by `node site/tools/test_levels.mjs`. The drafting agent puts
+every email in a category (new lead, customer question, scheduling, price question, cancel/change, emergency,
+complaint/legal, payment/account, not a customer) and follows the client's level. Ceilings from the never-list can't be
+lifted: price and cancel/change max Ask Me; complaints, legal, payment always Never; emergency max Tell Me.
+- **Never:** nothing written, left for the owner. A Never list of senders (address or @domain) is never sent to the AI.
+- **Ask Me:** draft (as before). **Tell Me:** emergencies go to the on-call person, and the after-hours note can send.
+  At Ask Me or Never an emergency only alerts the owner. **Handle It:** non-customer mail is set aside.
+- Handle It / Tell Me on a reply still leave a draft until "approved replies" exist (needs the attorney).
+- Set per client on the dashboard ("Permission levels") or `POST /api/admin/levels {agentId, levels, neverFrom}`.
+- Gap found: the Services page says the client can "pause everything with one switch". Only Jerome can pause today
+  (`/api/admin/client-agent-status`). Build a client-facing pause, or change the copy.
+
 ## Agent checklist
 
 `docs/agent-checklist.md` tracks every back-office capability a client needs, our agent name for it, and its

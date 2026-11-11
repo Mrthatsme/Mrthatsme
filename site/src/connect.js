@@ -36,7 +36,7 @@ async function alertOwner(env, conn, profile, from, subject, out) {
 // At most one per customer every 6 hours. Returns the text sent, or null.
 const AUTO_HOLDING_GAP_HOURS = 6;
 export async function sendAfterHoursHolding(env, conn, profile, { replyTo, subject, messageId, out }) {
-  if (!out.emergency || profile.afterHoursAutoReply === false || !outsideBusinessHours(profile)) return null;
+  if (!out.emergency || out.actAllowed === false || profile.afterHoursAutoReply === false || !outsideBusinessHours(profile)) return null;
   const m = String(replyTo || "").match(/<([^>]+)>/);
   const to = (m ? m[1] : String(replyTo || "")).trim().toLowerCase();
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(to) || sameAddress(to, conn.email)) return null;

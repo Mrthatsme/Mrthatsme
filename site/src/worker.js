@@ -26,6 +26,7 @@ import { renderGmPanel } from "./admingm.js";
 import { setupClient, renderSetupPanel, SETUP_CSS } from "./adminsetup.js";
 import { sendClientBriefs } from "./clientbrief.js";
 import { gmWatch, watchHealth } from "./gmwatch.js";
+import { saveLevels, dashboardLevels, renderLevelsPanel } from "./adminlevels.js";
 import { agreementPage, startPage, signupsOpen, SIGNUPS_CLOSED_MESSAGE } from "./agreementpage.js";
 
 const JSON_HEADERS = { "Content-Type": "application/json; charset=utf-8" };
@@ -184,6 +185,10 @@ export default {
         }
         // The GM: save an answer the owner approved, or dismiss a question that needs none.
         // Send a client's Daily Brief now (testing): {agentId, force}.
+        if (path === "/api/admin/levels" && request.method === "POST") {
+          const out = await saveLevels(env, (await readJson(request)) || {});
+          return json(out, out.error ? 400 : 200);
+        }
         if (path === "/api/admin/client-brief" && request.method === "POST") {
           const body = (await readJson(request)) || {};
           if (!body.agentId) return json({ error: "missing_agentId" }, 400);
@@ -655,7 +660,8 @@ async function handleAdmin(path, env) {
     const nonce = btoa(String.fromCharCode(...crypto.getRandomValues(new Uint8Array(16))));
     const hours = await dashboardHours(env).catch((err) => { console.error("hours panel failed", err); return []; });
     const gaps = await dashboardGaps(env).catch((err) => { console.error("GM panel failed", err); return []; });
-    return new Response(renderAdminPage({ leads, contracts, clients, payments, hoursPanel: renderGmPanel(gaps, nonce) + renderHoursPanel(hours, nonce) + renderSetupPanel(nonce), hoursCss: HOURS_CSS + GM_CSS + SETUP_CSS }), {
+    const lv = await dashboardLevels(env).catch((err) => { console.error("levels panel failed", err); return []; });
+    return new Response(renderAdminPage({ leads, contracts, clients, payments, hoursPanel: renderGmPanel(gaps, nonce) + renderHoursPanel(hours, nonce) + renderLevelsPanel(lv, nonce) + renderSetupPanel(nonce), hoursCss: HOURS_CSS + GM_CSS + SETUP_CSS }), {
       headers: {
         "Content-Type": "text/html; charset=utf-8",
         "Cache-Control": "no-store",

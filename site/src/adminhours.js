@@ -216,6 +216,8 @@ export const HOURS_CSS = `
   @media (max-width:600px){ body{margin:1rem !important} .hgrid,.forms{grid-template-columns:1fr} }
 `;
 export const GM_CSS = `
+  .lvform label small{color:#666;font-weight:400}
+  .lvform textarea{display:block;width:100%;box-sizing:border-box;padding:6px;font:inherit;font-size:.9rem;margin-top:2px}
   .gmform{margin-top:8px} .gq{margin:0 0 6px;font-size:.88rem}
   .gmform .dismiss{margin-left:8px;font-size:.8rem;background:none;border:0;color:#555;text-decoration:underline;cursor:pointer}
 `;

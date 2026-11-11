@@ -147,7 +147,7 @@ async function processIntake(env, agent, lead) {
   let ack = null;
   if (lead.email) {
     const owner = await ownerEmail(env, agent, profile);
-    ack = out.emergency && outsideBusinessHours(profile)
+    ack = out.emergency && out.actAllowed !== false && outsideBusinessHours(profile)
       ? afterHoursHoldingText(profile, out.routedTo)
       : `Thank you for contacting ${business.replace(/\.$/, "")}. We received your request and will be in touch soon.\n\n-- ${business}'s assistant (sent automatically)`;
     await sendNotificationEmail(env, {

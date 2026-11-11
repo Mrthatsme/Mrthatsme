@@ -6,6 +6,7 @@
 import { sendNotificationEmail } from "./email.js";
 import { voiceUsageLine } from "./usage.js";
 import { fillGaps } from "./gm.js";
+import { CATEGORY_IDS, effectiveLevel, canAct, onNeverList } from "./levels.js";
 
 const MODEL = "claude-haiku-5-5";
 const MAX_THREAD_CHARS = 4000;
@@ -132,14 +133,20 @@ const DRAFT_TOOL = {
       holding: { type: "string", description: "For urgent hand-offs: a short holding reply that commits to nothing, for the owner to send." },
       emergency: { type: "boolean", description: "True only when the email describes one of this business's listed emergencies." },
       emergency_brief: { type: "string", description: "For emergencies: name, address, callback number and problem, from the email only, [GAP] where missing." },
+      category: { type: "string", enum: CATEGORY_IDS, description: "What kind of email this is. new_lead: someone new asking about a job. customer_question: an existing customer. scheduling: booking or timing. price_question: price, quote or estimate. change_or_cancel: cancel, reschedule or dispute. emergency: one of the business's listed emergencies. complaint_or_legal: complaint, refund or legal. payment_or_account: payment details, bank or account changes. not_customer: newsletters, receipts, automated mail." },
       gaps: { type: "array", items: { type: "string" }, description: "Each thing the customer asked that the approved answers don't cover, as one short question (e.g. \"Do you service Chesapeake?\"). Not prices or dates: those always stay [GAP]. Empty if none." },
     },
-    required: ["action", "reason"],
+    required: ["action", "reason", "category"],
   },
 };
 
 // The agent sends one thread's latest message; we return a draft or a hand-off.
 export async function draftForClient(env, agent, { from, subject, body }) {
+  // A sender on the client's Never list is never sent to the AI at all.
+  if (onNeverList(JSON.parse(agent.profile || "{}"), from)) {
+    await logClientAgentEvent(env, agent.id, "needs_you", `[Never] "${subject}" from ${from}: on your Never list, left for you. Not read by the AI.`);
+    return { action: "handoff", reason: "This sender is on your Never list, so it's left for you.", category: "never_list", level: "Never" };
+  }
   if (!(await useBudget(env, agent))) {
     await logClientAgentEvent(env, agent.id, "needs_you", `Daily drafting limit reached. "${subject}" from ${from} needs you.`);
     return { action: "handoff", reason: "Daily drafting limit reached; this one needs you." };
@@ -175,11 +182,28 @@ export async function draftForClient(env, agent, { from, subject, body }) {
   }
   if (out.action === "draft" && !out.draft) out.action = "handoff";
   if (out.emergency && !profile.emergencyTypes) out.emergency = false;
-  if (out.emergency) out.urgent = true;
+  if (out.emergency) { out.urgent = true; out.category = "emergency"; }
+  // The client's permission level for this kind of email (levels.js).
+  if (!CATEGORY_IDS.includes(out.category)) out.category = out.action === "ignore" ? "not_customer" : "customer_question";
+  out.level = effectiveLevel(profile, out.category);
+  if (out.level === "Never") {
+    // Nothing written; the owner is told it's theirs.
+    out.action = "handoff"; delete out.draft; delete out.holding;
+    out.reason = `${out.reason || ""} Left for you (your setting: Never).`.trim();
+  } else if (out.action === "ignore" && out.level !== "Handle It") {
+    out.action = "handoff";
+    out.reason = `${out.reason || ""} Not from a customer; flagged because your setting is ${out.level}.`.trim();
+  } else if (out.action === "draft" && canAct(out.level)) {
+    out.levelNote = `Your setting is ${out.level}. Until approved replies are switched on, it waits as a draft for you to send.`;
+  }
+  // Emergencies go to the client's on-call staff only at Tell Me or Handle It;
+  // otherwise the owner is alerted and nothing is routed or sent on its own.
+  out.actAllowed = canAct(out.level);
   const kind = out.action === "draft" ? "drafted" : out.action === "handoff" ? "needs_you" : "ignored";
-  if (out.emergency) out.routedTo = await routeEmergency(env, profile, { from, subject, out });
+  out.routedTo = [];
+  if (out.emergency && out.actAllowed) out.routedTo = await routeEmergency(env, profile, { from, subject, out });
   const tag = out.emergency ? "EMERGENCY " : out.urgent ? "URGENT " : "";
-  await logClientAgentEvent(env, agent.id, kind, `${tag}"${subject}" from ${from}: ${out.reason || ""}${out.emergency ? ` On-call alerted: ${out.routedTo.length ? out.routedTo.join(", ") : "nobody on call"}.` : ""}`);
+  await logClientAgentEvent(env, agent.id, kind, `[${out.level}] ${tag}"${subject}" from ${from}: ${out.reason || ""}${out.emergency ? (out.actAllowed ? ` On-call alerted: ${out.routedTo.length ? out.routedTo.join(", ") : "nobody on call"}.` : " Not routed to on-call (your setting is " + out.level + ").") : ""}`);
   if (out.urgent) {
     // Time-critical (Agent Spec §6; Security Clauses 6.4(a)): the owner-operator
     // hears now, not at the next brief.
