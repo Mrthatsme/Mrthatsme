@@ -12,7 +12,7 @@ import { requireAdmin, unauthorizedResponse, renderAdminPage } from "./admin.js"
 import { notifyNewClient, sendNotificationEmail } from "./email.js";
 import { triageLead } from "./triage.js";
 import { sendDailyBrief, isBriefHour } from "./brief.js";
-import { screenSubmission, logSecurityEvent } from "./protect.js";
+import { screenSubmission, logSecurityEvent, adminGate } from "./protect.js";
 import { sendRenewalNotices } from "./renewals.js";
 import { recordHeartbeat } from "./health.js";
 import { createClientAgent, authenticateClientAgent, draftForClient, logClientAgentEvent } from "./clientagent.js";
@@ -54,6 +54,7 @@ export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
     const path = url.pathname;
+    let adminOk = false;   // set once the admin gate has passed
 
     try {
       if (path === "/demo-video.mp4" && (request.method === "GET" || request.method === "HEAD")) {
@@ -145,7 +146,9 @@ export default {
         return await handleOpsSummary(url, env);
       }
       if (path.startsWith("/api/admin/")) {
-        if (!requireAdmin(request, env)) return unauthorizedResponse();
+        const refused = await adminGate(request, env);
+        if (refused) return refused;
+        adminOk = true;
         if (path === "/api/admin/send-brief" && request.method === "POST") {
           await sendDailyBrief(env);
           return json({ sent: true });
@@ -252,7 +255,8 @@ export default {
       return json({ error: "not found" }, 404);
     } catch (err) {
       console.error(err);
-      return json({ error: "internal_error", message: String(err && err.message || err) }, 500);
+      // The detail helps Jerome on the dashboard; a stranger gets none of it.
+      return json(adminOk ? { error: "internal_error", message: String(err && err.message || err) } : { error: "internal_error" }, 500);
     }
   },
 

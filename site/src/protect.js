@@ -50,3 +50,56 @@ export async function securitySummary(env, sinceIso) {
   ).bind(sinceIso).all();
   return results || [];
 }
+
+// ------------------------------------------------------------ admin gate --
+// One place that decides whether an /api/admin request may proceed. Returns
+// null to continue, or the Response to send back.
+//  - Wrong passwords are counted per IP: after ADMIN_MAX_FAILS in the window the
+//    IP is refused for the rest of it, right password or not (brute force).
+//  - The password is compared in constant time.
+//  - A browser already signed in to the dashboard sends its saved password with
+//    every request to this site, including ones started by another site. So a
+//    request that changes something must come from our own pages (cross-site
+//    request forgery). Tools that send no Origin header (curl, scripts) pass.
+export const ADMIN_MAX_FAILS = 10;
+export const ADMIN_FAIL_WINDOW_MIN = 15;
+const ADMIN_PATH = "/api/admin";
+
+async function sameSecret(a, b) {
+  const enc = new TextEncoder();
+  const [x, y] = (await Promise.all([crypto.subtle.digest("SHA-256", enc.encode(a)), crypto.subtle.digest("SHA-256", enc.encode(b))])).map((d) => new Uint8Array(d));
+  let diff = 0;
+  for (let i = 0; i < x.length; i++) diff |= x[i] ^ y[i];
+  return diff === 0;
+}
+
+export async function adminGate(request, env) {
+  const deny = (status, error, extra = {}) => new Response(status === 401 ? "Authentication required." : JSON.stringify({ error }), {
+    status, headers: { "Cache-Control": "no-store", ...(status === 401 ? { "WWW-Authenticate": 'Basic realm="Minutes Regained CRM"' } : { "Content-Type": "application/json; charset=utf-8" }), ...extra },
+  });
+  const hash = await ipHash(request, env);
+  const since = new Date(Date.now() - ADMIN_FAIL_WINDOW_MIN * 60000).toISOString();
+  const fails = await env.DB.prepare(`SELECT COUNT(*) AS n FROM security_events WHERE ip_hash = ? AND path = ? AND kind = 'admin_fail' AND created_at >= ?`)
+    .bind(hash, ADMIN_PATH, since).first().catch(() => null);
+  if (fails && fails.n >= ADMIN_MAX_FAILS) return deny(429, "too_many_attempts", { "Retry-After": String(ADMIN_FAIL_WINDOW_MIN * 60) });
+
+  const auth = request.headers.get("Authorization") || "";
+  let given = null;
+  if (auth.startsWith("Basic ")) { try { given = atob(auth.slice(6)); } catch { given = ""; } }
+  const ok = !!env.ADMIN_PASSWORD && given !== null && await sameSecret(given, `admin:${env.ADMIN_PASSWORD}`);
+  if (!ok) {
+    // A first visit with no password yet is not an attempt; a wrong one is.
+    if (given !== null) await logSecurityEvent(env, { kind: "admin_fail", path: ADMIN_PATH, hash });
+    return deny(401, "unauthorized");
+  }
+  if (request.method !== "GET" && request.method !== "HEAD") {
+    const origin = request.headers.get("Origin");
+    const site = request.headers.get("Sec-Fetch-Site");
+    const own = new URL(request.url).origin;
+    if ((origin && origin !== own) || (site && site !== "same-origin" && site !== "none")) {
+      await logSecurityEvent(env, { kind: "admin_cross_site", path: ADMIN_PATH, hash });
+      return deny(403, "cross_site_request");
+    }
+  }
+  return null;
+}
