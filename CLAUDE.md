@@ -98,6 +98,17 @@ Decisions made after the package, which override `docs/build-spec.md` where they
   CLOCK keeps the day, STARS asks for the review, PAID gets the invoice out, WATCH tells you all of it every morning.
   **Not yet in the agreement:** `site/src/plans.js` and `site/src/contract.js` still use the old names until the attorney
   updates the agreement; change them together with the attorney's version. Trademark search pending.
+- **Admin gate (November 11):** every `/api/admin` request goes through `adminGate` in `site/src/protect.js`: 10 wrong
+  passwords from one IP in 15 minutes locks that IP out for the rest of the window, the password is compared in constant
+  time, and a request that changes something is refused if another site started it (Origin / Sec-Fetch-Site). Error
+  detail is returned only after the gate has passed; everyone else gets `internal_error` with no message.
+  **Before signups open:** add `screenSubmission` to `/api/agree` and `/api/checkout`, which have no rate limit today.
+- **Process-map tool (November 11):** `node site/tools/process_map.mjs <folder> --business "Name"` reads a client's
+  exported files on Jerome's own computer and drafts where work slips, with Claude Fable 5.2 (one retry on Opus 5.5 if
+  it declines). It shows the token count and cost and sends nothing without `--go`; leaves out any file that mentions a
+  `--never` sender; marks any quote not found in the files UNVERIFIED; and works out dollars in code. Its output is a
+  draft with estimates, never a client result. Client files and drafts never go in this repo (`process-map-out/` is
+  git-ignored). Anthropic keeps Fable requests for 30 days: don't run it on files promised no retention.
 - **The weekly SITREP (Jerome, November 11):** `site/src/sitrep.js` emails each client's owner on Monday at 7 AM their
   time, covering the Monday-to-Sunday week before, and sends Jerome a copy. It goes out on its own (Jerome's decision);
   a week with nothing to report is skipped. Code gathers the facts; Claude Sonnet 5.5 writes one short paragraph from

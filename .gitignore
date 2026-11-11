@@ -10,3 +10,6 @@ venv/
 .claude/
 skills-lock.json
 videos/
+
+# Process-map drafts hold client details. This repo is public: never commit them.
+process-map-out/
