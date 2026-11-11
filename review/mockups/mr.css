@@ -99,3 +99,21 @@ footer.site{border-top:1px solid var(--line);padding:28px 0;color:var(--fg-faint
 .theme-toggle svg{width:16px;height:16px}
 .theme-toggle .lbl{min-width:34px;text-align:left}
 @media (max-width:820px){.hdr-right .btn{display:none}}
+
+/* Calculators */
+.calc{display:grid;grid-template-columns:1.1fr .9fr;gap:22px;align-items:start}
+@media (max-width:820px){.calc{grid-template-columns:1fr}}
+.field{display:block;margin:0 0 16px}
+.field .q{display:block;font-weight:600;margin-bottom:2px}
+.field .h{display:block;font-size:14px;color:var(--fg-dim);margin-bottom:8px}
+.field .in{display:flex;align-items:center;gap:8px}
+.field input{width:100%;max-width:200px;font:600 17px var(--mono);color:var(--fg);background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:10px 12px}
+.field input:focus{outline:none;border-color:var(--accent)}
+.field .u{color:var(--fg-faint);font:500 15px var(--mono)}
+.result{position:sticky;top:16px}
+.result .big{font:800 48px/1 var(--display);color:var(--signal);margin:6px 0}
+.result .sub{font:700 20px var(--display);margin:0 0 14px}
+.result .line{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-top:1px solid var(--line-soft);font-size:15px}
+.result .line b{font-family:var(--mono)}
+.toolcard{display:block;text-decoration:none;color:inherit}
+.toolcard:hover{border-color:var(--accent)}
