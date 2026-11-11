@@ -5,7 +5,7 @@
 
 import { CORE_AUTOMATIONS } from "./plans.js";
 
-export const CONTRACT_VERSION = "2026-11-10.1";
+export const CONTRACT_VERSION = "2026-11-11.1";
 
 const usd = (cents) => `$${(cents / 100).toLocaleString("en-US", { maximumFractionDigits: 0 })}`;
 
@@ -70,6 +70,11 @@ ${included}
    published on minutesregained.com (Handle it / Tell me / Ask me / Never).
    No action with a real-world consequence to Client's business or its
    customers is taken without the authorization level Client has set.
+   Client may also pause everything at any time, from the link in the daily
+   brief: while paused, Client's inbox is not read and nothing is drafted,
+   routed or sent on Client's behalf, and requests through Client's form go
+   to Client unprocessed. Pausing does not change the fee or the notice
+   period under section 1, and Client may resume at any time.
 
 3. No financial access on Client's behalf. The payment set up through this
    agreement is Client's fee to Minutes Regained for the service

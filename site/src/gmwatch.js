@@ -30,8 +30,9 @@ export async function currentProblems(env, now = new Date()) {
   const ago = (iso) => (now - new Date(iso)) / MIN;
 
   // Clients: connected inboxes and inbox scripts.
-  const agents = await q(`SELECT id, label, last_seen, created_at FROM client_agents WHERE status = 'active'`);
+  const agents = await q(`SELECT id, label, last_seen, created_at, profile FROM client_agents WHERE status = 'active'`);
   for (const a of agents) {
+    if (JSON.parse(a.profile || "{}").pausedAt) continue;   // paused on purpose: nothing should be running
     const conn = (await q(`SELECT id, email, status, last_poll, connected_at FROM client_connections WHERE agent_id = ? ORDER BY connected_at DESC LIMIT 1`, a.id))[0];
     if (conn && conn.status === "disconnected") {
       problems.push({ key: `disconnected:${a.id}`, title: `${a.label}: ${conn.email || "the inbox"} was disconnected. Send a new connect link if that wasn't intended.` });

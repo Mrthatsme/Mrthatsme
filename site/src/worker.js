@@ -28,6 +28,7 @@ import { sendClientBriefs } from "./clientbrief.js";
 import { gmWatch, watchHealth } from "./gmwatch.js";
 import { saveLevels, dashboardLevels, renderLevelsPanel } from "./adminlevels.js";
 import { linkPage, linkAct } from "./approvals.js";
+import { setPaused } from "./pause.js";
 import { agreementPage, startPage, signupsOpen, SIGNUPS_CLOSED_MESSAGE } from "./agreementpage.js";
 
 const JSON_HEADERS = { "Content-Type": "application/json; charset=utf-8" };
@@ -118,6 +119,9 @@ export default {
         const agent = await authenticateClientAgent(request, env);
         if (!agent) return json({ error: "unauthorized" }, 401);
         const body = (await readJson(request)) || {};
+        if (path === "/api/agent/draft" && JSON.parse(agent.profile || "{}").pausedAt) {
+          return json({ action: "handoff", reason: "Paused: nothing is drafted until you resume from your Daily Brief.", paused: true });
+        }
         if (path === "/api/agent/draft") {
           try {
             return json(await draftForClient(env, agent, body));
@@ -190,6 +194,12 @@ export default {
         }
         // The GM: save an answer the owner approved, or dismiss a question that needs none.
         // Send a client's Daily Brief now (testing): {agentId, force}.
+        // Jerome can pause or resume a client too: {agentId, paused}.
+        if (path === "/api/admin/pause" && request.method === "POST") {
+          const body = (await readJson(request)) || {};
+          const out = await setPaused(env, body.agentId, !!body.paused, "Minutes Regained");
+          return json(out, out.error ? 400 : 200);
+        }
         if (path === "/api/admin/levels" && request.method === "POST") {
           const out = await saveLevels(env, (await readJson(request)) || {});
           return json(out, out.error ? 400 : 200);

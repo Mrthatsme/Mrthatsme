@@ -360,8 +360,12 @@ lifted: price and cancel/change max Ask Me; complaints, legal, payment always Ne
   At Ask Me or Never an emergency only alerts the owner. **Handle It:** non-customer mail is set aside.
 - Handle It / Tell Me on a reply still leave a draft until "approved replies" exist (needs the attorney).
 - Set per client on the dashboard ("Permission levels") or `POST /api/admin/levels {agentId, levels, neverFrom}`.
-- Gap found: the Services page says the client can "pause everything with one switch". Only Jerome can pause today
-  (`/api/admin/client-agent-status`). Build a client-facing pause, or change the copy.
+- **Pause everything (built November 11, `site/src/pause.js`, `node site/tools/test_pause.mjs`):** a one-tap link in
+  every Daily Brief. While paused the inbox isn't read, nothing is drafted, routed or sent on its own, form requests
+  are recorded and sent to the owner unprocessed, the watch ignores that client, and the brief shows PAUSED with a
+  Resume link. Jerome is emailed on pause and resume, and can do it too: `POST /api/admin/pause {agentId, paused}`.
+  Agreement clause 2 now says so, and that the fee and the 30-day notice don't change: **version 2026-11-11.1**.
+  Cancellation stays at 30 days' notice (checked against Belay, Boldly, Wing and automation agencies on Nov 11).
 
 ## Yes/no list and one-tap links (built November 11)
 

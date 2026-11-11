@@ -12,6 +12,7 @@ import { recordApproval, fmtMinutes, extraCents } from "./hours.js";
 import { PLANS } from "./plans.js";
 import { sendNotificationEmail } from "./email.js";
 import { monthKey } from "./usage.js";
+import { setPaused, isPaused } from "./pause.js";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
@@ -54,6 +55,15 @@ async function describe(env, p) {
         : `Decline the extra time${req.build_name ? ` for ${req.build_name}` : ""}? We'll pause it and pick it up with next month's hours.`,
       button: p.a === "yes" ? "Yes, approve it" : "No, pause it", cls: p.a === "yes" ? "" : "no" };
   }
+  if (p.t === "pause") {
+    const paused = isPaused(agent);
+    const pausing = p.a === "pause";
+    return { agent, business, done: pausing === paused,
+      question: pausing
+        ? `Pause everything for ${business}? Nothing will read your inbox, draft, route or send anything on its own until you resume. Requests through your form still come to you. Your fee and 30-day notice don't change.`
+        : `Resume everything for ${business}? Your inbox is checked again within 10 minutes.`,
+      button: pausing ? "Pause everything" : "Resume", cls: pausing ? "no" : "" };
+  }
   if (p.t === "done") {
     const ev = await env.DB.prepare(`SELECT * FROM client_agent_events WHERE id = ? AND agent_id = ?`).bind(p.id, p.ag).first();
     if (!ev) return null;
@@ -69,7 +79,7 @@ export async function linkPage(env, token) {
   if (!p) return gone();
   const d = await describe(env, p);
   if (!d) return gone();
-  if (d.done) return page("Already answered", `<h1>Already answered</h1><p>This was already taken care of. Nothing more to do.</p>`);
+  if (d.done) return page("Already answered", p.t === "pause" ? `<h1>Already ${p.a === "pause" ? "paused" : "running"}</h1><p>Nothing to change.</p>` : `<h1>Already answered</h1><p>This was already taken care of. Nothing more to do.</p>`);
   return page("Confirm", `<p class="small">${esc(d.business)}</p><h1>${esc(d.question)}</h1>
 <form method="post"><button type="submit" class="${d.cls}">${esc(d.button)}</button></form>
 <p class="small">Nothing happens until you tap the button.</p>`);
@@ -80,7 +90,7 @@ export async function linkAct(env, token, request) {
   if (!p) return gone();
   const d = await describe(env, p);
   if (!d) return gone();
-  if (d.done) return page("Already answered", `<h1>Already answered</h1><p>This was already taken care of.</p>`);
+  if (d.done) return page("Already answered", p.t === "pause" ? `<h1>Already ${p.a === "pause" ? "paused" : "running"}</h1><p>Nothing to change.</p>` : `<h1>Already answered</h1><p>This was already taken care of.</p>`);
   const ip = request.headers.get("CF-Connecting-IP") || "unknown";
   const now = new Date();
   const stamp = `${now.toISOString()} from ${ip}`;
@@ -100,6 +110,12 @@ export async function linkAct(env, token, request) {
     await env.DB.prepare(`UPDATE hours_requests SET status = 'declined', decided_at = ?, decided_note = ? WHERE id = ?`).bind(now.toISOString(), stamp, d.req.id).run();
     await sendNotificationEmail(env, { subject: `[${d.agent.label}] declined extra time`, text: `${d.business} declined the extra time with the one-tap link (${stamp}). Keep the work within their hours and pick it up next month.` }).catch(() => {});
     return page("Paused", `<h1>Got it, paused</h1><p>We'll stay within your hours and pick it up with next month's. Nothing extra goes on your bill.</p>`);
+  }
+  if (p.t === "pause") {
+    await setPaused(env, p.ag, p.a === "pause", `the owner, one-tap link, ${stamp}`);
+    return p.a === "pause"
+      ? page("Paused", `<h1>Everything is paused</h1><p>Nothing reads your inbox or sends anything on its own. Requests through your form still come to you. Resume any time from your Daily Brief.</p>`)
+      : page("Resumed", `<h1>Resumed</h1><p>Everything runs again. Your inbox is checked within 10 minutes.</p>`);
   }
   if (p.t === "done") {
     await env.DB.prepare(`INSERT INTO owner_done (event_id, agent_id, done_at) VALUES (?, ?, ?) ON CONFLICT(event_id) DO NOTHING`).bind(p.id, p.ag, now.toISOString()).run();

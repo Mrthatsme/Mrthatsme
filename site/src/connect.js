@@ -337,6 +337,8 @@ export async function pollConnectedInboxes(env) {
      WHERE c.status = 'active' AND a.status = 'active'`
   ).all();
   for (const conn of results || []) {
+    // A paused client's inbox isn't read at all.
+    if (JSON.parse(conn.profile || "{}").pausedAt) continue;
     try {
       const token = await accessToken(env, conn);
       const handled = conn.provider === "google" ? await pollGmail(env, conn, token) : await pollOutlook(env, conn, token);

@@ -49,10 +49,14 @@ export function findOverlaps(events) {
 
 const timeIn = (tz, iso) => new Intl.DateTimeFormat("en-US", { timeZone: tz, hour: "numeric", minute: "2-digit" }).format(new Date(iso));
 
-export function composeClientBrief({ business, tz, now = new Date(), calendar, events = [], waiting = [], requests = [], came = {}, hours = null }) {
+export function composeClientBrief({ business, tz, now = new Date(), calendar, events = [], waiting = [], requests = [], came = {}, hours = null, paused = null, pauseUrl = null }) {
   const day = new Intl.DateTimeFormat("en-US", { timeZone: tz, weekday: "long", month: "long", day: "numeric" }).format(now);
   const overlaps = findOverlaps(events);
   const lines = [`Good morning. Here's ${business}'s day, ${day}.`, ``];
+  if (paused) {
+    lines.push(`EVERYTHING IS PAUSED (since ${new Intl.DateTimeFormat("en-US", { timeZone: tz, month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }).format(new Date(paused.since))})`,
+      `Your inbox isn't being read and nothing is sent on its own. Form requests come straight to you.`, `Resume: ${paused.resumeUrl}`, ``);
+  }
   if (requests.length) {
     lines.push(`NEEDS YOUR YES OR NO (${requests.length})`);
     requests.forEach((r) => lines.push(`- ${r.text}`, `  Yes: ${r.yesUrl}`, `  No: ${r.noUrl}`));
@@ -88,10 +92,12 @@ export function composeClientBrief({ business, tz, now = new Date(), calendar, e
 
   if (hours) lines.push(``, `YOUR HOURS THIS MONTH`, `- ${fmtMinutes(hours.used)} used of ${fmtMinutes(hours.available)}${hours.carry ? ` (including ${fmtMinutes(hours.carry)} rolled over)` : ""}.`);
 
-  lines.push(``, `Nothing in this brief was sent to any customer. Reply to this email with anything you need.`, ``, `-- Minutes Regained, your Daily Brief`);
+  lines.push(``, `Nothing in this brief was sent to any customer. Reply to this email with anything you need.`);
+  if (!paused && pauseUrl) lines.push(`Need everything to stop right now? Pause everything: ${pauseUrl}`);
+  lines.push(``, `-- Minutes Regained, your Daily Brief`);
   const timed = events.filter((e) => !e.allDay).length;
-  const subject = `Your Daily Brief: ${calendar === "ok" ? `${events.length} on the calendar` : "today"}${requests.length ? `, ${requests.length} yes or no` : ""}${overlaps.length ? `, ${overlaps.length} overlap${overlaps.length === 1 ? "" : "s"}` : ""}${waiting.length ? `, ${waiting.length} waiting on you` : ""}`;
-  const hasContent = calendar === "ok" || waiting.length > 0 || requests.length > 0 || bits.length > 0;
+  const subject = `${paused ? "PAUSED. " : ""}Your Daily Brief: ${calendar === "ok" ? `${events.length} on the calendar` : "today"}${requests.length ? `, ${requests.length} yes or no` : ""}${overlaps.length ? `, ${overlaps.length} overlap${overlaps.length === 1 ? "" : "s"}` : ""}${waiting.length ? `, ${waiting.length} waiting on you` : ""}`;
+  const hasContent = !!paused || calendar === "ok" || waiting.length > 0 || requests.length > 0 || bits.length > 0;
   return { subject, text: lines.join("\n"), hasContent, overlaps: overlaps.length, timed };
 }
 
@@ -143,7 +149,9 @@ export async function buildBriefFor(env, agent, now = new Date()) {
   };
   const hours = await statusFor(env, agent).catch(() => null);
   const to = profile.ownerEmail || (conn && conn.email) || null;
-  return { to, ...composeClientBrief({ business: profile.business || agent.label, tz, now, calendar, events, waiting, requests, came, hours }) };
+  const paused = profile.pausedAt ? { since: profile.pausedAt, resumeUrl: await makeLink(env, { t: "pause", a: "resume", ag: agent.id }) } : null;
+  const pauseUrl = paused ? null : await makeLink(env, { t: "pause", a: "pause", ag: agent.id }).catch(() => null);
+  return { to, ...composeClientBrief({ business: profile.business || agent.label, tz, now, calendar, events, waiting, requests, came, hours, paused, pauseUrl }) };
 }
 
 // Morning run: one brief per active client, once per local day, only when

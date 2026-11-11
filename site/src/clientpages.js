@@ -130,6 +130,17 @@ async function processIntake(env, agent, lead) {
   const business = profile.business || "the business";
   const details = [`Name: ${lead.name}`, `Phone: ${lead.phone || "(none)"}`, `Email: ${lead.email || "(none)"}`,
     `Address: ${lead.address || "(none)"}`, `Came from: ${lead.source}`, ``, lead.message].join("\n");
+  if (profile.pausedAt) {
+    await logClientAgentEvent(env, agent.id, "form_lead", `${lead.name} via ${lead.source} form (paused: not processed).`);
+    const owner = await ownerEmail(env, agent, profile);
+    await sendNotificationEmail(env, {
+      to: owner, replyTo: lead.email || "support@minutesregained.com",
+      subject: `New request from your ${lead.source} link: ${lead.name} (paused)`,
+      text: [`You've paused everything, so this wasn't processed and no reply or acknowledgement was sent. It's yours to answer.`, ``, details, ``,
+        `Resume from the link in your Daily Brief.`, ``, `-- Minutes Regained, for ${business}`].join("\n"),
+    }).catch((err) => console.error("paused intake alert failed", err));
+    return;
+  }
   let out;
   try {
     out = await draftForClient(env, agent, {
