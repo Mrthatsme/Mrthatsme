@@ -20,7 +20,10 @@ Approved by Jerome on 2026-11-11. Everything in `site/` is production-ready: no 
 ## Before you publish
 
 1. **Trademark check:** search FIRST, TRACE, CLOCK, STARS, PAID and WATCH at USPTO.gov.
-2. **Other pages that still use the old names:** `/for/contractors`, `/for/law-firms`, `/demo`, `/demo-desk`, `/about` and `/agreement`. They weren't part of this package. Tell me and I'll update them the same way.
+2. **Other live pages that still use the old names** (checked 2026-11-11):
+   - `/for/contractors`: 5 mentions. `/for/law-firms`: 1 mention. Tell me and I'll update both the same way.
+   - `/agreement`: 6 mentions. **This is your client agreement, which is with your attorney.** Have the attorney make the name change, or add one line mapping the new names to the old ones, so the contract and the website use the same terms.
+   - `/demo`, `/demo-desk`, `/about`: none.
 3. **Sitemap:** add the 9 new URLs to `sitemap.xml` if you have one.
 
 ## Publishing
