@@ -45,9 +45,9 @@ export const FAQ = [
   ["Is there a contract?",
    "Yes, a short service agreement you sign online. Monthly plans need 30 days' notice to cancel; a 12-month Retainer, paid upfront for the year, saves 10%. Pricing is published rather than quoted on a call, there's no setup fee, and software we use to serve you is included up to your plan's allowance."],
   ["What do you actually do?",
-   "We build and run five core automations: Lead Catcher (website chat and lead replies), Quote Chaser (follow-ups on open quotes), Schedule Keeper (confirmations, reminders and no-shows), Review Builder (one review request when a job closes) and Invoice & Chase (invoices sent and unpaid ones followed up; we never take the money), plus your Daily Brief. On top of that we keep your inbox, follow-ups and calendar current. We fix anything that breaks. No setup fee."],
+   "We build and run five core automations: FIRST (website chat and lead replies), TRACE (follow-ups on open quotes), CLOCK (confirmations, reminders and no-shows), STARS (one review request when a job closes) and PAID (invoices sent and unpaid ones followed up; we never take the money), plus your Daily Brief. On top of that we keep your inbox, follow-ups and calendar current. We fix anything that breaks. No setup fee."],
   ["Do you answer our phones?",
-   "No. We don't answer calls and we don't run an AI receptionist. Lead Catcher replies to your website chat, forms and email, in words you approved, and missed calls go to the top of your daily brief so you can call back. If you need every call answered live, that's an answering service, not us."],
+   "No. We don't answer calls and we don't run an AI receptionist. FIRST replies to your website chat, forms and email, in words you approved, and missed calls go to the top of your daily brief so you can call back. If you need every call answered live, that's an answering service, not us."],
   ["What happens if an automation breaks?",
    "We monitor every automation we build. When one breaks, it shows up in your daily brief with what failed, and we fix it at no charge, usually within one business day. Repairs never use your hours."],
   ["If I cancel, do I lose the automations?",
@@ -68,7 +68,7 @@ Business Support: $1,300/month ($14,040/year on a 12-month Retainer, paid upfron
 Custom Automation: from $550/month, dropping to $250 once the build is paid off. No assistant hours. A process map first, built live on recorded calls, documentation and a walkthrough, checked daily with breaks fixed free, and a quarterly session. Scopes: one gap $550 then $250; one side of the business $1,150 then $450; whole back office $2,100 then $750. 12-month term, then monthly; or pay the build upfront ($2,500 / $6,000 / $12,000) and start at the lower rate.
 Voice notes over the allowance: $10 for each extra 100.
 Founding Client offer (first 3 clients only): Business Support with the $1,300/month price locked for two years, plus a free process map of the business in the first month. Monthly billing only.
-The five core automations: Lead Catcher, Quote Chaser, Schedule Keeper, Review Builder, Invoice & Chase, plus the Daily Brief with every plan.
+The five core automations: FIRST, TRACE, CLOCK, STARS, PAID, plus the Daily Brief with every plan.
 Sign-ups are not open yet: the service agreement is with the attorney, and no one is signed or charged until it is back.`;
 
 export function faqAsText() {

@@ -1,0 +1,133 @@
+/* Minutes Regained additions (Nov 11, 2026): automation pages, calculators, pricing and services additions.
+   Kept out of the HTML because the Content-Security-Policy allows no inline styles. */
+/* Minutes Regained: automation and calculator pages. Uses the color tokens from landing.css. */
+.mrx section{padding:44px 0}.mrx .m-wrap{max-width:none;padding:0}
+.mrx .m-wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+.mrx section{padding:64px 0}
+.mrx section.m-alt{background:var(--surface-2)}
+.mrx .m-eyebrow{font:600 12px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin:0 0 14px}
+.mrx h1,.mrx h2,.mrx h3{font-family:var(--display);line-height:1.08;margin:0 0 16px;letter-spacing:-.01em}
+.mrx h1{font-size:clamp(36px,6vw,60px);font-weight:800}
+.mrx h2{font-size:clamp(28px,4vw,40px);font-weight:800}
+.mrx h3{font-size:21px;font-weight:700}
+.mrx .m-lede{font-size:19px;color:var(--fg-dim);max-width:680px}
+.mrx p{margin:0 0 14px}
+.mrx .m-dim{color:var(--fg-dim)}
+.mrx .m-faint{color:var(--fg-faint)}
+.mrx .m-grid{display:grid;gap:18px}
+.mrx .m-g2{grid-template-columns:repeat(2,1fr)}
+.mrx .m-g3{grid-template-columns:repeat(3,1fr)}
+.mrx .m-g4{grid-template-columns:repeat(4,1fr)}
+@media (max-width:820px){.mrx .m-g2,.mrx .m-g3,.mrx .m-g4{grid-template-columns:1fr}}
+.mrx .m-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:24px}
+.mrx .m-card.m-feature{border:2px solid var(--accent)}
+.mrx .m-tag{display:inline-block;font:600 11px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;padding:6px 9px;border-radius:999px;background:var(--accent-soft);color:var(--accent)}
+.mrx .m-tag.m-signal{background:var(--signal);color:var(--signal-ink)}
+.mrx .m-tag.m-warn{background:var(--warn-soft);color:var(--warn)}
+.mrx .m-tag.m-good{background:var(--good-soft);color:var(--good)}
+.mrx .m-tag.m-crit{background:var(--crit-soft);color:var(--crit)}
+.mrx .m-price{font:800 44px/1 var(--display);margin:10px 0 4px}
+.mrx .m-price small{font:500 16px var(--sans);color:var(--fg-dim)}
+.mrx ul.m-ticks,.mrx ul.m-crosses{list-style:none;padding:0;margin:0 0 12px}
+.mrx ul.m-ticks li,.mrx ul.m-crosses li{padding:6px 0 6px 26px;position:relative;border-top:1px solid var(--line-soft);font-size:15px}
+.mrx ul.m-ticks li:first-child,.mrx ul.m-crosses li:first-child{border-top:0}
+.mrx ul.m-ticks li::before{content:"✓";position:absolute;left:2px;color:var(--good);font-weight:700}
+.mrx ul.m-crosses li::before{content:"✕";position:absolute;left:3px;color:var(--crit);font-weight:700}
+.mrx .m-listhead{font:600 12px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--fg-faint);margin:18px 0 6px}
+.mrx table{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;font-size:15px}
+.mrx th,.mrx td{text-align:left;padding:14px 16px;border-bottom:1px solid var(--line-soft);vertical-align:top}
+.mrx th{font:600 12px/1.3 var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--fg-faint);background:var(--surface-2)}
+.mrx tr.us td{background:var(--accent-soft)}
+.mrx tr.us td:first-child{border-left:4px solid var(--accent)}
+.mrx td.num{font-family:var(--mono);white-space:nowrap}
+.mrx .tablewrap{overflow-x:auto}
+.mrx .m-exercise{font:600 12px/1.4 var(--mono);letter-spacing:.1em;color:var(--warn);background:var(--warn-soft);border:1px dashed var(--warn);border-radius:10px;padding:10px 14px;margin:0 0 16px}
+.mrx .m-log{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden}
+.mrx .m-log .m-row{display:grid;grid-template-columns:70px 1fr auto;gap:14px;padding:14px 18px;border-top:1px solid var(--line-soft);align-items:start}
+.mrx .m-log .m-row:first-child{border-top:0}
+.mrx .m-log .m-t{font:600 14px var(--mono);color:var(--fg-faint)}
+.mrx .m-log .m-what{font-weight:600}
+.mrx .m-log .m-why{color:var(--fg-dim);font-size:14px}
+.mrx .m-note{border-left:4px solid var(--signal);background:var(--surface);padding:14px 18px;border-radius:0 10px 10px 0;margin:18px 0;font-size:15px}
+.mrx .m-band{background:var(--fg);color:var(--bg);border-radius:var(--r);padding:36px}
+.mrx .m-band .m-eyebrow{color:var(--accent-line)}
+.mrx .m-band p{color:color-mix(in srgb,var(--bg) 80%,transparent)}
+.mrx .m-msg{background:var(--surface-2);border-radius:14px 14px 14px 4px;padding:14px 16px;font-size:15px;max-width:520px}
+.mrx .m-msg.m-out{background:var(--accent-soft);border-radius:14px 14px 4px 14px;margin-left:auto}
+.mrx .m-msg .m-who{font:600 11px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--fg-faint);display:block;margin-bottom:6px}
+.mrx .m-levels{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+@media (max-width:820px){.mrx .m-levels{grid-template-columns:1fr 1fr}}
+.mrx .m-levels .m-card{padding:16px}
+.mrx .m-levels b{display:block;font-family:var(--display);font-size:17px;margin-bottom:4px}
+.mrx .m-steps{counter-reset:s;display:grid;gap:14px}
+.mrx .m-steps .m-card{position:relative;padding-left:64px}
+.mrx .m-steps .m-card::before{counter-increment:s;content:counter(s);position:absolute;left:20px;top:22px;width:30px;height:30px;border-radius:50%;background:var(--accent);color:#fff;font:700 15px/30px var(--display);text-align:center}
+.mrx .m-calc{display:grid;grid-template-columns:1.1fr .9fr;gap:22px;align-items:start}
+@media (max-width:820px){.mrx .m-calc{grid-template-columns:1fr}}
+.mrx .m-field{display:block;margin:0 0 16px}
+.mrx .m-field .m-q{display:block;font-weight:600;margin-bottom:2px}
+.mrx .m-field .m-h{display:block;font-size:14px;color:var(--fg-dim);margin-bottom:8px}
+.mrx .m-field .m-in{display:flex;align-items:center;gap:8px}
+.mrx .m-field input{width:100%;max-width:200px;font:600 17px var(--mono);color:var(--fg);background:var(--bg);border:1.5px solid var(--line);border-radius:10px;padding:10px 12px}
+.mrx .m-field input:focus{outline:none;border-color:var(--accent)}
+.mrx .m-field .m-u{color:var(--fg-faint);font:500 15px var(--mono)}
+.mrx .m-result{position:sticky;top:16px}
+.mrx .m-result .m-big{font:800 48px/1 var(--display);color:var(--signal);margin:6px 0}
+.mrx .m-result .m-sub{font:700 20px var(--display);margin:0 0 14px}
+.mrx .m-result .m-line{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-top:1px solid var(--line-soft);font-size:15px}
+.mrx .m-result .m-line b{font-family:var(--mono)}
+.mrx .m-toolcard{display:block;text-decoration:none;color:inherit}
+.mrx .m-toolcard:hover{border-color:var(--accent)}
+/* Minutes Regained: pricing and services additions */
+ul.exc{list-style:none;margin:10px 0 0;padding:10px 0 0;border-top:1px dashed var(--line);display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--fg-dim)}
+ul.exc li{display:flex;gap:8px;align-items:flex-start}
+ul.exc li::before{content:"\2715";flex:none;font-size:10px;color:var(--crit);margin-top:3px}
+.exc-h{font:600 10.5px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--fg-faint);margin:12px 0 0}
+.secband{margin-top:34px;background:var(--fg);color:var(--bg);border-radius:var(--r);padding:26px}
+.secband .eyebrow{color:var(--accent-line)}
+.secband h3{font-family:var(--display);font-size:22px;margin:6px 0 8px}
+.secband p{color:color-mix(in srgb,var(--bg) 82%,transparent);font-size:14.5px;max-width:70ch}
+.secband .g{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:14px}
+.secband .g b{display:block;font-family:var(--display);font-size:15.5px;margin-bottom:3px;color:var(--bg)}
+@media (max-width:720px){.secband .g{grid-template-columns:1fr}}
+.morecalc{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:16px}
+@media (max-width:720px){.morecalc{grid-template-columns:1fr}}
+.morecalc a{display:block;padding:14px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);color:var(--fg);text-decoration:none;font-size:14px}
+.morecalc a b{display:block;font-family:var(--display);font-size:15.5px;margin-bottom:3px}
+.autolinks{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;padding:8px 6px 4px;font-size:13px;font-weight:600}
+.autolinks a{color:var(--accent);text-decoration:none}
+.autolinks a:hover{text-decoration:underline}
+.auto{display:flex;flex-direction:column}
+.auto > div:last-child{margin-top:auto}
+.auto h4 + p{margin-bottom:20px}
+/* former style attributes */
+.x-fdd7e87.x-fdd7e87.x-fdd7e87{font-weight:500;color:var(--fg-faint);font-size:12.5px}
+.x-1097151.x-1097151.x-1097151{margin-top:16px;font-size:14.5px;padding:6px 8px;display:inline-block}
+.x-64ac89c.x-64ac89c.x-64ac89c{color:var(--accent);font-weight:600}
+.x-4c0b344.x-4c0b344.x-4c0b344{margin:6px 0 40px}
+.x-b60eb1a.x-b60eb1a.x-b60eb1a{margin-top:10px;font-size:13.5px}
+.x-2517a51.x-2517a51.x-2517a51{margin-top:22px}
+.x-d462248.x-d462248.x-d462248{margin-top:0}
+.x-96ad609.x-96ad609.x-96ad609{margin-top:4px}
+.x-602bb33.x-602bb33.x-602bb33{margin:10px 0 40px}
+.x-433de30.x-433de30.x-433de30{font-size:14px}
+.x-a805525.x-a805525.x-a805525{color:var(--accent)}
+.x-cd4593b.x-cd4593b.x-cd4593b{letter-spacing:.03em}
+.x-afc50a8.x-afc50a8.x-afc50a8{display:inline-block;padding:14px 18px;margin:4px 0 18px;font-size:15px}
+.x-2a1b75c.x-2a1b75c.x-2a1b75c{display:block}
+.x-8f13de9.x-8f13de9.x-8f13de9{color:var(--signal);font-family:var(--display)}
+.x-f5a473e.x-f5a473e.x-f5a473e{font-family:var(--display);font-size:24px;color:var(--fg);font-weight:700}
+.x-a26bda7.x-a26bda7.x-a26bda7{margin-top:20px}
+.x-dfb2165.x-dfb2165.x-dfb2165{align-items:start}
+.x-6788b49.x-6788b49.x-6788b49{display:grid;gap:12px}
+.x-6f3d7fe.x-6f3d7fe.x-6f3d7fe{padding:18px 22px}
+.x-de00808.x-de00808.x-de00808{font-size:15px}
+.x-d34d921.x-d34d921.x-d34d921{margin-top:36px}
+.x-4ff818f.x-4ff818f.x-4ff818f{font-size:18px}
+.x-1169661.x-1169661.x-1169661{margin:0}
+.x-583f758.x-583f758.x-583f758{margin-top:28px}
+.x-a3f4406.x-a3f4406.x-a3f4406{font-size:13px;margin-top:14px}
+.x-fe7b497.x-fe7b497.x-fe7b497{margin-top:6px}
+.x-2032baa.x-2032baa.x-2032baa{font-size:13px;margin-top:16px}
+.x-24d308c.x-24d308c.x-24d308c{margin-top:26px}
+.x-56f4356.x-56f4356.x-56f4356{margin-top:12px}

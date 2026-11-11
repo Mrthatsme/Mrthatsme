@@ -47,7 +47,7 @@
       add({lane:'after',k:'told',b:'Callback window set', s:'Flag at 30 and 90 days while it’s under warranty.'});
     }},
     {id:'quote', label:'An estimate gets accepted', sm:'customer replies yes', run:function(){
-      add({lane:'intake',k:'done',b:'Quote Chaser stood down', s:'Dana R. replied. Day 5 and day 10 follow-ups cancelled.'});
+      add({lane:'intake',k:'done',b:'TRACE stood down', s:'Dana R. replied. Day 5 and day 10 follow-ups cancelled.'});
       add({lane:'schedule',k:'told',b:'Job placed — Thursday 10am', s:'Two hours blocked, 22 minutes of drive time either side.'});
       add({lane:'money',k:'told',b:'Deposit request drafted — $500', s:'We never run a card. You get told, you charge it.'});
     }},

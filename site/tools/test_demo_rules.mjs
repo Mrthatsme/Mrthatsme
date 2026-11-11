@@ -8,7 +8,7 @@ function check(name, cond, got) {
   if (cond) { console.log("ok  ", name); return; }
   fails++; console.log("FAIL", name, "\n     ", JSON.stringify(got));
 }
-const ok = (o) => ({ category: "new_lead", automation: "Lead Catcher", level: "Handle It", reason: "Routine.",
+const ok = (o) => ({ category: "new_lead", automation: "FIRST", level: "Handle It", reason: "Routine.",
   reply: "Thanks for reaching out. What's the best number to reach you?", brief_line: "New lead.", owner_task: "", ...o });
 
 let r;
@@ -47,7 +47,7 @@ r = enforceRules("plumbing", "Can you text me when you're on the way?", ok({ rep
 check("never offers texting", !/text/i.test(r.reply), r);
 
 r = enforceRules("plumbing", "hello there", { category: "made_up", automation: "Skynet", level: "Do Anything", reply: "" });
-check("garbage draft normalised", r.category === "other" && r.automation === "Lead Catcher" && r.level === "Ask Me" && r.reply.length > 12, r);
+check("garbage draft normalised", r.category === "other" && r.automation === "FIRST" && r.level === "Ask Me" && r.reply.length > 12, r);
 
 r = enforceRules("plumbing", "hello", null);
 check("missing draft still answers safely", r.reply === safeReply("plumbing", "other"), r);

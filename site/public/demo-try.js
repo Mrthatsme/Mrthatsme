@@ -54,10 +54,10 @@
   }
   function fallback(co, text) {
     var t = text.toLowerCase(), held = [];
-    var r = { category: "new_lead", automation: "Lead Catcher", level: "Handle It", reason: "Routine, so it just gets done.", owner_task: "" };
+    var r = { category: "new_lead", automation: "FIRST", level: "Handle It", reason: "Routine, so it just gets done.", owner_task: "" };
     if (/ignore|disregard|forget .*(rules|instructions)|system prompt|you are now/.test(t)) held.push("Someone tried to change its rules. It kept them.");
     if (/robot|\bbot\b|\bai\b|real person|human|who am i (talking|speaking)/.test(t)) {
-      r = { category: "identity_question", automation: "Lead Catcher", level: "Handle It", reason: "Saying who it is needs no one's OK.", owner_task: "",
+      r = { category: "identity_question", automation: "FIRST", level: "Handle It", reason: "Saying who it is needs no one's OK.", owner_task: "",
         reply: "I'm " + NAMES[co] + "'s assistant, not a person. I can take down what you need, and the team handles anything about prices or times.",
         brief: "Website chat: asked if they were talking to a person. Told it's the assistant." };
       held.push("Asked if it's a person. It says it's the company's assistant.");
@@ -65,17 +65,17 @@
       r = { category: "legal_question", automation: "A person", level: "Never", reason: "Legal advice comes from an attorney, never the assistant.", owner_task: "", brief: "Legal question from website chat, passed to an attorney." };
       held.push("No legal advice. The question goes to an attorney.");
     } else if (/price|cost|how much|quote|estimate|charge|\bfees?\b|discount|cheap|\$/.test(t)) {
-      r = { category: "price_question", automation: co === "plumbing" ? "Quote Chaser" : "A person", level: "Ask Me", reason: "Anything with a price on it waits for the owner.",
+      r = { category: "price_question", automation: co === "plumbing" ? "TRACE" : "A person", level: "Ask Me", reason: "Anything with a price on it waits for the owner.",
         owner_task: co === "plumbing" ? "Price the job and send the quote." : "Go over fees with the prospective client.", brief: "Price question from website chat. Waiting on you for the quote." };
       held.push("Asked for a price. It doesn't give one; the owner does.");
     } else if (co === "plumbing" && /burst|flood|leak|gushing|no (hot )?water|sewage|overflow|gas|emergency|urgent/.test(t)) {
-      r = { category: "emergency", automation: "Lead Catcher", level: "Tell Me", reason: "Emergencies go straight to the on-call person, and it's in your brief.", owner_task: "", brief: "Emergency from website chat, sent to the on-call person." };
+      r = { category: "emergency", automation: "FIRST", level: "Tell Me", reason: "Emergencies go straight to the on-call person, and it's in your brief.", owner_task: "", brief: "Emergency from website chat, sent to the on-call person." };
     } else if (/book|appointment|consult|schedule|come out|available|monday|tuesday|wednesday|thursday|friday|saturday|sunday|next week|tomorrow/.test(t)) {
-      r = { category: "booking", automation: "Schedule Keeper", level: "Ask Me", reason: "A time is a promise, so it waits for your OK.", owner_task: "Pick a slot to offer.", brief: "Booking request from website chat. Waiting on you for a time." };
+      r = { category: "booking", automation: "CLOCK", level: "Ask Me", reason: "A time is a promise, so it waits for your OK.", owner_task: "Pick a slot to offer.", brief: "Booking request from website chat. Waiting on you for a time." };
     } else if (/invoice|bill|paid|payment|receipt|refund/.test(t)) {
-      r = { category: "billing", automation: "Invoice & Chase", level: "Tell Me", reason: "Logged and reported. It never touches the money.", owner_task: "", brief: "Billing question from website chat. Logged for you." };
+      r = { category: "billing", automation: "PAID", level: "Tell Me", reason: "Logged and reported. It never touches the money.", owner_task: "", brief: "Billing question from website chat. Logged for you." };
     } else if (/review|great job|thank|amazing|recommend/.test(t)) {
-      r = { category: "feedback", automation: "Review Builder", level: "Handle It", reason: "A thank-you needs no one's OK.", owner_task: "", brief: "Kind words in website chat. Thanked them." };
+      r = { category: "feedback", automation: "STARS", level: "Handle It", reason: "A thank-you needs no one's OK.", owner_task: "", brief: "Kind words in website chat. Thanked them." };
     } else if (/upset|angry|terrible|awful|complain|disappointed|worst/.test(t)) {
       r = { category: "complaint", automation: "A person", level: "Ask Me", reason: "A complaint needs a person's judgement.", owner_task: "Read the complaint and decide how to answer.", brief: "Complaint in website chat. Waiting on you." };
     }

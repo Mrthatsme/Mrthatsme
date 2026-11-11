@@ -20,9 +20,14 @@ PUB = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "public")
 PAGES = {  # file -> public path
     "index.html": "/", "services.html": "/services", "pricing.html": "/pricing", "about.html": "/about",
     "for/index.html": "/for/", "for/contractors.html": "/for/contractors", "for/law-firms.html": "/for/law-firms",
+    "automations/first.html": "/automations/first", "automations/trace.html": "/automations/trace",
+    "automations/clock.html": "/automations/clock", "automations/stars.html": "/automations/stars",
+    "automations/paid.html": "/automations/paid", "calculators/index.html": "/calculators/",
+    "calculators/slow-replies.html": "/calculators/slow-replies", "calculators/cold-quotes.html": "/calculators/cold-quotes",
+    "calculators/late-invoices.html": "/calculators/late-invoices",
 }
 MENU = ['href="/"', 'href="/services"', 'href="/pricing"', 'href="/for/"', 'href="/about"']
-FIVE = ["Lead Catcher", "Quote Chaser", "Schedule Keeper", "Review Builder", "Invoice &amp; Chase"]
+FIVE = ["FIRST", "TRACE", "CLOCK", "STARS", "PAID"]  # renamed Nov 11, 2026 (Jerome)
 JSONLD = re.compile(r'<script type="application/ld\+json">(.*?)</script>', re.S)
 
 problems = []

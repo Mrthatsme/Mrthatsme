@@ -64,8 +64,8 @@ em dashes, varied sentence rhythm. Name things the way the reader would.
 
 | Thing | Name |
 | --- | --- |
-| The five automations | Lead Catcher, Quote Chaser, Schedule Keeper, Review Builder, Invoice & Chase |
-| Included with every plan | The Daily Brief |
+| The five automations | FIRST (new leads), TRACE (quote follow-up), CLOCK (scheduling), STARS (reviews), PAID (invoices) |
+| Included with every plan | The daily brief, named WATCH on its card only; sentences keep "daily brief" |
 | Client-facing agents | The GM, Intake, Schedule, Quotes, Billing, Aftercare, The Watch, The Fixer |
 | Permission levels | Handle It, Tell Me, Ask Me, Never |
 | Weekly client report | SITREP |
@@ -91,6 +91,17 @@ those live in the Shared Drive. The open-decisions and internal ops documents fr
 (folder 03), not in this repo.
 
 Decisions made after the package, which override `docs/build-spec.md` where they differ:
+
+- **Automation names (Jerome, November 11):** Lead Catcher, Quote Chaser, Schedule Keeper, Review Builder and Invoice & Chase
+  became FIRST, TRACE, CLOCK, STARS and PAID, each shown with a short label ("FIRST · new leads"). The daily brief card is
+  named WATCH; everywhere else it stays "daily brief". One line reads them in order: FIRST answers, TRACE follows up,
+  CLOCK keeps the day, STARS asks for the review, PAID gets the invoice out, WATCH tells you all of it every morning.
+  **Not yet in the agreement:** `site/src/plans.js` and `site/src/contract.js` still use the old names until the attorney
+  updates the agreement; change them together with the attorney's version. Trademark search pending.
+- **Added November 11:** one page per automation (`/automations/first` and the rest), three calculators and a calculators
+  page (`/calculators/`), "Not included" lists on the plan cards, two rows in the price comparison table, and a security
+  band on Pricing and Services. Styles for all of it live in `site/public/extras.css` and calculator scripts in
+  `site/public/calculators/*.js`, because the CSP allows no inline styles or scripts.
 
 - Published plans (Jerome, November 10, replacing $450/$900/$75): Essential **$650** with **4 hours** a month,
   Business Support **$1,300** with **8 hours**, extra hours **$95 an hour** on both, only with written approval.
