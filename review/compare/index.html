@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Pricing: live vs draft</title>
+<title>Live vs draft</title>
 <style>
 :root{--bg:#FBF7F1;--fg:#1C2B2A;--line:#E4D9CC;--signal:#C24E17}
 @media (prefers-color-scheme:dark){:root{--bg:#151B1A;--fg:#F1ECE4;--line:#34403E;--signal:#F28A4B}}
@@ -13,9 +13,13 @@ html,body{margin:0;height:100%;background:var(--bg);color:var(--fg);font:15px/1.
 .col:last-child h2{color:var(--signal)}
 iframe{flex:1;width:100%;border:0}
 @media (max-width:900px){.cols{grid-template-columns:1fr;height:auto}.col iframe{height:80vh}}
-</style></head><body>
-<div class="top"><b>Pricing page: live vs draft</b><span>Scroll each side separately. Orange dashed boxes marked NEW are the only changes. Nothing here is live.</span></div>
+.tabs{display:inline-flex;gap:6px}.tabs button{font:600 14px system-ui;padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--fg);cursor:pointer}.tabs button.on{background:var(--signal);border-color:var(--signal);color:#fff}</style></head><body>
+<div class="top"><b>Live vs draft</b><span class="tabs"><button data-p="pricing" class="on">Pricing</button><button data-p="services">Services</button></span><span>Scroll each side separately. Orange dashed boxes marked NEW are the only changes. Nothing here is live.</span></div>
 <div class="cols">
-<div class="col"><h2>Live today</h2><iframe src="pricing-live.html" title="Live pricing page"></iframe></div>
-<div class="col"><h2>Draft with additions</h2><iframe src="pricing-draft.html" title="Draft pricing page"></iframe></div>
-</div></body></html>
+<div class="col"><h2>Live today</h2><iframe id="fl" src="pricing-live.html" title="Live pricing page"></iframe></div>
+<div class="col"><h2>Draft with additions</h2><iframe id="fd" src="pricing-draft.html" title="Draft pricing page"></iframe></div>
+</div><script>
+document.querySelectorAll(".tabs button").forEach(function(b){b.onclick=function(){
+document.querySelectorAll(".tabs button").forEach(function(x){x.classList.toggle("on",x===b)});
+document.getElementById("fl").src=b.dataset.p+"-live.html";document.getElementById("fd").src=b.dataset.p+"-draft.html"}});
+</script></body></html>

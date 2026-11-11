@@ -29,6 +29,8 @@ Everything in this folder is a **proposal for review**. Nothing has been changed
 - Rewriting the live site's wording.
 
 ## Side by side with the real page
-`compare/index.html` shows your **actual live Pricing page** (exact copy) next to the same page with only the additions dropped in, each marked with an orange **NEW** box. Images: `screenshots/compare-pricing-*.png` (header, calculator, plan cards, price table, security band).
+`compare/index.html` shows your **actual live pages** (exact copies) next to the same pages with only the additions dropped in, each marked with an orange **NEW** box. Use the Pricing / Services tabs at the top.
+- Pricing images: `screenshots/compare-pricing-*.png` (header, calculator, plan cards, price table, security band)
+- Services images: `screenshots/compare-services-*.png` (header, automation cards with links, tools + security band, demo + proof log link)
 
 **To view:** open any `.html` file in `mockups/` in a browser. The dashed orange boxes are review notes, not page content.
