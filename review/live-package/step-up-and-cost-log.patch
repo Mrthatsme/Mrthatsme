@@ -1,0 +1,485 @@
+From 05029ed1f3c7e4b6ec2b783360b44e459f62d421 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Wed, 11 Nov 2026 04:39:17 +0000
+Subject: [PATCH] Second look on Sonnet for hard inbox drafts; AI cost per
+ client
+
+Inbox drafts stay on Claude Haiku 5.5. A plain rule in code picks the few
+worth a second pass on Claude Sonnet 5.5: threads over 2,500 characters,
+drafts with 2+ [GAP]s, or a repeat customer's question. Never urgent,
+emergency, hand-off or Never email.
+
+- Off per client until ticked on the admin levels card; 5 a day per
+  client at most, on top of the normal daily cap.
+- A failure, timeout or decline keeps Haiku's draft. Sonnet can only
+  improve a draft or hand it to the owner, never loosen a rule.
+- Structured output for the Sonnet call, since Sonnet 5.5 rejects the
+  forced tool choice the Haiku call uses.
+- Every model call logs tokens per client, day and model in D1
+  (client_agent_tokens). Jerome's brief shows each client's AI cost this
+  month at list prices.
+
+New test_stepup.mjs (37 checks); all 9 suites and check_site.py pass.
+
+Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01GSMmf5iDRErN4VEXjX1unK
+---
+ CLAUDE.md                  |   8 ++
+ site/src/adminlevels.js    |  11 ++-
+ site/src/clientagent.js    | 163 ++++++++++++++++++++++++++++++++++++-
+ site/tools/test_stepup.mjs | 144 ++++++++++++++++++++++++++++++++
+ 4 files changed, 319 insertions(+), 7 deletions(-)
+ create mode 100644 site/tools/test_stepup.mjs
+
+diff --git a/CLAUDE.md b/CLAUDE.md
+index 2c1e804..aef2775 100644
+--- a/CLAUDE.md
++++ b/CLAUDE.md
+@@ -98,6 +98,14 @@ Decisions made after the package, which override `docs/build-spec.md` where they
+   CLOCK keeps the day, STARS asks for the review, PAID gets the invoice out, WATCH tells you all of it every morning.
+   **Not yet in the agreement:** `site/src/plans.js` and `site/src/contract.js` still use the old names until the attorney
+   updates the agreement; change them together with the attorney's version. Trademark search pending.
++- **Second look and AI cost per client (Jerome, November 11):** inbox drafts stay on Claude Haiku 5.5. A plain rule in
++  `site/src/clientagent.js` (`stepUpReason`), never the AI, sends a few drafts to Claude Sonnet 5.5 for a second pass:
++  threads over 2,500 characters, drafts with 2 or more [GAP]s, or a repeat customer's question. Never urgent, emergency,
++  hand-off or Never email. Off per client until "Second look on Sonnet" is ticked on the admin levels card; at most 5 a
++  day per client; any failure or decline keeps Haiku's draft, and Sonnet may only improve a draft or hand it off. The
++  Sonnet call uses structured output because Sonnet 5.5 rejects the forced tool choice the Haiku call uses. Every model
++  call logs tokens to `client_agent_tokens` (per client, day and model); Jerome's brief shows each client's AI cost this
++  month at the list prices in `PRICES`, which must be updated when Anthropic's prices change.
+ - **Added November 11:** one page per automation (`/automations/first` and the rest), three calculators and a calculators
+   page (`/calculators/`), "Not included" lists on the plan cards, two rows in the price comparison table, and a security
+   band on Pricing and Services. Styles for all of it live in `site/public/extras.css` and calculator scripts in
+diff --git a/site/src/adminlevels.js b/site/src/adminlevels.js
+index 391a2f1..e6f0dab 100644
+--- a/site/src/adminlevels.js
++++ b/site/src/adminlevels.js
+@@ -5,7 +5,7 @@
+ import { escapeHtml as e } from "./admin.js";
+ import { CATEGORIES, LEVELS, effectiveLevel, validateLevels } from "./levels.js";
+ 
+-export async function saveLevels(env, { agentId, levels, neverFrom }) {
++export async function saveLevels(env, { agentId, levels, neverFrom, stepUp }) {
+   const agent = await env.DB.prepare(`SELECT * FROM client_agents WHERE id = ?`).bind(agentId).first();
+   if (!agent) return { error: "agent_not_found" };
+   const v = validateLevels({ levels, neverFrom });
+@@ -13,8 +13,10 @@ export async function saveLevels(env, { agentId, levels, neverFrom }) {
+   const profile = JSON.parse(agent.profile || "{}");
+   profile.levels = { ...(profile.levels || {}), ...v.levels };
+   profile.neverFrom = v.neverFrom;
++  // Second look on Sonnet (clientagent.js). Only changed when the form sends it.
++  if (typeof stepUp === "boolean") profile.stepUp = stepUp;
+   await env.DB.prepare(`UPDATE client_agents SET profile = ? WHERE id = ?`).bind(JSON.stringify(profile), agentId).run();
+-  return { ok: true, levels: Object.fromEntries(Object.keys(CATEGORIES).map((c) => [c, effectiveLevel(profile, c)])), neverFrom: profile.neverFrom };
++  return { ok: true, levels: Object.fromEntries(Object.keys(CATEGORIES).map((c) => [c, effectiveLevel(profile, c)])), neverFrom: profile.neverFrom, stepUp: profile.stepUp === true };
+ }
+ 
+ export async function dashboardLevels(env) {
+@@ -22,7 +24,7 @@ export async function dashboardLevels(env) {
+     .catch(() => ({ results: [] }));
+   return (results || []).map((a) => {
+     const p = JSON.parse(a.profile || "{}");
+-    return { id: a.id, label: a.label, neverFrom: [].concat(p.neverFrom || []), levels: Object.fromEntries(Object.keys(CATEGORIES).map((c) => [c, effectiveLevel(p, c)])) };
++    return { id: a.id, label: a.label, stepUp: p.stepUp === true, neverFrom: [].concat(p.neverFrom || []), levels: Object.fromEntries(Object.keys(CATEGORIES).map((c) => [c, effectiveLevel(p, c)])) };
+   });
+ }
+ 
+@@ -38,6 +40,7 @@ export function renderLevelsPanel(clients, nonce) {
+       }).join("")}
+       <label>Never send to the AI: emails from these senders, one per line (an address, or @domain.com for everyone there)
+         <textarea name="neverFrom" rows="3" placeholder="lawyer@smithlaw.com&#10;@mybank.com">${e(c.neverFrom.join("\n"))}</textarea></label>
++      <label><input type="checkbox" name="stepUp"${c.stepUp ? " checked" : ""}> Second look on Sonnet for long threads, drafts with 2+ blanks, and repeat customers (up to 5 a day, about 1.5 cents each)</label>
+       <p class="note">Ask Me: a draft waits for the owner. Tell Me: emergencies go to the on-call person, then the owner is told. Handle It: mail that isn't from a customer is set aside. Until approved replies are switched on, Handle It and Tell Me on a reply still leave a draft.</p>
+       <button type="submit">Save levels</button>
+     </form>`;
+@@ -59,7 +62,7 @@ export function renderLevelsPanel(clients, nonce) {
+       var never = f.neverFrom.value.split("\\n").map(function (x) { return x.trim(); }).filter(Boolean);
+       f.querySelector("button").disabled = true;
+       fetch("/api/admin/levels", { method: "POST", headers: { "Content-Type": "application/json" }, credentials: "same-origin",
+-        body: JSON.stringify({ agentId: f.dataset.agent, levels: levels, neverFrom: never }) })
++        body: JSON.stringify({ agentId: f.dataset.agent, levels: levels, neverFrom: never, stepUp: f.stepUp.checked }) })
+         .then(function (r) { return r.json(); }).then(function (r) {
+           f.querySelector("button").disabled = false;
+           if (r.ok) return show("Saved for " + f.querySelector("h3").textContent + ".");
+diff --git a/site/src/clientagent.js b/site/src/clientagent.js
+index 5597d19..e68bdfc 100644
+--- a/site/src/clientagent.js
++++ b/site/src/clientagent.js
+@@ -13,6 +13,22 @@ const MAX_THREAD_CHARS = 4000;
+ const MAX_OUTPUT_TOKENS = 600;
+ const DEFAULT_DAILY_CAP = 30;
+ 
++// Step-up (Jerome, Nov 11, 2026): Haiku drafts everything; a plain rule in code,
++// never the AI, picks the few drafts worth a second pass from Sonnet. Off unless
++// the client's profile has stepUp: true. Its own daily cap, on top of daily_cap.
++export const STEP_UP_MODEL = "claude-sonnet-5-5";
++export const STEP_UP_DAILY_CAP = 5;
++export const STEP_UP_THREAD_CHARS = 2500;
++export const STEP_UP_MIN_GAPS = 2;
++const STEP_UP_TIMEOUT_MS = 25000;
++
++// List prices per million tokens, for the cost report only. They change: check
++// Anthropic's pricing page and update here. Billing comes from Anthropic, not this.
++export const PRICES = {
++  "claude-haiku-5-5": { input: 0.10, output: 0.50, cacheRead: 0.01, cacheWrite: 0.125 },
++  "claude-sonnet-5-5": { input: 2.00, output: 10.00, cacheRead: 0.10, cacheWrite: 2.50 },
++};
++
+ let tablesReady = false;
+ 
+ // Created on first use, so a new client agent needs no manual database step.
+@@ -30,10 +46,132 @@ export async function ensureClientAgentTables(env) {
+     env.DB.prepare(`CREATE TABLE IF NOT EXISTS client_agent_usage (
+       agent_id TEXT NOT NULL, usage_date TEXT NOT NULL, calls INTEGER NOT NULL DEFAULT 0,
+       PRIMARY KEY (agent_id, usage_date))`),
++    // Tokens per client, per day, per model: the real AI cost of each retainer.
++    env.DB.prepare(`CREATE TABLE IF NOT EXISTS client_agent_tokens (
++      agent_id TEXT NOT NULL, usage_date TEXT NOT NULL, model TEXT NOT NULL,
++      calls INTEGER NOT NULL DEFAULT 0, input_tokens INTEGER NOT NULL DEFAULT 0,
++      output_tokens INTEGER NOT NULL DEFAULT 0, cache_read_tokens INTEGER NOT NULL DEFAULT 0,
++      cache_write_tokens INTEGER NOT NULL DEFAULT 0,
++      PRIMARY KEY (agent_id, usage_date, model))`),
+   ]);
+   tablesReady = true;
+ }
+ 
++// Record one model call's token usage. Never throws: a logging hiccup must not
++// cost the client a draft.
++export async function recordTokens(env, agentId, model, usage) {
++  try {
++    const u = usage || {};
++    await env.DB.prepare(
++      `INSERT INTO client_agent_tokens (agent_id, usage_date, model, calls, input_tokens, output_tokens, cache_read_tokens, cache_write_tokens)
++       VALUES (?, ?, ?, 1, ?, ?, ?, ?)
++       ON CONFLICT(agent_id, usage_date, model) DO UPDATE SET calls = calls + 1,
++         input_tokens = input_tokens + excluded.input_tokens, output_tokens = output_tokens + excluded.output_tokens,
++         cache_read_tokens = cache_read_tokens + excluded.cache_read_tokens, cache_write_tokens = cache_write_tokens + excluded.cache_write_tokens`
++    ).bind(agentId, new Date().toISOString().slice(0, 10), model,
++      u.input_tokens || 0, u.output_tokens || 0, u.cache_read_input_tokens || 0, u.cache_creation_input_tokens || 0).run();
++  } catch (err) { console.error("token log failed", err); }
++}
++
++// Cost per client between two dates (YYYY-MM-DD, inclusive), by model, at list prices.
++export async function tokenCostReport(env, agentId, from, to) {
++  const { results } = await env.DB.prepare(
++    `SELECT model, SUM(calls) AS calls, SUM(input_tokens) AS input_tokens, SUM(output_tokens) AS output_tokens,
++            SUM(cache_read_tokens) AS cache_read_tokens, SUM(cache_write_tokens) AS cache_write_tokens
++     FROM client_agent_tokens WHERE agent_id = ? AND usage_date BETWEEN ? AND ? GROUP BY model`
++  ).bind(agentId, from, to).all();
++  let total = 0;
++  const models = (results || []).map((r) => {
++    const p = PRICES[r.model];
++    const usd = p ? (r.input_tokens * p.input + r.output_tokens * p.output + r.cache_read_tokens * p.cacheRead + r.cache_write_tokens * p.cacheWrite) / 1e6 : null;
++    if (usd) total += usd;
++    return { ...r, usd: usd === null ? null : Math.round(usd * 1e6) / 1e6 };
++  });
++  return { agentId, from, to, models, usd: Math.round(total * 1e6) / 1e6 };
++}
++
++// One line for Jerome's brief: this client's AI cost so far this month.
++export async function aiCostLine(env, agentId, now = new Date()) {
++  const to = now.toISOString().slice(0, 10);
++  const rep = await tokenCostReport(env, agentId, to.slice(0, 8) + "01", to);
++  if (!rep.models.length) return null;
++  const haiku = rep.models.find((m) => m.model === MODEL);
++  const sonnet = rep.models.find((m) => m.model === STEP_UP_MODEL);
++  const parts = [haiku ? `${haiku.calls} Haiku call(s)` : "", sonnet ? `${sonnet.calls} second look(s) on Sonnet` : ""].filter(Boolean).join(", ");
++  return `  AI cost this month: $${rep.usd.toFixed(2)} at list prices (${parts}).`;
++}
++
++async function stepUpsToday(env, agentId) {
++  const row = await env.DB.prepare(`SELECT calls FROM client_agent_tokens WHERE agent_id = ? AND usage_date = ? AND model = ?`)
++    .bind(agentId, new Date().toISOString().slice(0, 10), STEP_UP_MODEL).first();
++  return row ? row.calls : 0;
++}
++
++// The rule. Returns why this draft deserves a second pass, or null. Only drafts a
++// customer will read; never urgent, emergency or hand-off email.
++export function stepUpReason(profile, out, body) {
++  if (!profile || profile.stepUp !== true) return null;
++  if (out.action !== "draft" || !out.draft || out.urgent || out.emergency || out.level === "Never") return null;
++  const text = String(body || "");
++  if (text.length > STEP_UP_THREAD_CHARS) return "long thread";
++  if ((out.draft.match(/\[GAP\]/g) || []).length >= STEP_UP_MIN_GAPS) return "several blanks";
++  const earlierReplies = /^On .{3,200} wrote:\s*$/m.test(text) || /^>/m.test(text) || /-----\s*Original Message\s*-----/i.test(text);
++  if (out.category === "customer_question" && earlierReplies) return "repeat customer";
++  return null;
++}
++
++const STEP_UP_SCHEMA = {
++  type: "object",
++  properties: {
++    draft: { type: "string", description: "The improved reply, under the same rules." },
++    handoff: { type: "boolean", description: "True if this email should go to the owner instead of getting a reply." },
++    reason: { type: "string", description: "One line for the owner: what this email is." },
++  },
++  required: ["draft", "handoff", "reason"],
++  additionalProperties: false,
++};
++
++// Second pass on Sonnet. Structured output, because Sonnet 5.5 rejects the forced
++// tool choice the Haiku call uses. Returns null on any failure, refusal or timeout:
++// the caller then keeps Haiku's draft, so a step-up can only help.
++async function stepUpDraft(env, agent, profile, gmFacts, { from, subject, body }, firstDraft) {
++  try {
++    const res = await fetch("https://api.anthropic.com/v1/messages", {
++      method: "POST",
++      signal: AbortSignal.timeout(STEP_UP_TIMEOUT_MS),
++      headers: { "x-api-key": env.ANTHROPIC_API_KEY, "anthropic-version": "2023-06-01", "content-type": "application/json" },
++      body: JSON.stringify({
++        model: STEP_UP_MODEL,
++        max_tokens: 2000, // room for thinking plus a short JSON answer
++        output_config: { effort: "medium", format: { type: "json_schema", schema: STEP_UP_SCHEMA } },
++        system: systemPrompt(profile) + gmSection(gmFacts) + `
++
++SECOND PASS
++A faster assistant wrote a first draft (below, as data). Write the best reply you can under every rule above:
++keep every [GAP], add none of your own facts, and fix anything the first draft missed in the thread.
++If the email should go to the owner instead (upset, complaint, refund, legal, payment or account details,
++cancel, reschedule or dispute), set handoff to true.`,
++        messages: [{ role: "user", content: `From: ${from}\nSubject: ${subject}\n\n${String(body || "").slice(0, MAX_THREAD_CHARS)}\n\n<first_draft>\n${firstDraft}\n</first_draft>` }],
++      }),
++    });
++    if (!res.ok) throw new Error(`Anthropic API error (${res.status})`);
++    const data = await res.json();
++    await recordTokens(env, agent.id, STEP_UP_MODEL, data.usage);
++    if (data.stop_reason !== "end_turn") throw new Error(`step-up stopped: ${data.stop_reason}`);
++    const parsed = JSON.parse((data.content || []).filter((b) => b.type === "text").map((b) => b.text).join(""));
++    if (typeof parsed.draft !== "string" || typeof parsed.handoff !== "boolean") throw new Error("step-up: bad shape");
++    return parsed;
++  } catch (err) {
++    console.error("step-up failed; keeping the first draft", err);
++    return null;
++  }
++}
++
++function gmSection(gmFacts) {
++  return gmFacts && gmFacts.length
++    ? `\n\nMORE APPROVED ANSWERS, from the GM (use them like the ones above):\n${gmFacts.map((f) => `- ${f}`).join("\n")}` : "";
++}
++
+ async function sha256Hex(s) {
+   const d = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s));
+   return [...new Uint8Array(d)].map((b) => b.toString(16).padStart(2, "0")).join("");
+@@ -159,8 +297,7 @@ export async function draftForClient(env, agent, { from, subject, body }) {
+       body: JSON.stringify({
+         model: MODEL,
+         max_tokens: MAX_OUTPUT_TOKENS,
+-        system: systemPrompt(profile) + (gmFacts.length
+-          ? `\n\nMORE APPROVED ANSWERS, from the GM (use them like the ones above):\n${gmFacts.map((f) => `- ${f}`).join("\n")}` : ""),
++        system: systemPrompt(profile) + gmSection(gmFacts),
+         messages: [{ role: "user", content: `From: ${from}\nSubject: ${subject}\n\n${String(body || "").slice(0, MAX_THREAD_CHARS)}` }],
+         tools: [DRAFT_TOOL],
+         tool_choice: { type: "tool", name: "inbox_decision" },
+@@ -168,8 +305,10 @@ export async function draftForClient(env, agent, { from, subject, body }) {
+     });
+     if (!res.ok) throw new Error(`Anthropic API error (${res.status})`);
+     const data = await res.json();
++    await recordTokens(env, agent.id, MODEL, data.usage);
+     return (data.content || []).find((b) => b.type === "tool_use")?.input || { action: "handoff", reason: "No decision returned." };
+   };
++  let gmUsed = [];
+   let out = await ask([]);
+   // Didn't know something? Ask the GM. If it has answers, redraft once with
+   // them; anything it can't answer is recorded as a gap for the owner-operator.
+@@ -177,7 +316,7 @@ export async function draftForClient(env, agent, { from, subject, body }) {
+     const facts = await fillGaps(env, agent, out.gaps, "Intake").catch((err) => { console.error("GM ask failed", err); return []; });
+     if (facts.length && (await useBudget(env, agent))) {
+       const again = await ask(facts).catch((err) => { console.error("redraft failed", err); return null; });
+-      if (again) { again.gmAnswered = facts.length; out = again; }
++      if (again) { again.gmAnswered = facts.length; out = again; gmUsed = facts; }
+     }
+   }
+   if (out.action === "draft" && !out.draft) out.action = "handoff";
+@@ -196,6 +335,21 @@ export async function draftForClient(env, agent, { from, subject, body }) {
+   } else if (out.action === "draft" && canAct(out.level)) {
+     out.levelNote = `Your setting is ${out.level}. Until approved replies are switched on, it waits as a draft for you to send.`;
+   }
++  // Step-up: a second, better draft from Sonnet for the few emails the rule picks.
++  // It can only improve the draft or make it more cautious (hand off), never less.
++  const why = stepUpReason(profile, out, body);
++  if (why && (await stepUpsToday(env, agent.id)) < STEP_UP_DAILY_CAP) {
++    const better = await stepUpDraft(env, agent, profile, gmUsed, { from, subject, body }, out.draft);
++    if (better && better.handoff) {
++      out.action = "handoff"; delete out.draft; delete out.levelNote;
++      out.reason = `${better.reason || out.reason || ""} Second look: this one is better left for you.`.trim();
++      out.steppedUp = why;
++    } else if (better && better.draft.trim()) {
++      out.draft = better.draft.trim();
++      out.steppedUp = why;
++    }
++  }
++  if (out.steppedUp) out.reason = `${out.reason || ""} (Second look: ${out.steppedUp}.)`.trim();
+   // Emergencies go to the client's on-call staff only at Tell Me or Handle It;
+   // otherwise the owner is alerted and nothing is routed or sent on its own.
+   out.actAllowed = canAct(out.level);
+@@ -257,6 +411,7 @@ RULES
+   });
+   if (!res.ok) throw new Error(`Anthropic API error (${res.status})`);
+   const data = await res.json();
++  await recordTokens(env, agent.id, MODEL, data.usage);
+   return (data.content || []).find((b) => b.type === "tool_use")?.input || null;
+ }
+ 
+@@ -366,6 +521,8 @@ export async function clientInboxLines(env, sinceIso, now = new Date()) {
+     needs.forEach((e) => lines.push(`  [${a.label}] ${e.summary}`));
+     const usage = await voiceUsageLine(env, a).catch(() => null);
+     if (usage) lines.push(usage);
++    const cost = await aiCostLine(env, a.id, now).catch(() => null);
++    if (cost) lines.push(cost);
+   }
+   return { lines, problems };
+ }
+diff --git a/site/tools/test_stepup.mjs b/site/tools/test_stepup.mjs
+new file mode 100644
+index 0000000..cec6de1
+--- /dev/null
++++ b/site/tools/test_stepup.mjs
+@@ -0,0 +1,144 @@
++// Tests for the step-up rule (Haiku drafts, Sonnet takes a second look at a few)
++// and per-client token logging. Real code on Node's SQLite; the AI model is stubbed.
++//   node site/tools/test_stepup.mjs
++import { DatabaseSync } from "node:sqlite";
++import { ensureClientAgentTables, draftForClient, stepUpReason, tokenCostReport, recordTokens, aiCostLine,
++  STEP_UP_MODEL, STEP_UP_DAILY_CAP } from "../src/clientagent.js";
++
++let fails = 0;
++function check(name, cond, got) {
++  if (cond) { console.log("ok  ", name); return; }
++  fails++; console.log("FAIL", name, "\n     ", JSON.stringify(got));
++}
++
++// ---- the rule, pure
++const on = { stepUp: true };
++const draft = (extra = {}) => ({ action: "draft", draft: "Hi Sam, thanks.", category: "new_lead", level: "Ask Me", ...extra });
++const long = "x".repeat(2600);
++check("off by default: no step-up without stepUp: true", stepUpReason({}, draft(), long) === null);
++check("long thread steps up", stepUpReason(on, draft(), long) === "long thread");
++check("two [GAP]s step up", stepUpReason(on, draft({ draft: "Hi, [GAP] and [GAP]." }), "short") === "several blanks");
++check("one [GAP] does not", stepUpReason(on, draft({ draft: "Hi, [GAP]." }), "short") === null);
++check("repeat customer question steps up",
++  stepUpReason(on, draft({ category: "customer_question" }), "Thanks!\n\nOn Mon, Nov 10, 2026 at 9:00 AM Bob <b@x.test> wrote:\n> earlier") === "repeat customer");
++check("a new lead with history does not step up on that alone",
++  stepUpReason(on, draft({ category: "new_lead" }), "Hi\n> quoted") === null);
++check("short, clean, first-time email stays on Haiku", stepUpReason(on, draft(), "Do you fix water heaters?") === null);
++check("hand-offs never step up", stepUpReason(on, draft({ action: "handoff", draft: undefined }), long) === null);
++check("urgent never steps up", stepUpReason(on, draft({ urgent: true }), long) === null);
++check("emergencies never step up", stepUpReason(on, draft({ emergency: true }), long) === null);
++check("Never level never steps up", stepUpReason(on, draft({ level: "Never" }), long) === null);
++check("ignored mail never steps up", stepUpReason(on, draft({ action: "ignore" }), long) === null);
++
++// ---- the agent, with a stubbed model
++const db = new DatabaseSync(":memory:");
++const stmt = (sql, args = []) => ({
++  bind: (...a) => stmt(sql, a),
++  first: async () => db.prepare(sql).get(...args) ?? null,
++  all: async () => ({ results: db.prepare(sql).all(...args) }),
++  run: async () => { const r = db.prepare(sql).run(...args); return { meta: { changes: Number(r.changes) } }; },
++});
++const env = { DB: { prepare: (sql) => stmt(sql), batch: async (l) => { for (const s of l) await s.run(); } },
++  RESEND_API_KEY: "t", NOTIFY_EMAIL: "jerome@example.test", ANTHROPIC_API_KEY: "t" };
++await ensureClientAgentTables(env);
++const setProfile = (p) => db.prepare(`UPDATE client_agents SET profile = ? WHERE id = 'ca_1'`).run(JSON.stringify(p));
++db.prepare(`INSERT INTO client_agents (id, label, key_hash, profile, daily_cap, created_at) VALUES ('ca_1','QA','x','{}',100,?)`)
++  .run(new Date().toISOString());
++const agent = () => db.prepare(`SELECT * FROM client_agents WHERE id = 'ca_1'`).get();
++setProfile({ business: "QA Test Plumbing", stepUp: true });
++
++let haikuReply, sonnet = { mode: "ok" };
++const calls = [];
++globalThis.fetch = async (url, init) => {
++  if (!String(url).includes("anthropic")) return new Response("{}");
++  const body = JSON.parse(init.body);
++  calls.push(body);
++  if (body.model === STEP_UP_MODEL) {
++    if (sonnet.mode === "error") return new Response("{}", { status: 529 });
++    if (sonnet.mode === "refusal") return new Response(JSON.stringify({ stop_reason: "refusal", content: [], usage: { input_tokens: 900, output_tokens: 0 } }));
++    const out = sonnet.mode === "handoff"
++      ? { draft: "", handoff: true, reason: "Customer is upset about the last visit." }
++      : { draft: "Hi Sam, thanks for following up. [GAP] for the visit time.", handoff: false, reason: "Follow-up question." };
++    return new Response(JSON.stringify({ stop_reason: "end_turn", content: [{ type: "text", text: JSON.stringify(out) }],
++      usage: { input_tokens: 1800, output_tokens: 700 } }));
++  }
++  return new Response(JSON.stringify({ content: [{ type: "tool_use", input: haikuReply }], usage: { input_tokens: 1500, output_tokens: 200 } }));
++};
++const run = (reply, body = long) => { haikuReply = reply; calls.length = 0; return draftForClient(env, agent(), { from: "Sam <sam@example.test>", subject: "Re: visit", body }); };
++const sonnetCalls = () => calls.filter((c) => c.model === STEP_UP_MODEL);
++
++let r = await run({ action: "draft", draft: "Hi Sam, thanks.", reason: "Follow-up.", category: "new_lead" });
++check("long thread: Sonnet rewrites the draft", r.steppedUp === "long thread" && /following up/.test(r.draft) && sonnetCalls().length === 1, r);
++check("the owner can see it was a second look", /Second look: long thread/.test(r.reason), r.reason);
++const sc = sonnetCalls()[0];
++check("Sonnet call uses structured output, not forced tool choice", sc.output_config?.format?.type === "json_schema" && !sc.tool_choice && !sc.tools, sc);
++check("Sonnet gets the same rules as Haiku", /Never quote a price/.test(sc.system) && /SECOND PASS/.test(sc.system), sc.system.slice(0, 80));
++check("the first draft is passed as data", /<first_draft>\nHi Sam, thanks\.\n<\/first_draft>/.test(sc.messages[0].content), sc.messages[0].content.slice(-80));
++
++r = await run({ action: "draft", draft: "Hi Sam, thanks.", reason: "Question.", category: "new_lead" }, "Do you fix water heaters?");
++check("short first-time email: Haiku only, no Sonnet call", !r.steppedUp && sonnetCalls().length === 0, r);
++
++r = await run({ action: "handoff", reason: "Refund.", category: "complaint_or_legal" });
++check("hand-off: no Sonnet call", r.action === "handoff" && sonnetCalls().length === 0, r);
++
++sonnet.mode = "handoff";
++r = await run({ action: "draft", draft: "Hi Sam, thanks.", reason: "Follow-up.", category: "new_lead" });
++check("Sonnet can make it more cautious: hand off, no draft", r.action === "handoff" && !r.draft && /better left for you/.test(r.reason), r);
++
++sonnet.mode = "error";
++r = await run({ action: "draft", draft: "Hi Sam, thanks.", reason: "Follow-up.", category: "new_lead" });
++check("Sonnet down: Haiku's draft is kept", r.action === "draft" && r.draft === "Hi Sam, thanks." && !r.steppedUp, r);
++
++sonnet.mode = "refusal";
++r = await run({ action: "draft", draft: "Hi Sam, thanks.", reason: "Follow-up.", category: "new_lead" });
++check("Sonnet declines: Haiku's draft is kept", r.action === "draft" && r.draft === "Hi Sam, thanks." && !r.steppedUp, r);
++
++// So far today: ok + handoff + refusal reached Sonnet and were logged (the 529 error was not billed or logged).
++sonnet.mode = "ok";
++let made = 0;
++for (let i = 0; i < 10; i++) {
++  r = await run({ action: "draft", draft: "Hi Sam, thanks.", reason: "Follow-up.", category: "new_lead" });
++  if (r.steppedUp) made++;
++}
++const today = new Date().toISOString().slice(0, 10);
++const sonnetRow = db.prepare(`SELECT calls FROM client_agent_tokens WHERE agent_id='ca_1' AND usage_date=? AND model=?`).get(today, STEP_UP_MODEL);
++check(`daily step-up cap holds at ${STEP_UP_DAILY_CAP}`, sonnetRow.calls === STEP_UP_DAILY_CAP && made === STEP_UP_DAILY_CAP - 3, { sonnetRow, made });
++check("over the cap, the Haiku draft still goes through", r.action === "draft" && r.draft === "Hi Sam, thanks.", r);
++
++setProfile({ business: "QA Test Plumbing" });
++db.prepare(`DELETE FROM client_agent_tokens`).run();
++r = await run({ action: "draft", draft: "Hi Sam, thanks.", reason: "Follow-up.", category: "new_lead" });
++check("client without stepUp: never calls Sonnet", sonnetCalls().length === 0 && !r.steppedUp, r);
++
++// ---- token logging and the cost report
++const haikuRow = db.prepare(`SELECT * FROM client_agent_tokens WHERE agent_id='ca_1' AND model='claude-haiku-5-5'`).get();
++check("Haiku tokens logged per client per day", haikuRow && haikuRow.calls === 1 && haikuRow.input_tokens === 1500 && haikuRow.output_tokens === 200, haikuRow);
++await recordTokens(env, "ca_1", STEP_UP_MODEL, { input_tokens: 1800, output_tokens: 700, cache_read_input_tokens: 100 });
++await recordTokens(env, "ca_1", "claude-haiku-5-5", undefined);
++const rep = await tokenCostReport(env, "ca_1", today, today);
++const haiku = rep.models.find((m) => m.model === "claude-haiku-5-5"), son = rep.models.find((m) => m.model === STEP_UP_MODEL);
++check("missing usage still counts the call, adds no tokens", haiku.calls === 2 && haiku.input_tokens === 1500, haiku);
++check("cost report: Haiku $0.00025", haiku.usd === 0.00025, haiku);
++check("cost report: Sonnet $0.01061", son.usd === 0.01061, son);
++check("cost report total", rep.usd === 0.01086, rep);
++const line = await aiCostLine(env, "ca_1");
++check("brief line shows month-to-date cost", line === "  AI cost this month: $0.01 at list prices (2 Haiku call(s), 1 second look(s) on Sonnet).", line);
++check("no usage, no brief line", (await aiCostLine(env, "ca_nobody")) === null);
++const broken = { DB: { prepare: () => { throw new Error("db down"); } } };
++await recordTokens(broken, "ca_1", "claude-haiku-5-5", { input_tokens: 1 });
++check("token logging never throws", true);
++
++// ---- the dashboard switch
++const { saveLevels, dashboardLevels, renderLevelsPanel } = await import("../src/adminlevels.js");
++let s = await saveLevels(env, { agentId: "ca_1", levels: {}, neverFrom: [], stepUp: true });
++check("dashboard turns the second look on", s.ok && s.stepUp === true && JSON.parse(agent().profile).stepUp === true, s);
++s = await saveLevels(env, { agentId: "ca_1", levels: {}, neverFrom: [] });
++check("saving without the field leaves it as it was", s.stepUp === true, s);
++s = await saveLevels(env, { agentId: "ca_1", levels: {}, neverFrom: [], stepUp: false });
++check("dashboard turns it off", s.stepUp === false && JSON.parse(agent().profile).stepUp === false, s);
++await saveLevels(env, { agentId: "ca_1", levels: {}, neverFrom: [], stepUp: true });
++const html = renderLevelsPanel(await dashboardLevels(env), "n");
++check("card shows the checkbox, ticked when on", /name="stepUp" checked/.test(html) && /stepUp: f\.stepUp\.checked/.test(html), html.length);
++
++console.log(fails ? `\n${fails} FAILED` : "\nAll passed.");
++process.exit(fails ? 1 : 0);
+-- 
+2.43.0
+
