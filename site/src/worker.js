@@ -421,6 +421,10 @@ async function handleCreateLead(request, env, ctx) {
 
 async function handleAgree(request, env) {
   if (!signupsOpen(env)) return json({ error: "signups_closed", message: SIGNUPS_CLOSED_MESSAGE }, 403);
+  // Per-IP limit (protect.js): a signature is a few a day at most, so bursts are refused.
+  const screen = await screenSubmission(request, env, "/api/agree", { honeypot: undefined, elapsedMs: undefined });
+  if (!screen.ok) return json({ error: "rate_limited", message: "Too many attempts. Please wait a few minutes and try again." }, 429);
+  await logSecurityEvent(env, { kind: "accepted", path: "/api/agree", hash: screen.hash });
   const body = await readJson(request);
   if (body === undefined) return json({ error: "invalid_json" }, 400);
   const { planId, founding, signerName, signerEmail, businessName, leadId } = body || {};
@@ -489,6 +493,9 @@ async function handleAgree(request, env) {
 async function handleCheckout(request, env, url) {
   // No payment until there is a countersigned agreement to pay against.
   if (!signupsOpen(env)) return json({ error: "signups_closed", message: SIGNUPS_CLOSED_MESSAGE }, 403);
+  const screen = await screenSubmission(request, env, "/api/checkout", { honeypot: undefined, elapsedMs: undefined });
+  if (!screen.ok) return json({ error: "rate_limited", message: "Too many attempts. Please wait a few minutes and try again." }, 429);
+  await logSecurityEvent(env, { kind: "accepted", path: "/api/checkout", hash: screen.hash });
   const body = await readJson(request);
   if (body === undefined) return json({ error: "invalid_json" }, 400);
   const { contractId } = body || {};

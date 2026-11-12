@@ -98,11 +98,16 @@ Decisions made after the package, which override `docs/build-spec.md` where they
   CLOCK keeps the day, STARS asks for the review, PAID gets the invoice out, WATCH tells you all of it every morning.
   **Not yet in the agreement:** `site/src/plans.js` and `site/src/contract.js` still use the old names until the attorney
   updates the agreement; change them together with the attorney's version. Trademark search pending.
+- **Going live (November 12):** Jasmine Brown has not returned contract recommendations (last message November 3);
+  a proposed agreement v2026-11-12.1 with liability, indemnity, Florida law and venue, AI disclosure and e-signature
+  clauses is in the Shared Drive (02) as a draft for attorney review, not in use. Stripe here is a test sandbox; the live
+  account is not activated and has no bank account. The step-by-step order to go live is at the top of
+  `site/SETUP-PAYMENTS.md`. Do not open sign-ups before counsel approves the agreement.
 - **Admin gate (November 11):** every `/api/admin` request goes through `adminGate` in `site/src/protect.js`: 10 wrong
   passwords from one IP in 15 minutes locks that IP out for the rest of the window, the password is compared in constant
   time, and a request that changes something is refused if another site started it (Origin / Sec-Fetch-Site). Error
   detail is returned only after the gate has passed; everyone else gets `internal_error` with no message.
-  **Before signups open:** add `screenSubmission` to `/api/agree` and `/api/checkout`, which have no rate limit today.
+  `/api/agree` and `/api/checkout` are rate-limited per IP (added November 12).
 - **Process-map tool (November 11):** `node site/tools/process_map.mjs <folder> --business "Name"` reads a client's
   exported files on Jerome's own computer and drafts where work slips, with Claude Fable 5.2 (one retry on Opus 5.5 if
   it declines). It shows the token count and cost and sends nothing without `--go`; leaves out any file that mentions a

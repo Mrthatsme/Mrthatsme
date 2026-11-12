@@ -1,5 +1,39 @@
 # Payments / CRM / contracts — setup checklist
 
+## Going live: the order (written November 12, 2026)
+
+Status today: sign-ups are closed (`SIGNUPS_OPEN` unset), Stripe is test mode only, and the
+agreement has not had legal review. Nothing below is done yet. Do the steps in order.
+
+1. **Fictitious name.** Register "Minutes Regained" for Provident Watch LLC with the Florida
+   Division of Corporations (sunbiz.org), as section 865.09, Florida Statutes, requires before
+   doing business under it. Confirm with counsel how the agreement names the parties meanwhile.
+2. **Attorney sign-off.** Counsel reviews "DRAFT FOR ATTORNEY REVIEW — Service Agreement
+   v2026-11-12.1" (Shared Drive, 02 Business, Legal & Contracts) and the 12 questions in the
+   attorney brief. Confirm counsel is a member of The Florida Bar (floridabar.org member search).
+3. **Put the approved text in the code.** Replace the wording in `src/contract.js`, bump
+   `CONTRACT_VERSION`, and rename `CORE_AUTOMATIONS` in `src/plans.js` to FIRST, TRACE, CLOCK,
+   STARS and PAID at the same time, so the agreement matches the site. Run all `site/tools/test_*.mjs`.
+4. **Business bank account, then Stripe activation.** In the Stripe dashboard, activate the live
+   account: business details, EIN, identity verification and a payout bank account. Stripe asks
+   for the bank account during activation.
+5. **Live Prices.** With the live secret key:
+   `STRIPE_KEY=sk_live_... node site/tools/stripe_live_prices.mjs` (shows what it would do), then
+   the same with `--create`. It creates the four Prices with the lookup keys checkout uses and
+   never duplicates one. (Running it from a Claude session needs `NODE_USE_ENV_PROXY=1`.)
+6. **Live webhook.** Stripe dashboard (live mode) > Developers > Webhooks: endpoint
+   `https://minutesregained.com/api/stripe/webhook`, events `checkout.session.completed`,
+   `invoice.paid`, `invoice.payment_failed`. Copy the signing secret.
+7. **Cloudflare secrets** (from `site/`): `npx wrangler secret put STRIPE_SECRET_KEY` (live key)
+   and `npx wrangler secret put STRIPE_WEBHOOK_SECRET` (live signing secret).
+8. **Open sign-ups.** Set `SIGNUPS_OPEN = "true"` in the Worker's variables.
+9. **One real test.** Sign up with your own card on the cheapest plan, confirm the signed
+   agreement is stored and emailed, the subscription appears in Stripe, then cancel and refund it.
+
+Already done: online signing (typed name, time, IP, version and SHA-256 of the text), checkout
+that refuses a Price whose amount doesn't match the signed agreement, and per-IP limits on
+`/api/agree` and `/api/checkout` (added November 12).
+
 Code is written and ready to deploy. These are the remaining steps that need
 your Stripe account and an updated Cloudflare token — I can't do these for
 you without them.

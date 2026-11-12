@@ -31,7 +31,10 @@ const now = new Date();
 const link = await makeLink(env, { t: "done", id: 1, ag: "ca_1" }, now);
 const tok = link.split("/b/")[1];
 check("link reads back", (await readLink(env, tok, now)).id === 1);
-check("tampered link is refused", (await readLink(env, tok.replace(/.$/, (c) => (c === "A" ? "B" : "A")), now)) === null);
+// Change a character in the middle of the signature: the last base64url character
+// carries spare bits, so changing it can leave the decoded signature the same.
+const flip = (t) => { const i = t.indexOf(".") + 10; return t.slice(0, i) + (t[i] === "A" ? "B" : "A") + t.slice(i + 1); };
+check("tampered link is refused", (await readLink(env, flip(tok), now)) === null);
 check("expired link is refused", (await readLink(env, tok, new Date(now.getTime() + 15 * 86400000))) === null);
 check("a different key can't read it", (await readLink({ TOKEN_ENC_KEY: "z".repeat(40) }, tok, now)) === null);
 
