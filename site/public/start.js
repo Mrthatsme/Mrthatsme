@@ -244,7 +244,7 @@
     var box = $("result-box");
     if (status === "success") {
       box.className = "ok";
-      box.innerHTML = "<h2>You're set up.</h2><p>Payment confirmed and your service agreement is on file. We'll be in touch within one business day to start your assessment and onboarding.</p>";
+      box.innerHTML = "<h2>You're set up.</h2><p>Payment confirmed and your service agreement is on file. We'll be in touch within 12 hours to start your assessment and onboarding.</p>";
     } else {
       box.className = "err";
       box.innerHTML = "<h2>Checkout canceled.</h2><p>No charge was made. You can start over any time from the pricing section, or email support@minutesregained.com if something went wrong.</p>";

@@ -71,7 +71,7 @@
           var okH = document.createElement("h3");
           okH.textContent = "Got it, " + name + ".";
           var okP = document.createElement("p");
-          okP.textContent = "We'll be in touch within one business day, in the window you picked.";
+          okP.textContent = "We'll be in touch within 12 hours, in the window you picked.";
           okBox.appendChild(okH); okBox.appendChild(okP);
         })
         .catch(function(){

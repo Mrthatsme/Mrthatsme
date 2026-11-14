@@ -118,14 +118,14 @@ async function sendAcknowledgment(env, { name, contact }) {
     to: contact.trim(),
     replyTo: REPLY_TO,
     subject: `We got your message -- Minutes Regained`,
-    text: `Hi ${firstName},\n\nThanks for reaching out to Minutes Regained. We got your message, and a real person will get back to you within one business day.\n\n${SIGNATURE}`,
+    text: `Hi ${firstName},\n\nThanks for reaching out to Minutes Regained. We got your message, and a real person will get back to you within 12 hours.\n\n${SIGNATURE}`,
   });
 }
 
 async function notifyHuman(env, lead, { status, note, replyBody, acked, noAckReason, suggestedReply }) {
   const header = status === "auto_replied"
     ? `Auto-answered by the triage agent. Here's what went out:`
-    : `Needs your attention: ${note}\n${acked ? "(They were sent an automatic \"we got your message, we'll reply within one business day\" email.)" : `(No automatic reply went out: ${noAckReason || "no email address was given, so they need a phone call."})`}`;
+    : `Needs your attention: ${note}\n${acked ? "(They were sent an automatic \"we got your message, we'll reply within 12 hours\" email.)" : `(No automatic reply went out: ${noAckReason || "no email address was given, so they need a phone call."})`}`;
   const body = [
     header,
     ``,
