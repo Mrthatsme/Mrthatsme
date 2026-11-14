@@ -5,7 +5,7 @@
 
 import { CORE_AUTOMATIONS } from "./plans.js";
 
-export const CONTRACT_VERSION = "2026-11-11.1";
+export const CONTRACT_VERSION = "2026-11-14.1";
 
 const usd = (cents) => `$${(cents / 100).toLocaleString("en-US", { maximumFractionDigits: 0 })}`;
 
@@ -82,7 +82,7 @@ ${included}
    store any banking credential or payment login belonging to Client, will
    never have the ability to transfer Client's funds, and will never charge,
    collect, hold, or move money on behalf of Client or Client's customers.
-   Where Client's plan includes Invoice & Chase, Minutes Regained sends
+   Where Client's plan includes PAID, Minutes Regained sends
    invoices from Client's own invoicing tool, for amounts Client has set,
    follows up on unpaid ones and reads payment status there. It never
    takes, moves or refunds a payment and never runs a card. Every payment

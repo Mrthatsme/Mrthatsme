@@ -6,7 +6,7 @@
 export const RETAINER_DISCOUNT = 0.1;
 
 // The five core automations, by name. Keep in step with the homepage.
-export const CORE_AUTOMATIONS = ["Lead Catcher", "Quote Chaser", "Schedule Keeper", "Review Builder", "Invoice & Chase"];
+export const CORE_AUTOMATIONS = ["FIRST (new leads)", "TRACE (quote follow-up)", "CLOCK (scheduling)", "STARS (reviews)", "PAID (invoices)"];
 
 // Operations+ is retired (November 6, 2026). Custom Automation is scoped on a
 // call and is not sold through /start.

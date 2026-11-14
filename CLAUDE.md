@@ -96,8 +96,9 @@ Decisions made after the package, which override `docs/build-spec.md` where they
   became FIRST, TRACE, CLOCK, STARS and PAID, each shown with a short label ("FIRST · new leads"). The daily brief card is
   named WATCH; everywhere else it stays "daily brief". One line reads them in order: FIRST answers, TRACE follows up,
   CLOCK keeps the day, STARS asks for the review, PAID gets the invoice out, WATCH tells you all of it every morning.
-  **Not yet in the agreement:** `site/src/plans.js` and `site/src/contract.js` still use the old names until the attorney
-  updates the agreement; change them together with the attorney's version. Trademark search pending.
+  **In the agreement since November 14 (Jerome's call):** `site/src/plans.js` and `site/src/contract.js` use the new names
+  with their labels, agreement version 2026-11-14.1. The attorney's draft in the Shared Drive may still use the old names.
+  Trademark search pending.
 - **Going live (November 12):** Jasmine Brown has not returned contract recommendations (last message November 3);
   a proposed agreement v2026-11-12.1 with liability, indemnity, Florida law and venue, AI disclosure and e-signature
   clauses is in the Shared Drive (02) as a draft for attorney review, not in use. Stripe here is a test sandbox; the live
