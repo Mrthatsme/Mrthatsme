@@ -42,3 +42,15 @@
 .hold{border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:10px;padding:16px 18px;margin:24px 0 0;display:grid;gap:10px;background:var(--surface)}
 .hold p{margin:0}
 .ag-link{margin:16px 0 -8px}
+
+/* Sign-ups-closed notice (dialog open, closes with no script) */
+.uc-note{position:fixed;left:16px;right:16px;bottom:16px;top:auto;margin:0 auto;max-width:520px;width:auto;z-index:50;
+  background:var(--surface);color:var(--ink);border:1px solid var(--line);border-top:4px solid var(--accent);border-radius:10px;
+  padding:20px 22px;box-shadow:0 12px 40px rgba(16,32,46,.22);font-size:16px;line-height:1.55}
+.uc-note .uc-kicker{margin:0 0 4px;font:600 12px/1.2 var(--body);letter-spacing:.08em;text-transform:uppercase;color:var(--accent-text)}
+.uc-note h2{margin:0 0 8px;font-size:22px;line-height:1.2}
+.uc-note p{margin:0 0 10px}
+.uc-note .uc-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+.uc-note .uc-actions form{margin:0}
+.uc-note .btn{min-height:44px}
+@media (max-width:420px){.uc-note .uc-actions .btn{width:100%;justify-content:center}.uc-note .uc-actions form{width:100%}}

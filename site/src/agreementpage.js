@@ -20,6 +20,21 @@ export function signupsOpen(env) {
 export const SIGNUPS_CLOSED_MESSAGE =
   "Sign-ups open once our attorney-reviewed service agreement is back. Nothing can be signed or paid for until then.";
 
+// Shown on /start and /client while sign-ups are closed (Jerome, November 14).
+// A plain <dialog open>: "Keep reading" closes it with no script, so the CSP
+// stays as it is. It disappears by itself once SIGNUPS_OPEN is "true".
+export const REPLY_PROMISE = "within 12 hours";
+export const SIGNUPS_CLOSED_NOTICE = `<dialog class="uc-note" open aria-labelledby="uc-title">
+  <p class="uc-kicker">Under construction</p>
+  <h2 id="uc-title">We're almost ready</h2>
+  <p>We're finishing the last of our paperwork, so nobody can sign up or pay here yet. You're welcome to read the plans and the full agreement in the meantime.</p>
+  <p>Questions? Email <a href="mailto:support@minutesregained.com">support@minutesregained.com</a> and we'll get back to you ${REPLY_PROMISE}.</p>
+  <div class="uc-actions">
+    <a class="btn btn-primary" href="mailto:support@minutesregained.com?subject=Question%20about%20Minutes%20Regained">Email us</a>
+    <form method="dialog"><button class="btn btn-ghost" type="submit">Keep reading</button></form>
+  </div>
+</dialog>`;
+
 const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 
 // Read plan/billing/founding from a URL, falling back to Business Support,
@@ -142,11 +157,22 @@ export async function startPage(env, request, url) {
       .on("#start-lede", { element(el) { el.setInnerContent("Read the plans and the full agreement here. When sign-ups open, your card is handled entirely by Stripe: Minutes Regained never sees or stores it, and never collects payment from, or on behalf of, your customers."); } })
       .on("#step2-title", { element(el) { el.setInnerContent('<span class="step-num">2</span> Read the service agreement', { html: true }); } })
       .on("#to-step2", { element(el) { el.setInnerContent("Read the agreement"); } })
-      .on("#agree-form", { element(el) { el.replace(`<div class="hold"><p>${esc(SIGNUPS_CLOSED_MESSAGE)}</p><p><a class="btn btn-primary" href="${BOOK_URL}" target="_blank" rel="noopener">Book a call</a></p></div>`, { html: true }); } })
-      .on("#step-pay", { element(el) { el.remove(); } });
+      .on("#agree-form", { element(el) { el.replace(`<div class="hold"><p>${esc(SIGNUPS_CLOSED_MESSAGE)}</p><p>Questions in the meantime? Email <a href="mailto:support@minutesregained.com">support@minutesregained.com</a> and we'll get back to you ${REPLY_PROMISE}.</p><p><a class="btn btn-primary" href="${BOOK_URL}" target="_blank" rel="noopener">Book a call</a></p></div>`, { html: true }); } })
+      .on("#step-pay", { element(el) { el.remove(); } })
+      .on("body", { element(el) { el.append(SIGNUPS_CLOSED_NOTICE, { html: true }); } });
   }
   const res = rw.transform(asset);
   const headers = new Headers(res.headers);
   headers.set("Cache-Control", "no-store");
   return new Response(res.body, { status: res.status, headers });
+}
+
+
+// /client with the same notice while sign-ups are closed.
+export async function clientPage(env, request, url) {
+  const asset = await env.ASSETS.fetch(new Request(new URL("/client", url), request));
+  if (!asset.ok || signupsOpen(env)) return asset;
+  return new HTMLRewriter()
+    .on("body", { element(el) { el.append(SIGNUPS_CLOSED_NOTICE, { html: true }); } })
+    .transform(asset);
 }

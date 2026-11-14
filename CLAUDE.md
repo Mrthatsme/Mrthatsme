@@ -104,6 +104,9 @@ Decisions made after the package, which override `docs/build-spec.md` where they
   clauses is in the Shared Drive (02) as a draft for attorney review, not in use. Stripe here is a test sandbox; the live
   account is not activated and has no bank account. The step-by-step order to go live is at the top of
   `site/SETUP-PAYMENTS.md`. Do not open sign-ups before counsel approves the agreement.
+  While sign-ups are closed, /start and /client show an "Under construction" notice (`SIGNUPS_CLOSED_NOTICE` in
+  `site/src/agreementpage.js`) promising an email reply within 12 hours (Jerome, November 14). It goes away by itself
+  when `SIGNUPS_OPEN` is "true". Jerome is also waiting on business insurance and the fictitious name (DBA).
 - **Admin gate (November 11):** every `/api/admin` request goes through `adminGate` in `site/src/protect.js`: 10 wrong
   passwords from one IP in 15 minutes locks that IP out for the rest of the window, the password is compared in constant
   time, and a request that changes something is refused if another site started it (Origin / Sec-Fetch-Site). Error

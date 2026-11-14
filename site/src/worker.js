@@ -30,7 +30,7 @@ import { gmWatch, watchHealth } from "./gmwatch.js";
 import { saveLevels, dashboardLevels, renderLevelsPanel } from "./adminlevels.js";
 import { linkPage, linkAct } from "./approvals.js";
 import { setPaused } from "./pause.js";
-import { agreementPage, startPage, signupsOpen, SIGNUPS_CLOSED_MESSAGE } from "./agreementpage.js";
+import { agreementPage, startPage, clientPage, signupsOpen, SIGNUPS_CLOSED_MESSAGE } from "./agreementpage.js";
 
 const JSON_HEADERS = { "Content-Type": "application/json; charset=utf-8" };
 
@@ -65,6 +65,9 @@ export default {
       }
       if ((path === "/start" || path === "/start.html" || path === "/start/") && (request.method === "GET" || request.method === "HEAD")) {
         return await startPage(env, request, url);
+      }
+      if ((path === "/client" || path === "/client/") && (request.method === "GET" || request.method === "HEAD")) {
+        return await clientPage(env, request, url);
       }
       // The owner's one-tap answers (approvals.js): GET confirms, only POST acts.
       const bm = path.match(/^\/b\/([A-Za-z0-9_-]+\.[A-Za-z0-9_-]+)$/);
