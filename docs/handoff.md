@@ -383,6 +383,26 @@ lifted: price and cancel/change max Ask Me; complaints, legal, payment always Ne
 `docs/agent-checklist.md` tracks every back-office capability a client needs, our agent name for it, and its
 status (built, partly, not yet, not offered), with a suggested build order. Update it whenever something is built.
 
+## Idea: a real estate package (parked, November 15)
+Not built. For if a real estate agent ever becomes a client. Seen on Facebook: an agent's bot team with a chief of staff
+routing work to specialists for CMAs, contract deadlines, seller updates and appointment booking (GoHighLevel). Don't copy
+it; it maps onto what we already have:
+- **The GM** routes everything (their "chief of staff").
+- **CMAs**: a research specialist pulls comps and drafts the report. **Ask Me**: the agent reviews it and sets the price;
+  the assistant never gives a client a number.
+- **Contract deadlines** (transaction coordination): **Schedule**, with **The Watch** making sure nothing slips. A date goes
+  on the calendar only after the agent confirms it, and the assistant never calculates a deadline itself (same as law firms).
+- **Seller updates**: **Aftercare** or a client-updates specialist. Drafted for approval at first, activity only, never a
+  prediction about offers or sale dates.
+- **Appointment booking**: **Intake** plus **Schedule**.
+- Keep our plain role names, not cute persona names.
+- **GoHighLevel is not a verified integration.** It's "we check it on the assessment call" until tested.
+- **Texting**: GHL is text-heavy. Our rule holds: only through the agent's own software, only to someone who contacted them
+  first, never to anyone who asked to stop.
+- **Licensing**: the assistant never acts as a licensed agent or gives real estate advice (like "we're not paralegals").
+- If it happens: a `/for/real-estate` page in the same pattern as contractors and law firms, built only once the GHL
+  connection is confirmed.
+
 ## Next steps
 0. **The Home headline line about phones** (item 1 above). It's the review's one critical finding and a ten-minute fix.
 1. **Settle the founding client offer** (Jerome's numbers). Then update every place that names it: the Business Support card on `/pricing`,
