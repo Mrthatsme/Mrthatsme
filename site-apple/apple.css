@@ -306,8 +306,8 @@ p{margin:0}
 /* the on-watch clock */
 .shot.clock{width:min(460px,80vw)}
 .shot.clock .chip{color:var(--ink);width:220px;max-width:none}
-.shot.clock .chip.a{top:56%;bottom:auto;right:auto;left:calc(100% + 16px)}
-.shot.clock .chip.b{top:calc(50% - 44px);bottom:auto;left:auto;right:calc(100% + 16px)}
+.shot.clock .chip.b{top:68%;bottom:auto;right:auto;left:calc(100% + 16px)}
+.shot.clock .chip.a{top:68%;bottom:auto;left:auto;right:calc(100% + 16px);border:2px solid var(--amber)}
 .legend{margin-top:30px;display:flex;flex-wrap:wrap;gap:10px 26px;justify-content:center;font-size:15px;color:var(--night-ink2)}
 .legend span{display:inline-flex;align-items:center;gap:8px}
 .sw{display:inline-block;width:14px;height:14px;border-radius:4px}
@@ -316,9 +316,13 @@ p{margin:0}
   .shot.clock{aspect-ratio:auto;width:min(420px,100%);display:flex;flex-direction:column;align-items:center;gap:10px}
   .shot.clock svg{width:min(340px,100%);height:auto;margin-bottom:10px}
   .shot.clock .chip,.shot.clock .chip.a,.shot.clock .chip.b{position:static;width:100%;max-width:340px}
-  .shot.clock .chip.b{order:2}.shot.clock .chip.a{order:1}
+  .shot.clock .chip.b{order:1}.shot.clock .chip.a{order:2}
 }
 
 /* who it's for */
 .who{margin:44px auto 0;max-width:30ch;font-size:clamp(19px,2.2vw,22px);font-weight:600;letter-spacing:-0.02em;color:var(--ink)}
 .who + .demo{margin-top:26px}
+
+#sec{transform-origin:200px 200px;animation:tick 60s steps(60) infinite}
+@keyframes tick{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){#sec{animation:none;transform:rotate(132deg)}}
