@@ -21,7 +21,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
-<link rel="stylesheet" href="/apple.css?v=2">
+<link rel="stylesheet" href="/apple.css?v=3">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"ProfessionalService","name":"Minutes Regained","url":"https://minutesregained.com/","description":"Virtual assistant support and automation for small businesses.","telephone":"+1-877-896-8784","email":"support@minutesregained.com","areaServed":{"@type":"Country","name":"United States"},"priceRange":"$550-$2100","serviceType":["Virtual assistant services","Business process automation"],"offers":[{"@type":"Offer","name":"Essential","price":"650","priceCurrency":"USD"},{"@type":"Offer","name":"Business Support","price":"1300","priceCurrency":"USD"},{"@type":"Offer","name":"Custom Build","price":"550","priceCurrency":"USD"}]}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What does a virtual assistant do for my business?","acceptedAnswer":{"@type":"Answer","text":"The work that needs a person: cleaning up your inbox and replying to email, managing your calendar, scheduling appointments, customer follow-ups, data entry, documents and one-off projects. It's done inside your own accounts."}},{"@type":"Question","name":"Do I have to use automation?","acceptedAnswer":{"@type":"Answer","text":"No. Essential and Business Support are virtual assistant plans, so you can start with just the assistant. When we notice a task that happens the same way every time, we'll suggest automating it, and you decide."}},{"@type":"Question","name":"Do you answer my phone?","acceptedAnswer":{"@type":"Answer","text":"No. Missed calls show up in your morning report, ranked, so you know who to call back first. Website and social messages do get answered."}},{"@type":"Question","name":"Will anything go out that I didn't approve?","acceptedAnswer":{"@type":"Answer","text":"Only wording you've signed off on. Anything with a price, a date or a promise waits for you."}},{"@type":"Question","name":"What if you're out sick or on vacation?","acceptedAnswer":{"@type":"Answer","text":"Everything keeps running. It lives in your accounts, not on our computers, every setup is written down, and we get an alert if something breaks."}},{"@type":"Question","name":"What tools do I need?","acceptedAnswer":{"@type":"Answer","text":"Usually the ones you already have: your email, calendar and website. We build inside your accounts."}},{"@type":"Question","name":"Can I cancel?","acceptedAnswer":{"@type":"Answer","text":"Yes, with 30 days' notice. Everything we built stays yours."}}]}</script>
 </head>
@@ -62,22 +62,28 @@
         <a class="more" href="/how-it-works">See how it works</a>
       </div>
     </div>
-    <div class="shot" aria-hidden="true">
-      <svg viewBox="0 0 400 400">
-        <circle cx="200" cy="200" r="196" fill="#0f4c42"/>
-        <circle cx="200" cy="200" r="150" fill="none" stroke="#1d6357" stroke-width="22"/>
-        <path d="M200 50 A150 150 0 1 1 93.9 93.9" fill="none" stroke="#f2b544" stroke-width="22" stroke-linecap="round"/>
-        <g fill="#cfe3de" font-family="-apple-system,BlinkMacSystemFont,Inter,sans-serif" font-size="17" font-weight="600" text-anchor="middle">
-          <text x="200" y="96">5 PM</text><text x="306" y="206">9 PM</text><text x="200" y="316">1 AM</text><text x="96" y="206">5 AM</text><text x="134" y="138">7 AM</text>
-        </g>
-        <text x="200" y="262" fill="#ffffff" font-family="-apple-system,BlinkMacSystemFont,Inter,sans-serif" font-size="15" font-weight="600" letter-spacing="3" text-anchor="middle">ON WATCH</text>
-        <line id="hand" x1="200" y1="200" x2="200" y2="122" stroke="#ffffff" stroke-width="5" stroke-linecap="round"/>
-        <circle cx="200" cy="200" r="11" fill="#f2b544"/>
-      </svg>
-      <p class="chip a"><small>7:09 PM</small><b>New lead answered</b> while you're at dinner</p>
-      <p class="chip b"><small>6:00 AM · your report</small><b>3 things need your OK</b></p>
+    <div class="wrap">
+    <div class="demo" role="img" aria-label="Example: at 7:09 PM a customer messages a sample plumbing company's website about a broken water heater. At 7:11 PM they get a reply asking for their address and number, while the owner is at dinner. At 6 AM it is first on the owner's morning report.">
+      <div class="phone"><div class="ph-screen">
+        <div class="ph-top"><span class="ph-av">R</span><div><b>Redline Plumbing</b><small>Website chat · sample business</small></div></div>
+        <div class="ph-body">
+          <p class="ph-time">Tuesday 7:09 PM</p>
+          <p class="bubble in">Hi, our water heater just quit. Can someone come take a look?</p>
+          <p class="ph-time">7:11 PM</p>
+          <p class="bubble out">Thanks for reaching out to Redline Plumbing. Sorry about the water heater! What's the address and the best number to reach you?</p>
+          <p class="bubble in">412 Oak St. Best number is 904-555-0142.</p>
+          <p class="ph-saved">✓ Saved to your lead list</p>
+        </div>
+      </div></div>
+      <p class="chip where you"><small>Where you were at 7:09 PM</small><b>At dinner with your family.</b> Phone in your pocket.</p>
+      <p class="chip where rep"><small>6:00 AM · your morning report</small><b>Call back first:</b> water heater, 412 Oak St.</p>
     </div>
-    <p class="fine">Gold is the time you're off. We're on watch for all of it.</p>
+    <ol class="story" aria-label="What happened">
+      <li><time>7:09 PM</time>A customer messages your website.</li>
+      <li><time>7:11 PM</time>We reply in words you approved. No prices, no promises.</li>
+      <li><time>6:00 AM</time>It's at the top of your morning report, ready for you to call back.</li>
+    </ol>
+    </div>
   </section>
 
   <section class="panel mist" id="help" aria-labelledby="h-help">
@@ -267,6 +273,6 @@
   </div>
 </footer>
 <!--/BODY-->
-<script src="/apple.js?v=2" defer></script>
+<script src="/apple.js?v=3" defer></script>
 </body>
 </html>
