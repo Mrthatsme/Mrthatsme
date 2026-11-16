@@ -21,9 +21,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
-<link rel="stylesheet" href="/apple.css?v=3">
+<link rel="stylesheet" href="/apple.css?v=4">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"ProfessionalService","name":"Minutes Regained","url":"https://minutesregained.com/","description":"Virtual assistant support and automation for small businesses.","telephone":"+1-877-896-8784","email":"support@minutesregained.com","areaServed":{"@type":"Country","name":"United States"},"priceRange":"$550-$2100","serviceType":["Virtual assistant services","Business process automation"],"offers":[{"@type":"Offer","name":"Essential","price":"650","priceCurrency":"USD"},{"@type":"Offer","name":"Business Support","price":"1300","priceCurrency":"USD"},{"@type":"Offer","name":"Custom Build","price":"550","priceCurrency":"USD"}]}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What does a virtual assistant do for my business?","acceptedAnswer":{"@type":"Answer","text":"The work that needs a person: cleaning up your inbox and replying to email, managing your calendar, scheduling appointments, customer follow-ups, data entry, documents and one-off projects. It's done inside your own accounts."}},{"@type":"Question","name":"Do I have to use automation?","acceptedAnswer":{"@type":"Answer","text":"No. Essential and Business Support are virtual assistant plans, so you can start with just the assistant. When we notice a task that happens the same way every time, we'll suggest automating it, and you decide."}},{"@type":"Question","name":"Do you answer my phone?","acceptedAnswer":{"@type":"Answer","text":"No. Missed calls show up in your morning report, ranked, so you know who to call back first. Website and social messages do get answered."}},{"@type":"Question","name":"Will anything go out that I didn't approve?","acceptedAnswer":{"@type":"Answer","text":"Only wording you've signed off on. Anything with a price, a date or a promise waits for you."}},{"@type":"Question","name":"What if you're out sick or on vacation?","acceptedAnswer":{"@type":"Answer","text":"Everything keeps running. It lives in your accounts, not on our computers, every setup is written down, and we get an alert if something breaks."}},{"@type":"Question","name":"What tools do I need?","acceptedAnswer":{"@type":"Answer","text":"Usually the ones you already have: your email, calendar and website. We build inside your accounts."}},{"@type":"Question","name":"Can I cancel?","acceptedAnswer":{"@type":"Answer","text":"Yes, with 30 days' notice. Everything we built stays yours."}}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What does a virtual assistant do for my business?","acceptedAnswer":{"@type":"Answer","text":"The work that needs a person: cleaning up your inbox and replying to email, managing your calendar, scheduling appointments, customer follow-ups, data entry, documents and one-off projects. It's done inside your own accounts."}},{"@type":"Question","name":"Do I have to use automation?","acceptedAnswer":{"@type":"Answer","text":"No. Essential and Business Support are virtual assistant plans, so you can start with just the assistant. When we notice a task that happens the same way every time, we'll suggest automating it, and you decide."}},{"@type":"Question","name":"Do you answer my phone?","acceptedAnswer":{"@type":"Answer","text":"No. Missed calls show up in your morning report, ranked, so you know who to call back first. Website and social messages do get answered."}},{"@type":"Question","name":"What about emergencies?","acceptedAnswer":{"@type":"Answer","text":"If you have someone on call, emergencies go straight to them, any hour. You decide what counts as an emergency and who's on call when. The customer gets a short note that your team has been alerted, and it shows on your morning report."}},{"@type":"Question","name":"Will anything go out that I didn't approve?","acceptedAnswer":{"@type":"Answer","text":"Only wording you've signed off on. Anything with a price, a date or a promise waits for you."}},{"@type":"Question","name":"What if you're out sick or on vacation?","acceptedAnswer":{"@type":"Answer","text":"Everything keeps running. It lives in your accounts, not on our computers, every setup is written down, and we get an alert if something breaks."}},{"@type":"Question","name":"What tools do I need?","acceptedAnswer":{"@type":"Answer","text":"Usually the ones you already have: your email, calendar and website. We build inside your accounts."}},{"@type":"Question","name":"Can I cancel?","acceptedAnswer":{"@type":"Answer","text":"Yes, with 30 days' notice. Everything we built stays yours."}}]}</script>
 </head>
 <body>
 <!--BODY-->
@@ -63,25 +63,28 @@
       </div>
     </div>
     <div class="wrap">
-    <div class="demo" role="img" aria-label="Example: at 7:09 PM a customer messages a sample plumbing company's website about a broken water heater. At 7:11 PM they get a reply asking for their address and number, while the owner is at dinner. At 6 AM it is first on the owner's morning report.">
+    <div class="ind" role="group" aria-label="See an example for your kind of business">
+      <button type="button" data-i="0" aria-pressed="true">Plumber</button><button type="button" data-i="1" aria-pressed="false">Real estate</button><button type="button" data-i="2" aria-pressed="false">Law firm</button><button type="button" data-i="3" aria-pressed="false">Landscaping</button><button type="button" data-i="4" aria-pressed="false">Pool service</button><button type="button" data-i="5" aria-pressed="false">Charter</button><button type="button" data-i="6" aria-pressed="false">Roofing</button>
+    </div>
+    <div class="demo" id="demo">
       <div class="phone"><div class="ph-screen">
-        <div class="ph-top"><span class="ph-av">R</span><div><b>Redline Plumbing</b><small>Website chat · sample business</small></div></div>
-        <div class="ph-body">
+        <div class="ph-top"><span class="ph-av" id="d-av">R</span><div><b id="d-name">Redline Plumbing</b><small>Website chat · sample business</small></div></div>
+        <div class="ph-body" id="d-body">
           <p class="ph-time">Tuesday 7:09 PM</p>
-          <p class="bubble in">Hi, our water heater just quit. Can someone come take a look?</p>
-          <p class="ph-time">7:11 PM</p>
-          <p class="bubble out">Thanks for reaching out to Redline Plumbing. Sorry about the water heater! What's the address and the best number to reach you?</p>
-          <p class="bubble in">412 Oak St. Best number is 904-555-0142.</p>
-          <p class="ph-saved">✓ Saved to your lead list</p>
+          <p class="bubble in">Our water heater just burst. There's water all over the garage floor. 412 Oak St, 904-555-0142.</p>
+          <p class="ph-alert">Emergency · sent to Mike, on call tonight</p>
+          <p class="ph-time">7:10 PM</p>
+          <p class="bubble out">Thanks for reaching out to Redline Plumbing. Our on-call technician has been alerted and will contact you at this number.</p>
+          <p class="ph-saved">✓ Mike has the address and number</p>
         </div>
       </div></div>
-      <p class="chip where you"><small>Where you were at 7:09 PM</small><b>At dinner with your family.</b> Phone in your pocket.</p>
-      <p class="chip where rep"><small>6:00 AM · your morning report</small><b>Call back first:</b> water heater, 412 Oak St.</p>
+      <p class="chip where you" id="d-you"><small>Where you were at 7:09 PM</small><b>At dinner with your family.</b> Mike's on call tonight, so you weren't pulled away.</p>
+      <p class="chip where rep" id="d-rep"><small>6:00 AM · your morning report</small><b>Handled overnight:</b> burst water heater, 412 Oak St. Sent to Mike at 7:10 PM.</p>
     </div>
-    <ol class="story" aria-label="What happened">
-      <li><time>7:09 PM</time>A customer messages your website.</li>
-      <li><time>7:11 PM</time>We reply in words you approved. No prices, no promises.</li>
-      <li><time>6:00 AM</time>It's at the top of your morning report, ready for you to call back.</li>
+    <ol class="story" id="d-story" aria-label="What happened">
+      <li><time>7:09 PM</time><span>A customer reports an emergency.</span></li>
+      <li><time>7:10 PM</time><span>It goes straight to your on-call tech, and the customer is told your team has been alerted.</span></li>
+      <li><time>6:00 AM</time><span>Your morning report shows what happened overnight.</span></li>
     </ol>
     </div>
   </section>
@@ -151,28 +154,28 @@
       <div class="screen">
         <div class="flow" id="flow-lead" role="tabpanel" aria-labelledby="tab-lead">
           <p class="flow-name">Lead Catcher</p><p class="flow-what">Every website, Facebook and Instagram message answered in minutes.</p>
-          <ol class="steps"><li class="st in"><time>7:09 PM</time><p>New website message: "Our water heater just quit. Can someone come out?"</p></li><li class="st out"><time>7:11 PM</time><p>Reply sent in wording you approved, asking for the address and best number.</p></li><li class="st done"><time>7:11 PM</time><p>Name, number and problem saved to your customer list.</p></li><li class="st rep"><time>6:00 AM</time><p>On your morning report under "Call back first."</p></li></ol>
+          <ol class="steps"><li class="st in"><time>2:30 PM</time><p>New website message to a landscaping company: "Do you do weekly mowing? Our lot is about half an acre."</p></li><li class="st out"><time>2:32 PM</time><p>Reply sent in wording you approved, asking for the property address.</p></li><li class="st done"><time>2:32 PM</time><p>Name, address and request saved to your customer list.</p></li><li class="st rep"><time>6:00 AM</time><p>On your morning report under "Quotes to prepare."</p></li></ol>
           <p class="flow-wait"><b>Waits for you:</b> Quoting a price or promising a date.</p>
         </div><div class="flow" id="flow-quote" role="tabpanel" aria-labelledby="tab-quote" hidden>
           <p class="flow-name">Quote Chaser</p><p class="flow-what">Polite follow-ups on day 2, 5 and 10 after you send a quote.</p>
-          <ol class="steps"><li class="st done"><time>Monday</time><p>You send a quote to the Hall residence.</p></li><li class="st out"><time>Wednesday</time><p>Day 2: a friendly check-in goes out.</p></li><li class="st out"><time>Saturday</time><p>Day 5: a second follow-up.</p></li><li class="st rep"><time>Sunday 8:14 PM</time><p>They reply. Follow-ups stop and the reply comes straight to you.</p></li></ol>
+          <ol class="steps"><li class="st done"><time>Monday</time><p>A roofer sends a roof repair quote to the Martinez home.</p></li><li class="st out"><time>Wednesday</time><p>Day 2: a friendly check-in goes out.</p></li><li class="st out"><time>Saturday</time><p>Day 5: a second follow-up.</p></li><li class="st rep"><time>Sunday 8:14 PM</time><p>They reply. Follow-ups stop and the reply comes straight to you.</p></li></ol>
           <p class="flow-wait"><b>Waits for you:</b> Any reply that mentions a date or a change.</p>
         </div><div class="flow" id="flow-schedule" role="tabpanel" aria-labelledby="tab-schedule" hidden>
           <p class="flow-name">Schedule</p><p class="flow-what">Confirmations the night before and reminders that morning.</p>
-          <ol class="steps"><li class="st out"><time>6:00 PM</time><p>Confirmations go out for tomorrow's three jobs.</p></li><li class="st done"><time>6:20 PM</time><p>Two customers confirm.</p></li><li class="st ask"><time>8:00 PM</time><p>One hasn't replied, so it's flagged.</p></li><li class="st rep"><time>7:00 AM</time><p>Morning reminders sent. The unconfirmed job is first on your report.</p></li></ol>
+          <ol class="steps"><li class="st out"><time>6:00 PM</time><p>A pool service's confirmations go out for tomorrow's six cleanings.</p></li><li class="st done"><time>6:20 PM</time><p>Five customers confirm.</p></li><li class="st ask"><time>8:00 PM</time><p>One hasn't replied, so it's flagged.</p></li><li class="st rep"><time>7:00 AM</time><p>Morning reminders sent. The unconfirmed stop is first on your report.</p></li></ol>
           <p class="flow-wait"><b>Waits for you:</b> Every reschedule.</p>
         </div><div class="flow" id="flow-reviews" role="tabpanel" aria-labelledby="tab-reviews" hidden>
           <p class="flow-name">Reviews</p><p class="flow-what">One Google review request the day a job closes. Never a second ask.</p>
-          <ol class="steps"><li class="st done"><time>4:30 PM</time><p>Job marked complete.</p></li><li class="st done"><time>4:31 PM</time><p>Checked: this customer has not left a review yet.</p></li><li class="st out"><time>Next day 9 AM</time><p>One polite review request with the direct link.</p></li><li class="st ask"><time>Later</time><p>A 3-star review comes in. A reply is drafted and held for your OK.</p></li></ol>
+          <ol class="steps"><li class="st done"><time>4:30 PM</time><p>A fishing charter is back at the dock and the trip is marked complete.</p></li><li class="st done"><time>4:31 PM</time><p>Checked: this customer has not left a review yet.</p></li><li class="st out"><time>Next day 9 AM</time><p>One polite review request with the direct link.</p></li><li class="st ask"><time>Later</time><p>A 3-star review comes in. A reply is drafted and held for your OK.</p></li></ol>
           <p class="flow-wait"><b>Waits for you:</b> Every public reply.</p>
         </div><div class="flow" id="flow-invoices" role="tabpanel" aria-labelledby="tab-invoices" hidden>
           <p class="flow-name">Invoices</p><p class="flow-what">Invoices sent when a job closes, with reminders on a set schedule.</p>
-          <ol class="steps"><li class="st done"><time>3:00 PM</time><p>Job closes.</p></li><li class="st out"><time>3:05 PM</time><p>Invoice sent from your own invoicing tool.</p></li><li class="st ask"><time>Day 7</time><p>Not paid yet, so a friendly reminder is drafted for your OK.</p></li><li class="st rep"><time>Day 9</time><p>Paid. It shows on your morning report.</p></li></ol>
+          <ol class="steps"><li class="st done"><time>3:00 PM</time><p>A law firm marks a consultation complete.</p></li><li class="st out"><time>3:05 PM</time><p>Invoice sent from the firm's own billing software.</p></li><li class="st ask"><time>Day 7</time><p>Not paid yet, so a friendly reminder is drafted for your OK.</p></li><li class="st rep"><time>Day 9</time><p>Paid. It shows on your morning report.</p></li></ol>
           <p class="flow-wait"><b>Waits for you:</b> Every payment reminder. We never touch your money.</p>
         </div>
         <button type="button" class="replay" hidden>Replay</button>
       </div>
-      <p class="fine">Sample business and messages, for illustration. Not a real customer.</p>
+      <p class="fine">Sample businesses and messages, for illustration. Not real customers.</p>
     </div>
   </section>
 
@@ -242,6 +245,7 @@
         <details><summary>What does a virtual assistant do for my business?</summary><p>The work that needs a person: cleaning up your inbox and replying to email, managing your calendar, scheduling appointments, customer follow-ups, data entry, documents and one-off projects. It's done inside your own accounts.</p></details>
         <details><summary>Do I have to use automation?</summary><p>No. Essential and Business Support are virtual assistant plans, so you can start with just the assistant. When we notice a task that happens the same way every time, we'll suggest automating it, and you decide.</p></details>
         <details><summary>Do you answer my phone?</summary><p>No. Missed calls show up in your morning report, ranked, so you know who to call back first. Website and social messages do get answered.</p></details>
+        <details><summary>What about emergencies?</summary><p>If you have someone on call, emergencies go straight to them, any hour. You decide what counts as an emergency and who's on call when. The customer gets a short note that your team has been alerted, and it shows on your morning report.</p></details>
         <details><summary>Will anything go out that I didn't approve?</summary><p>Only wording you've signed off on. Anything with a price, a date or a promise waits for you.</p></details>
         <details><summary>What if you're out sick or on vacation?</summary><p>Everything keeps running. It lives in your accounts, not on our computers, every setup is written down, and we get an alert if something breaks.</p></details>
         <details><summary>What tools do I need?</summary><p>Usually the ones you already have: your email, calendar and website. We build inside your accounts.</p></details>
@@ -273,6 +277,6 @@
   </div>
 </footer>
 <!--/BODY-->
-<script src="/apple.js?v=3" defer></script>
+<script src="/apple.js?v=4" defer></script>
 </body>
 </html>

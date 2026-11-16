@@ -288,3 +288,17 @@ p{margin:0}
   .story{grid-template-columns:1fr;max-width:420px}
 }
 .hero{padding-bottom:84px}
+
+/* industry picker + emergency alert */
+.ind{margin:48px auto 0;display:flex;gap:6px;justify-content:center;flex-wrap:wrap;max-width:720px}
+.ind button{min-height:36px;padding:0 14px;border-radius:980px;border:1px solid var(--line);background:transparent;color:var(--ink);font:500 14px var(--font);cursor:pointer;transition:background .2s,color .2s,border-color .2s}
+.ind button[aria-pressed=true]{background:var(--seg-on-bg);color:var(--seg-on-ink);border-color:var(--seg-on-bg)}
+.ind + .demo{margin-top:22px}
+.ph-alert{align-self:center;margin:2px 0;padding:6px 12px;border-radius:980px;background:var(--ask-bg);box-shadow:inset 0 0 0 1.5px var(--amber);color:var(--ask-ink);font-size:12.5px;font-weight:600;text-align:center}
+.story li span{display:block}
+.demo,.story{transition:opacity .25s}
+.demo.swap,.story.swap{opacity:0}
+@media (max-width:480px){.ind{flex-wrap:nowrap;justify-content:flex-start;overflow-x:auto;margin-left:calc(-1 * var(--gutter));margin-right:-22px;padding:0 22px 4px var(--gutter);scrollbar-width:none}.ind::-webkit-scrollbar{display:none}.ind button{flex:none}}
+@media (prefers-reduced-motion:reduce){.demo,.story{transition:none}}
+.ph-body{min-height:420px}
+@media (max-width:860px){.where{min-height:66px}}
