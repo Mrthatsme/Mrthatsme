@@ -265,7 +265,7 @@ p{margin:0}
 
 /* hero demo: a real-looking chat on a phone, with where the owner was and where it lands */
 .demo{position:relative;margin:52px auto 0;width:min(360px,100%)}
-.phone{background:var(--phone);border-radius:46px;padding:11px;box-shadow:0 30px 70px rgba(0,0,0,.22);text-align:left}
+.ph-frame{background:var(--phone);border-radius:46px;padding:11px;box-shadow:0 30px 70px rgba(0,0,0,.22);text-align:left}
 .ph-screen{background:var(--card);border-radius:36px;overflow:hidden}
 .ph-top{display:flex;gap:10px;align-items:center;padding:22px 18px 12px;border-bottom:1px solid var(--line)}
 .ph-av{flex:none;width:36px;height:36px;border-radius:50%;background:var(--forest);color:#fff;display:grid;place-items:center;font-weight:700;font-size:15px}
