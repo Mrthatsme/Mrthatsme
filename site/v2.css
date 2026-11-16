@@ -360,3 +360,5 @@ details summary::-webkit-details-marker{display:none}
 /* small phones: let job tiles shrink */
 .bento>*{min-width:0}
 @media (max-width:420px){.bento .tile{padding:24px 20px!important}}
+
+.mnav[hidden]{display:none!important}
