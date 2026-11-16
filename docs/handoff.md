@@ -34,6 +34,15 @@ State (session "Site redesign and CRM setup"):
   portal/ (see DEPLOY.md there). Plan: fold it into this Worker (reuse the DB binding with
   portal_* tables, bootstrap via the existing admin gate) so no Cloudflare token is needed.
   Jerome wants the site signed off first. "Client login" links to /client until then.
+- Nov 16 later: Jerome asked that virtual assistant work be as visible as automation (some
+  clients want only a VA) and for one uncrowded way to show the automations. Apple home draft
+  now has "Two ways we help" (Virtual assistant | Automation, equal weight, model sentence) and a
+  "Watch it work" tab panel (all five flows in the HTML for SEO; one shown at a time). Live
+  pages' titles/descriptions now lead with "virtual assistant" (they had dropped it). SEO TODO
+  when building the rest: new pages are thin vs the old ones (services ~360 words vs ~2,800);
+  give Services a full VA section + per-automation detail, keep "virtual assistant" in titles,
+  H1/H2s and body; keep JSON-LD (check_site.py --fix). VA-only plan price is NOT set; ask Jerome
+  before showing one (current copy: "we'll build a plan around the hours you need"; extra hours $95).
 
 ## Finished
 
