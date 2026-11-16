@@ -338,3 +338,25 @@ details summary::-webkit-details-marker{display:none}
 .s8i{margin: 12px 0 0; font-size: 18px; color: #c9c9c9}
 .s8j{display: inline-flex; align-items: center; height: 52px; padding: 0 26px; border-radius: 999px; background: #f2b544; color: #111111; font-weight: 700; font-size: 16px; text-decoration: none}
 .s8k{display: inline-flex; align-items: center; height: 52px; padding: 0 24px; border-radius: 999px; border: 1px solid #555555; color: #ffffff; font-weight: 600; font-size: 16px; text-decoration: none}
+
+/* mobile menu (added Nov 16): the design hides the nav under 960px */
+.mbtn{display:none;align-items:center;gap:8px;height:46px;padding:0 16px;border-radius:999px;border:1.5px solid #111111;background:#ffffff;color:#111111;font:600 15px 'Instrument Sans',system-ui,sans-serif;cursor:pointer;flex:none}
+.mbtn-bars{width:16px;height:2px;background:currentColor;position:relative;border-radius:2px}
+.mbtn-bars::before,.mbtn-bars::after{content:"";position:absolute;left:0;width:16px;height:2px;background:currentColor;border-radius:2px}
+.mbtn-bars::before{top:-5px}.mbtn-bars::after{top:5px}
+.mbtn[aria-expanded="true"] .mbtn-bars{background:transparent}
+.mbtn[aria-expanded="true"] .mbtn-bars::before{top:0;transform:rotate(45deg)}
+.mbtn[aria-expanded="true"] .mbtn-bars::after{top:0;transform:rotate(-45deg)}
+.mnav{max-width:1280px;margin:0 auto 12px;padding:8px 20px 16px;display:flex;flex-direction:column;background:#ffffff;border:1px solid #e2ded6;border-radius:20px;box-sizing:border-box;width:calc(100% - 32px)}
+.mnav a{display:flex;align-items:center;min-height:52px;font-size:18px;font-weight:600;color:#111111;text-decoration:none;border-bottom:1px solid #ece8e0}
+.mnav a[aria-current="page"]{color:#0f4c42}
+.mnav a.mnav-call{border-bottom:0;color:#0f4c42}
+.mnav a.mnav-book{justify-content:center;margin-top:8px;border:0;border-radius:999px;background:#0f4c42;color:#ffffff}
+@media (max-width:960px){.mbtn{display:inline-flex}}
+@media (min-width:961px){.mnav{display:none!important}}
+@media (max-width:620px){.v2h{gap:12px!important;padding:0 16px!important}.v2h .b1{padding:0 16px!important;font-size:14px!important;height:42px!important}.mbtn{height:42px;padding:0 12px}.v2h>div{gap:10px!important}}
+@media (max-width:400px){.v2h .b1{display:none!important}}
+
+/* small phones: let job tiles shrink */
+.bento>*{min-width:0}
+@media (max-width:420px){.bento .tile{padding:24px 20px!important}}
