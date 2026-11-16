@@ -82,3 +82,8 @@
     });
   }
 })();
+
+/* mobile menu */
+(function(){var b=document.querySelector('.mbtn'),n=document.getElementById('mnav');if(!b||!n)return;
+b.addEventListener('click',function(){var open=b.getAttribute('aria-expanded')!=='true';b.setAttribute('aria-expanded',String(open));n.hidden=!open;});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!n.hidden){n.hidden=true;b.setAttribute('aria-expanded','false');b.focus();}});})();
