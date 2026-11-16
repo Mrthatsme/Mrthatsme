@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Admin desk demo — Minutes Regained</title>
+<meta name="description" content="Sample data for an example company: the hands-on side of Minutes Regained, with the inbox sorted, the calendar kept straight and one-off jobs handed over.">
+<meta name="robots" content="index,follow">
+<link rel="canonical" href="https://minutesregained.com/demo-desk">
+<meta property="og:image" content="https://minutesregained.com/og-image.png">
+<link rel="icon" href="/mark.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon-32.png" sizes="32x32">
+<link rel="apple-touch-icon" href="/favicon-180.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/demo-desk.css?v=20261106a">
+</head>
+<body>
+<div class="sitebar"><div class="in">
+  <a class="brand" href="/">Minutes <span>Regained</span></a>
+  <nav aria-label="Demos"><a href="/demo">The back office</a><a href="/demo-desk" aria-current="page">The admin desk</a></nav>
+  <div class="right"><a class="tel" href="tel:+18778968784">(877) 896-8784</a><a class="book" href="https://calendar.app.google/mL2TQQSCAgLAURZC6" target="_blank" rel="noopener">Book a call</a></div>
+</div></div>
+
+<div class="wrap">
+  <header class="top">
+    <div class="co">
+      <h1>Tidewater Plumbing &middot; the admin side</h1>
+      <p>Thursday morning, before the owner opens his laptop</p>
+    </div>
+    <div class="clock"><span class="pulse"></span><span class="mono">7:40 AM</span></div>
+  </header>
+
+  <div class="sample"><span>&#9888;</span><div><b>Sample data for an example company.</b> Nothing here is a real customer record, and no number is a client result. This is the hands-on half: the inbox, the calendar, and the jobs an owner hands over.</div></div>
+
+  <section class="strip">
+    <div class="tile"><div class="k">Email overnight</div><div class="v">61</div><div class="s">48 filed, 9 drafted</div></div>
+    <div class="tile flag"><div class="k">Needs you</div><div class="v" id="kYou">4</div><div class="s">nobody else can answer these</div></div>
+    <div class="tile"><div class="k">Calendar</div><div class="v">6</div><div class="s">1 conflict caught, 1 moved</div></div>
+    <div class="tile"><div class="k">Hours used</div><div class="v">5.2</div><div class="s">of 8 &middot; day 14</div></div>
+  </section>
+
+  <div class="cols">
+    <main class="mainc">
+      <section class="panel">
+        <div class="ph"><h2>Your inbox, already sorted</h2><span class="count">61 overnight &middot; 4 left for you</span></div>
+        <ul class="mail" id="mail"></ul>
+      </section>
+
+      <section class="panel">
+        <div class="ph"><h2>Today's calendar</h2><span class="count">kept straight overnight</span></div>
+        <ul class="cal">
+          <li class="ci"><span class="t">8:00 AM</span><span><b>Hendricks &mdash; water heater</b><span class="d">Confirmed last night. Customer replied.</span></span><span class="tag filed">Confirmed</span></li>
+          <li class="ci"><span class="t">10:30 AM</span><span><b>Supplier call &mdash; Ferguson</b><span class="d">Moved from 9:15. It overlapped the Hendricks drive.</span></span><span class="tag draft">Moved</span></li>
+          <li class="ci"><span class="t">1:00 PM</span><span><b>Slab leak locate &mdash; Rowan St</b><span class="d">Confirmed. Gate code on the run sheet.</span></span><span class="tag filed">Confirmed</span></li>
+          <li class="ci"><span class="t">3:30 PM</span><span><b>Interview &mdash; apprentice #2</b><span class="d">Booked from the applicant's reply. Resume in your drive.</span></span><span class="tag draft">Booked</span></li>
+          <li class="ci"><span class="t">5:00 PM</span><span><b>Insurance renewal call</b><span class="d">You asked to be reminded. Policy docs attached to the invite.</span></span><span class="tag you">Your call</span></li>
+          <li class="ci"><span class="t">Fri</span><span><b>Permit inspection &mdash; Rowan St</b><span class="d">Booked with the county. Confirmation filed.</span></span><span class="tag filed">Booked</span></li>
+        </ul>
+      </section>
+
+      <section class="hand">
+        <h2>Hand us something</h2>
+        <p>The things that don't repeat. Type it the way you'd say it, or pick one of the usual suspects.</p>
+        <div class="row2">
+          <input id="newTask" type="text" placeholder="Reschedule next week, the van's in the shop" aria-label="What do you want handed over">
+          <button class="btn" id="addTask">Hand it over</button>
+        </div>
+        <div class="chips" id="chips"></div>
+      </section>
+    </main>
+
+    <aside class="sidec">
+      <section class="panel">
+        <div class="ph"><h2>You handed us</h2><span class="count" id="tkCount"></span></div>
+        <ul class="tasks" id="tasks"></ul>
+      </section>
+
+      <section class="panel">
+        <div class="ph"><h2>Where your hours went</h2><span class="count">5.2 of 8 &middot; day 14</span></div>
+        <div class="hours">
+          <div class="bar" aria-hidden="true">
+            <i class="rep"></i><i class="one"></i><i class="left"></i>
+          </div>
+          <ul class="key">
+            <li><i class="rep"></i><span class="n"><b>Repeating</b><span>Work that happens the same way every time</span></span><span class="h">1.9 hrs</span></li>
+            <li><i class="one"></i><span class="n"><b>One-off</b><span>Needed a person to think about it</span></span><span class="h">3.3 hrs</span></li>
+            <li><i class="left"></i><span class="n"><b>Left this month</b><span>Rolls over one month if you don't use it</span></span><span class="h">2.8 hrs</span></li>
+          </ul>
+          <div class="autonote">
+            <b>We're building two of these as automations.</b>
+            Appointment confirmations and the Friday supplier check-in ate 1.9 hours this month and never change. Both are in build now, at no charge. Next month they stop using your hours entirely.
+          </div>
+          <p class="rate">Each task is counted at the time a skilled assistant would take, not wall-clock. Monitoring, repairs and your daily brief never use hours.</p>
+        </div>
+      </section>
+    </aside>
+  </div>
+
+  <section class="close">
+    <h2>The half a machine can't do.</h2>
+    <p>Automations handle what repeats. This is everything else: the inbox nobody got to the bottom of, the calendar that needs judgement, and whatever you hand over on a Tuesday because it has been on your list for a month. The split on the right is the honest part. When something in it starts repeating, we build it and your hours go back to you.</p>
+  </section>
+
+  <p class="other">This is the hands-on side. <a href="/demo">See the back office running</a>: the automations, the crew and what needs your OK.</p>
+  <p class="foot">Minutes Regained &middot; demo build, example company &middot; no real customer data</p>
+</div>
+<script src="/demo-desk.js?v=20261106a" defer></script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+# Known for heavy, aggressive crawling
+User-agent: Bytespider
+Disallow: /
+
+User-agent: *
+Allow: /
+Disallow: /api/
+
+Sitemap: https://minutesregained.com/sitemap.xml

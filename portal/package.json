@@ -1,0 +1,12 @@
+{
+  "name": "mr-portal",
+  "private": true,
+  "scripts": {
+    "dev": "wrangler dev --local",
+    "db:local": "wrangler d1 execute mr-portal --local --file=schema.sql",
+    "db:remote": "wrangler d1 execute mr-portal --remote --file=schema.sql",
+    "deploy": "wrangler deploy",
+    "test": "node test/smoke.mjs"
+  },
+  "devDependencies": { "wrangler": "4.162.0" }
+}

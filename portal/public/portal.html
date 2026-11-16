@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Client login | Minutes Regained</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="/favicon-32.png" sizes="32x32">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Fraunces:ital,opsz,wght@1,9..144,400;1,9..144,500&family=Caveat:wght@500;600&display=swap">
+<link rel="stylesheet" href="/portal/portal.css?v=1">
+</head>
+<body>
+<main class="auth">
+  <section class="auth-side">
+    <a class="brand" href="/" data-logo><span>Minutes Regained</span></a>
+    <div>
+      <p class="hand">client portal</p>
+      <h1>Everything we're handling. <span class="serif">In one place.</span></h1>
+      <p class="lead">Track where your setup stands, approve what's waiting, read your morning reports, and send us a request.</p>
+    </div>
+    <p class="foot">Veteran-owned · NDA before any access</p>
+  </section>
+  <section class="auth-main">
+    <form class="auth-form" id="login" novalidate>
+      <h2>Sign in</h2>
+      <p class="msg msg-err" id="err" role="alert" hidden></p>
+      <label class="f">Email<input type="email" name="email" autocomplete="email" required></label>
+      <label class="f">Password<input type="password" name="password" autocomplete="current-password" required></label>
+      <button type="submit" class="btn btn-primary btn-lg">Sign in</button>
+      <a href="mailto:support@minutesregained.com?subject=Portal%20password%20reset" class="small"><b>Forgot your password?</b> Email us and we'll send a new setup link.</a>
+      <p class="help">New client or still deciding? Your login link comes from us after your free call. Haven't booked one yet? <a href="/book">Book a free call</a>. Questions: <a href="mailto:support@minutesregained.com">support@minutesregained.com</a></p>
+    </form>
+  </section>
+</main>
+<script src="/portal/common.js?v=1"></script>
+<script src="/portal/login.js?v=1"></script>
+</body>
+</html>

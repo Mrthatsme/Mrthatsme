@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Set up your login | Minutes Regained</title>
+<meta name="robots" content="noindex">
+<meta name="referrer" content="no-referrer">
+<link rel="icon" href="/favicon-32.png" sizes="32x32">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Fraunces:ital,opsz,wght@1,9..144,400;1,9..144,500&family=Caveat:wght@500;600&display=swap">
+<link rel="stylesheet" href="/portal/portal.css?v=1">
+</head>
+<body>
+<main class="auth">
+  <section class="auth-side">
+    <a class="brand" href="/" data-logo><span>Minutes Regained</span></a>
+    <div>
+      <p class="hand">welcome aboard</p>
+      <h1>One password. <span class="serif">Then you're in.</span></h1>
+      <p class="lead">Pick a password for your client portal. You'll use it with your email every time you sign in.</p>
+    </div>
+    <p class="foot">Veteran-owned · NDA before any access</p>
+  </section>
+  <section class="auth-main">
+    <form class="auth-form" id="setup" novalidate>
+      <h2 id="title">Set your password</h2>
+      <p class="muted" id="who"></p>
+      <p class="msg msg-err" id="err" role="alert" hidden></p>
+      <label class="f">New password <span class="hint">(10 characters or more)</span><input type="password" name="password" autocomplete="new-password" minlength="10" required></label>
+      <label class="f">Type it again<input type="password" name="confirm" autocomplete="new-password" required></label>
+      <button type="submit" class="btn btn-primary btn-lg">Save and sign in</button>
+      <p class="help">Link not working? Email <a href="mailto:support@minutesregained.com">support@minutesregained.com</a> and we'll send a fresh one.</p>
+    </form>
+  </section>
+</main>
+<script src="/portal/common.js?v=1"></script>
+<script src="/portal/setup.js?v=1"></script>
+</body>
+</html>
