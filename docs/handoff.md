@@ -12,6 +12,29 @@ They are in the Shared Drive, folder 03 Operations & Automations.
 
 ---
 
+## Nov 16, 2026: redesign live, Apple-style direction next (read first)
+
+State (session "Site redesign and CRM setup"):
+- LIVE: the six redesigned pages from the "Minutes Regained homepage refresh" design canvas
+  (index, how-it-works, services, pricing, book, about) using site/public/v2.css + v2.js, with a
+  mobile Menu button. Commits b46262d..HEAD on this branch. To revert the redesign, revert those
+  commits (the pre-redesign version is 11161da). Old pages (for/, automations/, calculators/,
+  demo, agreement, client, start) unchanged.
+- Indexing: www.minutesregained.com now sends X-Robots-Tag: noindex (_headers); sitemap.txt
+  now matches sitemap.xml (22 URLs). A true www -> apex 301 needs a Cloudflare Redirect Rule
+  ("Redirect from WWW to root" template); the Worker can't see www asset requests.
+- NEXT (Jerome approved the direction): Apple.com-inspired look. Home page draft is in
+  mockups/apple-home/ (index.html, apple.css, apple.js; CSP-safe, no inline scripts/styles).
+  Preview: https://claude.ai/artifact/6HHZbu1bNaMZArcT8Jmh2L . Waiting on Jerome's OK on the
+  home page, then: build how-it-works, services, pricing, book (keep the /api/leads form logic
+  from site/public/v2.js), about in the same style; copy to site/public (apple.css/apple.js,
+  jerome.jpg at /jerome.jpg or img/), keep canonical tags + JSON-LD (run
+  python3 site/tools/check_site.py --fix), test at 360/390/820/1440, push to deploy.
+- Client portal/CRM is built but NOT live: branch claude/inspiring-pasteur-e795gm, folder
+  portal/ (see DEPLOY.md there). Plan: fold it into this Worker (reuse the DB binding with
+  portal_* tables, bootstrap via the existing admin gate) so no Cloudflare token is needed.
+  Jerome wants the site signed off first. "Client login" links to /client until then.
+
 ## Finished
 
 ### The /start agreement fix
