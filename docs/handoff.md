@@ -12,6 +12,23 @@ They are in the Shared Drive, folder 03 Operations & Automations.
 
 ---
 
+## Nov 16, 2026 (night): Apple-style site LIVE (read first)
+
+Jerome approved the Apple-style homepage and asked for the rest of the pages and a deploy.
+- LIVE now: index, how-it-works, services, pricing, book, about, all on site/public/apple.css + apple.js
+  (one shared header with the tel: link, one footer, dark mode follows the visitor's device via tokens).
+  Draft history: branch claude/gracious-thompson-v3id1i, folder site-apple/. Preview artifact 6HHZbu1bNaMZArcT8Jmh2L.
+- Book form: same /api/leads logic as v2.js (copied verbatim into apple.js). Tested with a mocked endpoint.
+- Decisions today: Essential and Business Support ARE the virtual assistant plans; no hourly selling. Site says
+  "fair-use limit, set out in the service agreement". Drive docs for Jasmine updated (agreement draft v2026-11-16.1).
+  Emergency routing shown on the homepage (plumber example: sent to the on-call tech, no promised time).
+  Copy speaks to "every service business"; no industry list. Control levels read Handle it / Tell me / Ask me / Never.
+- check_site.py now treats apple.css pages like v2 pages (own header) and reads <summary>Question</summary> FAQs.
+- Still old design: for/, automations/, calculators/, demo, agreement, client, start, privacy, 404.
+- Rollback: revert the commit titled "Apple-style site: ..." on this branch (v2 pages and v2.css/v2.js are untouched).
+- Naming note: the new pages use the plain names (Lead Catcher, Quote Chaser, Schedule, Reviews, Invoices), as the
+  approved homepage and the v2 pages did; FIRST/TRACE/CLOCK/STARS/PAID remain the names in the agreement and old pages.
+
 ## Nov 16, 2026: redesign live, Apple-style direction next (read first)
 
 State (session "Site redesign and CRM setup"):

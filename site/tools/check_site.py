@@ -46,7 +46,8 @@ titles, descs = {}, {}
 sitemap = open(os.path.join(PUB, "sitemap.xml")).read()
 for f, path in PAGES.items():
     s = open(os.path.join(PUB, f)).read()
-    v2 = "/v2.css" in s  # redesigned pages (Nov 16): own header and nav, plain-English job names
+    apple = "/apple.css" in s  # Apple-style pages (Nov 16, later): own header and nav
+    v2 = "/v2.css" in s or apple  # redesigned pages (Nov 16): own header and nav, plain-English job names
     hdr = re.search(r'<header class="site">(.*?)</header>', s, re.S) or (v2 and re.search(r'<header[^>]*>(.*?)</header>', s, re.S))
     if v2 and hdr:
         if 'href="tel:+18778968784"' not in hdr.group(1):
@@ -81,6 +82,8 @@ for f, path in PAGES.items():
     visible = [text(q) for q in re.findall(r'<details class="faq-item"[^>]*><summary>(.*?)</summary>', s, re.S)]
     if v2:  # new pages: <details class="sN"><summary class="sN">Question<span class="pl">+</span></summary>
         visible = [text(q) for q in re.findall(r'<details[^>]*>\s*<summary[^>]*>(.*?)<span', s, re.S)]
+    if apple:  # Apple-style pages: <details><summary>Question</summary>
+        visible = [text(q) for q in re.findall(r'<details[^>]*>\s*<summary[^>]*>(.*?)</summary>', s, re.S)]
     in_ld = []
     for block in JSONLD.findall(s):
         data = json.loads(block)
