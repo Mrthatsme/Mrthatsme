@@ -318,3 +318,7 @@ p{margin:0}
   .shot.clock .chip,.shot.clock .chip.a,.shot.clock .chip.b{position:static;width:100%;max-width:340px}
   .shot.clock .chip.b{order:2}.shot.clock .chip.a{order:1}
 }
+
+/* who it's for */
+.who{margin:44px auto 0;max-width:30ch;font-size:clamp(19px,2.2vw,22px);font-weight:600;letter-spacing:-0.02em;color:var(--ink)}
+.who + .demo{margin-top:26px}

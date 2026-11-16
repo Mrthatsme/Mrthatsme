@@ -66,7 +66,7 @@
 (function () {
   'use strict';
   var demo = document.getElementById('demo'), btns = Array.prototype.slice.call(document.querySelectorAll('.ind [data-i]'));
-  if (!demo || !btns.length) return;
+  if (!demo) return;
   var LEAD = function (t1, t2) { return [[t1, 'A customer messages you.'], [t2, 'Answered in minutes, in words you approved. No prices, no promises.'], ['Right away', "It's on your call-back list now, and on top of tomorrow's morning report if it's still open."]]; };
   var X = [
     { av: 'R', name: 'Redline Plumbing', body: [['t', 'Tuesday 7:09 PM'], ['in', "Our water heater just burst. There's water all over the garage floor. 412 Oak St, 904-555-0142."], ['alert', 'Emergency · sent to Mike, on call tonight'], ['t', '7:10 PM'], ['out', 'Thanks for reaching out to Redline Plumbing. Our on-call technician has been alerted and will contact you at this number.'], ['saved', '✓ Mike has the address and number']],
@@ -82,6 +82,8 @@
       you: ['Where you were at 4:05 PM', 'Elbow-deep in a pool filter.', ''], rep: ['Call back first:', ' green pool, 17 Bay Dr.'], story: LEAD('4:05 PM', '4:07 PM') },
     { av: 'R', name: 'Reel Time Charters', body: [['t', 'Friday 11:20 AM'], ['in', 'Is your boat open Saturday for 4 people? First time fishing!'], ['t', '11:22 AM'], ['out', "Thanks for reaching out to Reel Time Charters! The captain confirms dates and rates personally. What's the best number to reach you?"], ['in', '904-555-0164. Thanks!'], ['saved', '✓ Saved to your lead list']],
       you: ['Where you were at 11:20 AM', 'Offshore with a full boat.', ' No signal.'], rep: ['Call back first:', ' Saturday trip, party of 4.'], story: LEAD('11:20 AM', '11:22 AM') },
+    { av: 'S', name: 'Southside Taco Truck', body: [['t', 'Wednesday 12:15 PM'], ['in', 'Do you cater? Our daughter graduates in June and we expect about 60 people.'], ['t', '12:17 PM'], ['out', "Congratulations! We'd love to help. What's the date, the address and the best number to reach you?"], ['in', 'June 14, 55 River Rd. 904-555-0151.'], ['saved', '✓ Saved to your lead list']],
+      you: ['Where you were at 12:15 PM', 'Serving the lunch rush.', ' Line out the door.'], rep: ['Call back first:', ' graduation catering, about 60 guests.'], story: LEAD('12:15 PM', '12:17 PM') },
     { av: 'S', name: 'Summit Roofing', body: [['t', 'Thursday 7:48 AM'], ['in', "We'd like a quote to replace our roof. It's about 20 years old."], ['t', '7:50 AM'], ['out', "Thanks for reaching out to Summit Roofing! What's the address and the best number to reach you?"], ['in', '2204 Elm Ct. 904-555-0129.'], ['saved', '✓ Saved to your lead list']],
       you: ['Where you were at 7:48 AM', 'Up on a roof two towns over.', ''], rep: ['Quote to prepare:', ' roof replacement, 2204 Elm Ct.'], story: LEAD('7:48 AM', '7:50 AM') }
   ];
