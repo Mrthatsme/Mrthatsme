@@ -2,6 +2,10 @@
 https://minutesregained.jescott22.workers.dev/*
   X-Robots-Tag: noindex
 
+# www serves the same files; only the bare domain should be indexed (every page's canonical points there).
+https://www.minutesregained.com/*
+  X-Robots-Tag: noindex
+
 # Cloudflare Pages security headers.
 # Applied automatically on deploy -- no dashboard configuration needed.
 #

@@ -9,3 +9,14 @@ https://minutesregained.com/demo
 https://minutesregained.com/demo-desk
 https://minutesregained.com/agreement
 https://minutesregained.com/privacy
+https://minutesregained.com/automations/first
+https://minutesregained.com/automations/trace
+https://minutesregained.com/automations/clock
+https://minutesregained.com/automations/stars
+https://minutesregained.com/automations/paid
+https://minutesregained.com/calculators/
+https://minutesregained.com/calculators/slow-replies
+https://minutesregained.com/calculators/cold-quotes
+https://minutesregained.com/calculators/late-invoices
+https://minutesregained.com/how-it-works
+https://minutesregained.com/book
