@@ -25,6 +25,7 @@ PAGES = {  # file -> public path
     "automations/paid.html": "/automations/paid", "calculators/index.html": "/calculators/",
     "calculators/slow-replies.html": "/calculators/slow-replies", "calculators/cold-quotes.html": "/calculators/cold-quotes",
     "calculators/late-invoices.html": "/calculators/late-invoices",
+    "how-it-works.html": "/how-it-works", "book.html": "/book",
 }
 MENU = ['href="/"', 'href="/services"', 'href="/pricing"', 'href="/for/"', 'href="/about"']
 FIVE = ["FIRST", "TRACE", "CLOCK", "STARS", "PAID"]  # renamed Nov 11, 2026 (Jerome)
@@ -45,8 +46,12 @@ titles, descs = {}, {}
 sitemap = open(os.path.join(PUB, "sitemap.xml")).read()
 for f, path in PAGES.items():
     s = open(os.path.join(PUB, f)).read()
-    hdr = re.search(r'<header class="site">(.*?)</header>', s, re.S)
-    if not hdr:
+    v2 = "/v2.css" in s  # redesigned pages (Nov 16): own header and nav, plain-English job names
+    hdr = re.search(r'<header class="site">(.*?)</header>', s, re.S) or (v2 and re.search(r'<header[^>]*>(.*?)</header>', s, re.S))
+    if v2 and hdr:
+        if 'href="tel:+18778968784"' not in hdr.group(1):
+            bad(f, "no tel: link in the header")
+    elif not hdr:
         bad(f, "no site header")
     else:
         for m in MENU:
@@ -68,12 +73,14 @@ for f, path in PAGES.items():
         bad(f, f"{path} is not in sitemap.xml")
     if re.search(r'href="/#', s):
         bad(f, "links to an old one-page anchor (/#...)")
-    if f in ("index.html", "services.html"):
+    if f in ("index.html", "services.html") and not v2:
         for n in FIVE:
             if n not in s:
                 bad(f, f"automation name missing from the HTML: {n}")
 
     visible = [text(q) for q in re.findall(r'<details class="faq-item"[^>]*><summary>(.*?)</summary>', s, re.S)]
+    if v2:  # new pages: <details class="sN"><summary class="sN">Question<span class="pl">+</span></summary>
+        visible = [text(q) for q in re.findall(r'<details[^>]*>\s*<summary[^>]*>(.*?)<span', s, re.S)]
     in_ld = []
     for block in JSONLD.findall(s):
         data = json.loads(block)
