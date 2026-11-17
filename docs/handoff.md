@@ -12,6 +12,16 @@ They are in the Shared Drive, folder 03 Operations & Automations.
 
 ---
 
+## Nov 17, 2026: Meet your team (bot portraits)
+
+- Added a "Meet your team" strip to the homepage (after "Pick one. Or both.") and a full team section on
+  How it works (#team, after the five steps). Portraits come from the "Minutes Regained · Meet your team" artifact
+  (ByPD6CmxuXY3ihesxjU6KU), converted to site/public/img/team/<name>-240.webp and -480.webp.
+- Card copy reuses the promises already on the site (Lead Catcher, Quote Chaser, Schedule, Reviews, Invoices flows);
+  no new integrations or numbers. Every card has an AI badge, and each section ends with "These are AI assistants,
+  not employees. The portraits are illustrations, not real people." Keep that line.
+- Styles at the end of apple.css (.crew/.mate, .boss, .mates/.card-m, .facts, .ai). CSS version 20261117b.
+
 ## Nov 16, 2026 (night): Apple-style site LIVE (read first)
 
 Jerome approved the Apple-style homepage and asked for the rest of the pages and a deploy.

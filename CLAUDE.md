@@ -66,7 +66,7 @@ em dashes, varied sentence rhythm. Name things the way the reader would.
 | --- | --- |
 | The five automations | FIRST (new leads), TRACE (quote follow-up), CLOCK (scheduling), STARS (reviews), PAID (invoices) |
 | Included with every plan | The daily brief, named WATCH on its card only; sentences keep "daily brief" |
-| Client-facing agents | The GM, Intake, Schedule, Quotes, Billing, Aftercare, The Watch, The Fixer |
+| Client-facing agents | On the public site (Jerome, November 17): six AI assistants with names plus job: Morgan · General manager, Nova · New leads, Bea · Schedule, Piper · Quotes, Billie · Invoices, Remy · Reviews. Always shown with an "AI" badge and the line that the portraits are illustrations, not real people. Internal role names stay The GM, Intake, Schedule, Quotes, Billing, Aftercare, The Watch, The Fixer |
 | Permission levels | Handle It, Tell Me, Ask Me, Never |
 | Weekly client report | SITREP |
 | Internal ops system | CICWO — **never shown to a client** |
