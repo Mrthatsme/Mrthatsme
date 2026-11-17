@@ -12,6 +12,15 @@ They are in the Shared Drive, folder 03 Operations & Automations.
 
 ---
 
+## Nov 17, 2026: site review fixes
+
+- Home hero: added the honest phone line under the subhead (.hero .sub2). Essential card on Home and Pricing: sample
+  week line (.plan .week). "Most popular" tag removed from Business Support (dark card styling kept). "Tell me" level
+  on Home and How it works, and Bea's card, now carry the pre-approved job types booking rule. CSS v20261117c.
+- Not done on purpose: a trades list ("plumbers, HVAC...") conflicts with the every-service-business decision; the
+  free-call line under the hero button was not chosen. CLAUDE.md still lists the old "4 hours / 8 hours" under
+  Published plans, which predates the November 16 fair-use change.
+
 ## Nov 17, 2026: Meet your team (bot portraits)
 
 - Added a "Meet your team" strip to the homepage (after "Pick one. Or both.") and a full team section on

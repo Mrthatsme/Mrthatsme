@@ -140,6 +140,13 @@ Decisions made after the package, which override `docs/build-spec.md` where they
   band on Pricing and Services. Styles for all of it live in `site/public/extras.css` and calculator scripts in
   `site/public/calculators/*.js`, because the CSP allows no inline styles or scripts.
 
+- **Site review decisions (Jerome, November 17):** we don't answer phones; the homepage says website and social
+  messages get a reply in minutes and missed calls go to the top of the 6 AM callback list (no text-back promise, per
+  the never-list). Booking rule everywhere: books open slots on its own only for job types the client pre-approved;
+  new job types and after-hours requests wait for the owner. Plans stay flat with a fair-use limit (November 16), and
+  the Essential card shows "A typical week might look like" as an illustration. No "Most popular" badge on any plan
+  until there are real clients. The site keeps speaking to every service business, not a trade list.
+
 - Published plans (Jerome, November 10, replacing $450/$900/$75): Essential **$650** with **4 hours** a month,
   Business Support **$1,300** with **8 hours**, extra hours **$95 an hour** on both, only with written approval.
   12-month Retainers $7,020 and $14,040 (10% off). Custom Automation from $550 as specified. Set so both plans

@@ -440,3 +440,7 @@ p{margin:0}
 @media (max-width:640px){.boss{grid-template-columns:1fr;gap:18px;padding:22px}.boss img{width:100%;height:auto;aspect-ratio:1}}
 @media (max-width:380px){.mate b{font-size:16px}.ai{margin-left:4px;padding:1px 6px}}
 @media (max-width:560px){.card-m{display:grid;grid-template-columns:96px 1fr;gap:16px;padding:18px;align-items:start}.card-m img{width:96px;height:96px;aspect-ratio:1;border-radius:18px;object-position:center top}.m-body{padding:0}}
+/* Nov 17: honest phone line under the hero, sample week on Essential */
+.hero .sub2{margin:14px auto 0;max-width:44ch;font-size:clamp(15px,1.6vw,17px);line-height:1.45;color:var(--ink2)}
+.plan .week{margin:-10px 0 22px;font-size:14px;line-height:1.45;color:var(--ink2)}
+.plan .week b{color:var(--ink);font-weight:600}
