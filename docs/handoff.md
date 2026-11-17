@@ -12,6 +12,16 @@ They are in the Shared Drive, folder 03 Operations & Automations.
 
 ---
 
+## NEXT (Nov 18, 2026): lead outreach kickoff with Batman
+
+- Jerome wants to start contacting prospects tomorrow, working with Batman (Shared Drive "Batman" folder).
+  Use the existing prospect list (find it first: Drive, the client pipeline artifact 9eAL6NvdjTAnJxrNvTTDZq, and the
+  Nov 5 "GMB page for local clients" referral-partner list). Lead names and emails never go in this public repo.
+- Every email is drafted for Jerome's approval. Nothing is sent without his OK, one batch at a time.
+- Cold email for our own business must follow CAN-SPAM: honest subject, our postal address, and a working opt-out
+  that is honored. Anyone who opts out goes on the do-not-contact list and is never emailed again.
+- The site is ready for traffic: Meet your team and the review fixes went live Nov 17 and Jerome approved them.
+
 ## Nov 17, 2026: site review fixes
 
 - Home hero: added the honest phone line under the subhead (.hero .sub2). Essential card on Home and Pricing: sample
